@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- ============================================================
+       META & CONFIGURACIÓN BÁSICA
+       - charset: codificación de caracteres UTF-8
+       - viewport: esencial para que el diseño no se deforme
+         en dispositivos móviles (width=device-width)
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simulador Usicamm 2026 – Protocolo de Atención al Acoso Escolar">
+  <title>Simulador · Red de Seguridad Escolar</title>
+
+  <!-- Fuentes externas: Nunito (interfaz) + Lora (preguntas) -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==============================================================
+       RESET & BOX-MODEL
+       Todos los elementos incluyen padding/border en su ancho total.
+       Se elimina margin y padding por defecto del navegador.
+       ============================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ==============================================================
+       VARIABLES CSS (Design Tokens)
+       Usando variables facilita mantener consistencia de colores,
+       sombras y superficies en todo el archivo.
+       ============================================================== */
+    :root {
+      --bg: #eef4fb;
+      --surface: #ffffff;
+      --surface2: #f0f6ff;
+      --blue: #1a6bbf;
+      --blue-light: #3d8de0;
+      --blue-pale: #ddeeff;
+      --blue-xpale: #eef6ff;
+      --teal: #0d9488;
+      --teal-pale: #d0f4f0;
+      --purple: #7c3aed;
+      --purple-pale: #ede9ff;
+      --orange: #ea6c00;
+      --orange-pale: #fff0e0;
+      --green: #16a34a;
+      --green-pale: #dcfce7;
+      --red: #dc2626;
+      --red-pale: #fee2e2;
+      --text: #0f2b4a;
+      --text2: #4a6380;
+      --text3: #8aa3bc;
+      --border: #c8dff5;
+      --shadow: 0 4px 24px rgba(26,107,191,0.10);
+      --shadow-lg: 0 8px 40px rgba(26,107,191,0.14);
+
+      /* === ESCALADO TIPOGRÁFICO (fluido con clamp) ===
+         clamp(mínimo, preferido, máximo)
+         Así el texto nunca queda muy pequeño ni muy grande. */
+      --fs-xs:   clamp(0.65rem, 2vw, 0.75rem);
+      --fs-sm:   clamp(0.75rem, 2.2vw, 0.875rem);
+      --fs-base: clamp(0.875rem, 2.5vw, 1rem);
+      --fs-md:   clamp(1rem, 3vw, 1.125rem);
+      --fs-lg:   clamp(1.1rem, 3.5vw, 1.375rem);
+      --fs-xl:   clamp(1.25rem, 4vw, 1.875rem);
+      --fs-2xl:  clamp(2rem, 6vw, 4rem);
+
+      /* === ESPACIADO RESPONSIVO ===
+         Valores en rem para escalar con el zoom del navegador. */
+      --sp-xs: 0.5rem;
+      --sp-sm: 0.75rem;
+      --sp-md: 1rem;
+      --sp-lg: 1.5rem;
+      --sp-xl: 2rem;
+
+      /* Radio de bordes unificado */
+      --radius-sm: 0.5rem;
+      --radius-md: 0.875rem;
+      --radius-lg: 1.25rem;
+    }
+
+    /* ==============================================================
+       BODY
+       - font-size: 100% respeta la configuración del navegador
+       - padding con unidades % y rem para escalar correctamente
+       - min-height: 100svh cubre la pantalla en móviles modernos
+       ============================================================== */
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      min-height: 100svh; /* svh = small viewport height, mejor en móvil */
+      color: var(--text);
+      font-size: 100%;
+      /* padding: vertical en rem, horizontal como porcentaje del contenedor */
+      padding: var(--sp-lg) 4% clamp(3rem, 8vw, 4rem);
+      overflow-x: hidden; /* Previene desbordamiento horizontal */
+    }
+
+    /* ==============================================================
+       CONTENEDOR MÁXIMO
+       max-width fija el límite en pantallas grandes,
+       width:100% lo hace fluido en pantallas pequeñas.
+       margin auto centra el contenido.
+       ============================================================== */
+    .container {
+      width: 100%;
+      max-width: 46.25rem; /* 740px / 16 */
+      margin: 0 auto;
+    }
+
+    /* ==============================================================
+       BARRA MODO DE ESTUDIO (ELEMENTO DINÁMICO JAVASCRIPT)
+       Se muestra en la parte superior. El JS la controla.
+       ============================================================== */
+    #modo-bar {
+      width: 100%;
+      max-width: 46.25rem;
+      margin: 0 auto var(--sp-md);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--sp-sm) var(--sp-md);
+      box-shadow: var(--shadow);
+      /* Flexbox: distribución horizontal con salto a segunda línea en móvil */
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      flex-wrap: wrap;
+    }
+    #modo-bar .modo-label {
+      font-size: var(--fs-xs);
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      white-space: nowrap;
+    }
+    /* Botones del selector de modo — usan gap y flex-wrap para no desbordar */
+    #modo-bar .modo-btns {
+      display: flex;
+      gap: var(--sp-xs);
+      flex-wrap: wrap;
+      flex: 1;
+    }
+    .modo-btn {
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--text2);
+      font-family: 'Nunito', sans-serif;
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+    .modo-btn:hover { border-color: var(--blue-light); color: var(--blue); }
+    .modo-btn.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+      box-shadow: 0 2px 8px rgba(26,107,191,0.35);
+    }
+    /* Chip de estado del modo */
+    #modo-chip {
+      margin-left: auto;
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 100px;
+      background: var(--green-pale);
+      color: var(--green);
+      white-space: nowrap;
+      transition: all 0.3s ease;
+    }
+
+    /* ==============================================================
+       HEADER
+       Flexbox: logo + título a la izquierda, puntaje a la derecha.
+       En móvil la fuente y el padding se reducen automáticamente.
+       ============================================================== */
+    .header {
+      width: 100%;
+      max-width: 46.25rem;
+      margin: 0 auto var(--sp-md);
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-md) var(--sp-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      /* Flexbox principal del header */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-md);
+    }
+    /* Grupo izquierdo: ícono + textos */
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      /* min-width:0 es CLAVE: permite que el flex-child se encoja en móvil */
+      min-width: 0;
+    }
+    .header-icon {
+      /* Tamaño fijo en rem para mantener proporción */
+      width: 3rem;
+      height: 3rem;
+      min-width: 3rem; /* no se encoge */
+      background: var(--blue);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.375rem;
+    }
+    .header-title {
+      font-family: 'Lora', serif;
+      font-size: var(--fs-sm); /* fluido: pequeño en móvil, mayor en desktop */
+      font-weight: 700;
+      color: var(--blue);
+      line-height: 1.25;
+      /* overflow:hidden + text-overflow evitan desbordamiento del texto */
+      overflow: hidden;
+    }
+    .header-sub {
+      font-size: var(--fs-xs);
+      color: var(--text3);
+      margin-top: 0.125rem;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .score-box {
+      text-align: right;
+      flex-shrink: 0; /* no se encoge nunca */
+    }
+    .score-label {
+      font-size: var(--fs-xs);
+      color: var(--text3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .score-value {
+      font-size: var(--fs-xl); /* tamaño fluido */
+      font-weight: 900;
+      color: var(--blue);
+      line-height: 1;
+    }
+    .score-denom {
+      font-size: var(--fs-sm);
+      color: var(--text3);
+      font-weight: 600;
+    }
+
+    /* ==============================================================
+       BARRA DE TEMPORIZADOR
+       Flex row: ícono · barra de progreso · dígitos
+       ============================================================== */
+    .timer-bar {
+      width: 100%;
+      max-width: 46.25rem;
+      margin: 0 auto var(--sp-md);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem var(--sp-md);
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      box-shadow: var(--shadow);
+    }
+    .timer-icon { font-size: 1.25rem; flex-shrink: 0; }
+    .timer-track {
+      flex: 1; /* ocupa todo el espacio disponible */
+      height: 0.625rem;
+      background: var(--bg);
+      border-radius: 0.3125rem;
+      overflow: hidden;
+      min-width: 0; /* permite encogimiento en flex */
+    }
+    .timer-fill {
+      height: 100%;
+      border-radius: 0.3125rem;
+      background: linear-gradient(90deg, #16a34a, #4ade80);
+      transition: width 1s linear, background 1s ease;
+    }
+    .timer-digits {
+      font-size: var(--fs-md);
+      font-weight: 900;
+      color: var(--blue);
+      min-width: 3.5rem;
+      text-align: right;
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+    }
+    .timer-digits.warn   { color: var(--orange); }
+    .timer-digits.danger { color: var(--red); animation: timerPulse 0.8s ease infinite; }
+
+    /* ==============================================================
+       OVERLAY "TIEMPO AGOTADO"
+       position:fixed + inset:0 cubre toda la pantalla.
+       ============================================================== */
+    .overlay {
+      position: fixed;
+      inset: 0; /* shorthand: top right bottom left = 0 */
+      background: rgba(10, 30, 60, 0.72);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: var(--sp-md); /* espacio en móvil para que no llegue al borde */
+      animation: fadeIn 0.3s ease;
+    }
+    .overlay-box {
+      background: white;
+      border-radius: var(--radius-lg);
+      /* padding fluido con clamp */
+      padding: clamp(1.5rem, 5vw, 3rem) clamp(1.25rem, 5vw, 2.5rem);
+      text-align: center;
+      width: min(26.25rem, 100%); /* min() elige el menor: 420px o 100% */
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .overlay-emoji  { font-size: clamp(2.5rem, 8vw, 3.75rem); margin-bottom: 0.75rem; display: block; }
+    .overlay-title  { font-family:'Lora',serif; font-size: var(--fs-lg); font-weight:700; color:var(--red); margin-bottom:0.5rem; }
+    .overlay-sub    { font-size: var(--fs-sm); color:var(--text2); margin-bottom:1.75rem; line-height:1.6; }
+    .overlay-btn {
+      padding: 0.875rem 2rem;
+      background: var(--blue);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: white;
+      font-size: var(--fs-base);
+      font-weight: 800;
+      cursor: pointer;
+      font-family:'Nunito',sans-serif;
+      transition: all 0.18s;
+      width: 100%; /* botón full-width en móvil */
+      max-width: 16rem;
+    }
+    .overlay-btn:hover { background:var(--blue-light); transform:translateY(-2px); }
+
+    /* ==============================================================
+       BARRA DE PROGRESO
+       Flex row con barra que ocupa el resto del espacio.
+       ============================================================== */
+    .progress-wrap {
+      width: 100%;
+      max-width: 46.25rem;
+      margin: 0 auto var(--sp-md);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 0.625rem;
+      background: var(--border);
+      border-radius: 0.375rem;
+      overflow: hidden;
+      min-width: 0;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 0.375rem;
+      background: linear-gradient(90deg, var(--blue), var(--blue-light));
+      transition: width 0.5s ease;
+    }
+    .progress-text {
+      font-size: var(--fs-sm);
+      color: var(--text2);
+      font-weight: 700;
+      min-width: 3.375rem;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ==============================================================
+       BADGES DE TIPO (leyenda superior)
+       flex-wrap: cuando no caben, bajan a la siguiente línea.
+       ============================================================== */
+    .type-badges {
+      width: 100%;
+      max-width: 46.25rem;
+      margin: 0 auto var(--sp-md);
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap; /* permite que los badges bajen de línea en móvil */
+    }
+    .badge {
+      padding: 0.3125rem 0.8125rem;
+      border-radius: 1.25rem;
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3125rem;
+      border: 1.5px solid transparent;
+      cursor: default;
+    }
+    .badge-CD { background:var(--blue-pale);   color:var(--blue);   border-color:#b3d4f5; }
+    .badge-CO { background:var(--purple-pale);  color:var(--purple); border-color:#c4b5f7; }
+    .badge-OR { background:var(--teal-pale);    color:var(--teal);   border-color:#99e0d8; }
+    .badge-RE { background:var(--orange-pale);  color:var(--orange); border-color:#f5c88a; }
+
+    /* ==============================================================
+       TARJETA DE PREGUNTA
+       max-width contiene el ancho. padding fluido.
+       ============================================================== */
+    .card {
+      width: 100%;
+      max-width: 46.25rem;
+      margin: 0 auto;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      /* padding fluido: mínimo en móvil, mayor en desktop */
+      padding: clamp(1.125rem, 4vw, 1.75rem) clamp(1rem, 4vw, 2rem);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      animation: slideUp 0.35s ease;
+    }
+    .card-type-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.125rem;
+      flex-wrap: wrap; /* en pantallas muy pequeñas pueden bajar de línea */
+      gap: 0.5rem;
+    }
+    .q-number {
+      font-size: var(--fs-xs);
+      color: var(--text3);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    /* Bloque de texto de la pregunta */
+    .q-base {
+      background: var(--surface2);
+      border-left: 4px solid var(--blue);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 1.125rem var(--sp-md);
+      font-family: 'Lora', serif;
+      font-size: var(--fs-base); /* fluido: legible en cualquier pantalla */
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: var(--sp-md);
+      /* word-break evita que palabras largas desborden */
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* ==============================================================
+       TABLA DE RELACIÓN (2 columnas → 1 columna en móvil)
+       Grid con auto-fit: se adapta automáticamente.
+       ============================================================== */
+    .rel-table {
+      display: grid;
+      /* En pantallas grandes: 2 columnas iguales
+         En pantallas < 420px: colapsa a 1 columna (ver media query) */
+      grid-template-columns: 1fr 1fr;
+      gap: 0.625rem;
+      margin-bottom: 0.375rem;
+    }
+    .rel-col-title {
+      font-size: var(--fs-xs);
+      font-weight: 800;
+      letter-spacing: 0.125em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 0.125rem 0.25rem 0.5rem;
+    }
+    .rel-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5625rem 0.8125rem;
+      font-size: var(--fs-sm);
+      line-height: 1.55;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .rel-item.left  { border-left: 3px solid var(--blue); }
+    .rel-item.right { border-left: 3px solid var(--text3); }
+
+    /* Tags de ordenamiento */
+    .ord-tags {
+      display: flex;
+      flex-wrap: wrap; /* bajan de línea si no caben */
+      gap: 0.5rem;
+      margin-top: 0.875rem;
+    }
+    .ord-tag {
+      background: var(--blue-xpale);
+      border: 1px solid var(--blue-pale);
+      border-radius: var(--radius-sm);
+      padding: 0.375rem 0.8125rem;
+      font-size: var(--fs-sm);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    /* ==============================================================
+       OPCIONES DE RESPUESTA
+       flex-direction:column apila los botones verticalmente.
+       ============================================================== */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+      margin-top: 0.25rem;
+    }
+    .opt-btn {
+      width: 100%;
+      text-align: left;
+      /* padding fluido */
+      padding: clamp(0.75rem, 2.5vw, 0.9375rem) clamp(0.75rem, 2.5vw, 1.25rem);
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: var(--fs-base);
+      line-height: 1.55;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      /* Evita que el texto largísimo desborde */
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    .opt-btn:hover:not(:disabled) {
+      background: var(--blue-xpale);
+      border-color: var(--blue-light);
+      transform: translateX(4px);
+    }
+    /* En móvil reducimos el translateX para que no haya overflow */
+    @media (max-width: 30rem) {
+      .opt-btn:hover:not(:disabled) { transform: translateX(2px); }
+    }
+    .opt-btn:disabled { cursor: default; }
+    .opt-btn .opt-letter {
+      width: 1.75rem;
+      height: 1.75rem;
+      min-width: 1.75rem;
+      border-radius: 0.5rem;
+      background: var(--border);
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--fs-xs);
+      font-weight: 800;
+      transition: all 0.18s;
+      margin-top: 0.0625rem;
+    }
+    .opt-btn .opt-text { flex: 1; min-width: 0; }
+
+    /* Estado: correcto */
+    .opt-btn.correct { background: var(--green-pale); border-color: var(--green); animation: popIn 0.4s ease; }
+    .opt-btn.correct .opt-letter { background: var(--green); color: white; }
+    .opt-btn.correct .opt-text   { color: var(--green); font-weight: 700; }
+
+    /* Estado: incorrecto */
+    .opt-btn.wrong { background: var(--red-pale); border-color: var(--red); }
+    .opt-btn.wrong .opt-letter { background: var(--red); color: white; }
+    .opt-btn.wrong .opt-text   { color: var(--red); font-weight: 700; }
+
+    /* Estado: atenuado */
+    .opt-btn.dimmed { opacity: 0.45; }
+
+    /* ==============================================================
+       ARGUMENTACIÓN / JUSTIFICACIÓN
+       ============================================================== */
+    .just-toggle {
+      background: none;
+      border: none;
+      color: var(--blue);
+      font-family: 'Nunito', sans-serif;
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0.75rem 0 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      letter-spacing: 0.02em;
+    }
+    .just-toggle:hover { color: var(--blue-light); }
+    .just-box {
+      background: var(--blue-xpale);
+      border-left: 4px solid var(--blue);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 1rem var(--sp-md);
+      margin-top: 0.5rem;
+      font-size: var(--fs-sm);
+      line-height: 1.8;
+      color: var(--text2);
+      animation: slideUp 0.25s ease;
+      word-break: break-word;
+    }
+    .just-title {
+      font-size: var(--fs-xs);
+      font-weight: 900;
+      letter-spacing: 0.125em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 0.375rem;
+      display: block;
+    }
+
+    /* ==============================================================
+       BOTÓN SIGUIENTE
+       width:100% lo hace responsivo sin esfuerzo adicional.
+       ============================================================== */
+    .next-btn {
+      width: 100%;
+      margin-top: var(--sp-md);
+      padding: 1rem;
+      background: var(--blue);
+      border: none;
+      border-radius: var(--radius-md);
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      font-size: var(--fs-base);
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: all 0.18s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 16px rgba(26,107,191,0.3);
+    }
+    .next-btn:hover { background:var(--blue-light); transform:translateY(-2px); box-shadow:0 8px 24px rgba(26,107,191,0.35); }
+
+    /* ==============================================================
+       PANTALLA DE RESULTADOS
+       ============================================================== */
+    .results-wrap {
+      width: 100%;
+      max-width: 46.25rem;
+      margin: 0 auto;
+      animation: slideUp 0.5s ease;
+    }
+    .result-hero {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: clamp(2rem, 6vw, 3rem) clamp(1.25rem, 5vw, 2rem);
+      text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 1rem;
+    }
+    .result-emoji  { font-size: clamp(3rem, 10vw, 4.5rem); margin-bottom: 0.75rem; display: block; animation: popIn 0.8s ease 0.3s both; }
+    .result-label  { font-family:'Lora',serif; font-size: var(--fs-lg); font-weight:700; margin-bottom:0.375rem; }
+    .result-sub    { font-size: var(--fs-xs); color:var(--text3); margin-bottom:1.75rem; }
+    .result-pct    { font-size: var(--fs-2xl); font-weight:900; line-height:1; font-family:'Nunito',sans-serif; }
+    .result-detail { font-size: var(--fs-base); color:var(--text2); margin-top:0.5rem; }
+
+    .breakdown-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: clamp(1rem, 4vw, 1.75rem);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+    }
+    .breakdown-title {
+      font-size: var(--fs-xs);
+      font-weight: 800;
+      letter-spacing: 0.125em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 1rem;
+    }
+    .breakdown-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--bg);
+      flex-wrap: wrap; /* en pantallas muy pequeñas el score va abajo */
+    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-type {
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      /* min-width en % para pantallas pequeñas */
+      min-width: min(11.25rem, 45%);
+    }
+    .bk-bar-wrap    { flex:1; height:0.625rem; background:var(--bg); border-radius:0.3125rem; overflow:hidden; min-width:2rem; }
+    .bk-bar-fill    { height:100%; border-radius:0.3125rem; transition: width 1.2s ease; }
+    .breakdown-score{ font-size:var(--fs-sm); font-weight:800; min-width:3rem; text-align:right; }
+
+    .restart-btn {
+      width: 100%;
+      padding: clamp(0.875rem, 3vw, 1.125rem);
+      background: var(--blue);
+      border: none;
+      border-radius: var(--radius-md);
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      font-size: var(--fs-base);
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: all 0.18s;
+      box-shadow: 0 4px 16px rgba(26,107,191,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .restart-btn:hover { background:var(--blue-light); transform:translateY(-2px); }
+
+    /* ==============================================================
+       LEYENDA INFERIOR
+       justify-content:center + flex-wrap para que nunca desborde.
+       ============================================================== */
+    .legend {
+      width: 100%;
+      max-width: 46.25rem;
+      margin: 1rem auto 0;
+      display: flex;
+      gap: 0.875rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .legend-item {
+      font-size: var(--fs-xs);
+      color: var(--text3);
+      display: flex;
+      align-items: center;
+      gap: 0.3125rem;
+      font-weight: 700;
+    }
+    .legend-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; }
+
+    /* ==============================================================
+       ANIMACIONES
+       ============================================================== */
+    @keyframes fadeIn    { from{opacity:0}                    to{opacity:1} }
+    @keyframes slideUp   { from{opacity:0;transform:translateY(1.125rem)} to{opacity:1;transform:translateY(0)} }
+    @keyframes shake     { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-5px)} 40%,80%{transform:translateX(5px)} }
+    @keyframes popIn     { 0%{transform:scale(1)} 45%{transform:scale(1.03)} 100%{transform:scale(1)} }
+    @keyframes timerPulse{ 0%,100%{opacity:1} 50%{opacity:0.5} }
+    .shake { animation: shake 0.4s ease; }
+
+    /* ==============================================================
+       MEDIA QUERIES
+       Breakpoints principales:
+         - ≤ 480px  → móvil pequeño
+         - ≤ 360px  → móvil muy pequeño
+       Nota: los clamp() y las unidades relativas ya manejan la
+       mayor parte del ajuste; estas reglas son para casos especiales.
+       ============================================================== */
+
+    /* Tabletas y móviles (≤ 560px) */
+    @media (max-width: 35rem) {
+      body { padding: var(--sp-md) 4% clamp(2rem, 6vw, 3rem); }
+      .card    { padding: clamp(1rem, 3.5vw, 1.25rem) clamp(0.875rem, 3.5vw, 1.125rem); }
+      .header  { padding: var(--sp-sm) var(--sp-md); flex-wrap: wrap; }
+      /* La tabla de relación colapsa a 1 columna en móvil */
+      .rel-table { grid-template-columns: 1fr; }
+      /* El puntaje se alinea al inicio cuando el header se rompe */
+      .score-box { text-align: left; }
+    }
+
+    /* Móvil pequeño (≤ 400px) */
+    @media (max-width: 25rem) {
+      .header-icon { width: 2.5rem; height: 2.5rem; min-width: 2.5rem; font-size: 1.125rem; }
+      .breakdown-row { flex-direction: column; align-items: flex-start; gap: 0.375rem; }
+      .bk-bar-wrap { width: 100%; }
+    }
+
+    /* Modo de alto contraste / preferencia de movimiento reducido */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       BARRA DINÁMICA: MODO DE ESTUDIO
+       Este elemento es el "contenido dinámico con JavaScript"
+       solicitado. Permite cambiar entre 3 modos que afectan
+       el comportamiento del simulador en tiempo real:
+       - Normal: experiencia estándar con cronómetro
+       - Repaso: sin presión de tiempo, respuestas resaltadas
+       - Examen: oculta la argumentación hasta el final
+       ============================================================ -->
+  <div id="modo-bar">
+    <span class="modo-label">Modo:</span>
+    <div class="modo-btns">
+      <!-- El atributo data-modo es leído por el JS -->
+      <button class="modo-btn active" data-modo="normal"  onclick="cambiarModo('normal')">⏱ Normal</button>
+      <button class="modo-btn"        data-modo="repaso"  onclick="cambiarModo('repaso')">📖 Repaso</button>
+      <button class="modo-btn"        data-modo="examen"  onclick="cambiarModo('examen')">📝 Examen</button>
+    </div>
+    <span id="modo-chip">✓ Cronómetro activo</span>
+  </div>
+
+  <!-- ============================================================
+       CABECERA PRINCIPAL
+       ============================================================ -->
+  <div class="header" id="main-header">
+    <div class="header-left">
+      <div class="header-icon">🏫</div>
+      <div>
+        <div class="header-title">Simulador Usicamm 2026 · Protocolo de Atención al Acoso Escolar</div>
+        <div class="header-sub">Prof. Francisco De Jesus Luna Benitez</div>
+      </div>
+    </div>
+    <div class="score-box">
+      <div class="score-label">Puntaje</div>
+      <div>
+        <span class="score-value" id="score-display">0</span>
+        <span class="score-denom" id="answered-display">/0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       BARRA DE PROGRESO
+       ============================================================ -->
+  <div class="progress-wrap">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="progress-text">0 / 25</div>
+  </div>
+
+  <!-- ============================================================
+       TEMPORIZADOR
+       ============================================================ -->
+  <div class="timer-bar" id="timer-bar">
+    <span class="timer-icon">⏱️</span>
+    <div class="timer-track">
+      <div class="timer-fill" id="timer-fill" style="width:100%"></div>
+    </div>
+    <div class="timer-digits" id="timer-digits">40:00</div>
+  </div>
+
+  <!-- ============================================================
+       OVERLAY: TIEMPO AGOTADO (oculto por defecto)
+       ============================================================ -->
+  <div class="overlay" id="timeup-overlay" style="display:none">
+    <div class="overlay-box">
+      <span class="overlay-emoji">⏰</span>
+      <div class="overlay-title">¡Tiempo agotado!</div>
+      <div class="overlay-sub">
+        Los 40 minutos han concluido.<br>
+        Puedes revisar tus resultados parciales o reiniciar el simulador.
+      </div>
+      <button class="overlay-btn"
+        onclick="document.getElementById('timeup-overlay').style.display='none'; showResults();">
+        Ver mis resultados
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       BADGES DE TIPO (leyenda superior)
+       ============================================================ -->
+  <div class="type-badges">
+    <span class="badge badge-CD">❓ Cuestionamiento directo</span>
+    <span class="badge badge-CO">✏️ Completamiento</span>
+    <span class="badge badge-OR">🔢 Ordenamiento</span>
+    <span class="badge badge-RE">🔗 Relación de elementos</span>
+  </div>
+
+  <!-- ============================================================
+       TARJETA DE PREGUNTA (se actualiza por JS)
+       ============================================================ -->
+  <div class="card" id="question-card">
+    <div class="card-type-row">
+      <span class="badge" id="type-badge"></span>
+      <span class="q-number" id="q-number"></span>
+    </div>
+    <div class="q-base" id="q-base"></div>
+    <div id="q-extra"></div>
+    <div class="options" id="options-container"></div>
+    <div id="feedback-area"></div>
+  </div>
+
+  <!-- ============================================================
+       LEYENDA INFERIOR
+       ============================================================ -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#1a6bbf"></div>Cuestionamiento directo (8)
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#7c3aed"></div>Completamiento (6)
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#0d9488"></div>Ordenamiento (5)
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#ea6c00"></div>Relación de elementos (6)
+    </div>
+  </div>
+
+  <!-- ============================================================
+       JAVASCRIPT
+       Toda la lógica del simulador, incluyendo:
+       - Banco de preguntas (QUESTIONS)
+       - Función render() — dibuja la pregunta actual
+       - selectAnswer() — registra la respuesta del usuario
+       - showResults() — pantalla final de resultados
+       - restartSim() — reinicia el simulador
+       - Timer — cuenta regresiva de 40 minutos
+       - cambiarModo() — lógica dinámica de modos (NUEVO)
+       ============================================================ -->
+  <script>
+    // ================================================================
+    // BANCO DE PREGUNTAS
+    // Cada objeto contiene:
+    //   id, type, label, icon, base (enunciado), extra (opcional),
+    //   options (arreglo de 3), correct (índice 0-2), just (argumento)
+    // ================================================================
+    const QUESTIONS = [
+      // ── CUESTIONAMIENTO DIRECTO (8) ─────────────────────────────
+      { id:1, type:"CD", label:"Cuestionamiento directo", icon:"❓",
+        base:"¿Cuáles son los dos principios innegociables que rigen los cuatro momentos del protocolo de atención al acoso escolar?",
+        options:["El interés superior de la niñez y el respeto a la dignidad y los derechos humanos.",
+                 "La participación del colegiado y la notificación obligatoria a autoridades externas.",
+                 "La documentación rigurosa de incidentes y la capacitación continua del personal."],
+        correct:0, just:"El Eje Rector del protocolo establece que toda atención, en sus cuatro momentos (Detección, Notificación, Intervención y Seguimiento), está subordinada a estos dos principios innegociables que priorizan la protección integral del menor." },
+
+      { id:2, type:"CD", label:"Cuestionamiento directo", icon:"❓",
+        base:"¿Qué tipo de acoso escolar se caracteriza por la difusión de información o imágenes personales sin consentimiento, mensajes hirientes y robo de contraseñas?",
+        options:["Acoso físico.","Acoso socioemocional.","Ciberacoso."],
+        correct:2, just:"El ciberacoso se define por agresiones en entornos digitales: difusión sin consentimiento de información o imágenes personales, mensajes hirientes, publicaciones ofensivas y robo de contraseñas o creación de perfiles falsos." },
+
+      { id:3, type:"CD", label:"Cuestionamiento directo", icon:"❓",
+        base:"¿Qué figura educativa es el ejecutor central de los procedimientos de atención al acoso escolar y está encargada de implementar el sistema de seguimiento?",
+        options:["El docente titular del grupo afectado.","El colegiado.","El director del plantel."],
+        correct:1, just:"El Colegiado es el ejecutor central de los procedimientos de atención. Sin embargo, todas las figuras educativas deben participar ante la ausencia de la autoridad, garantizando la continuidad del protocolo." },
+
+      { id:4, type:"CD", label:"Cuestionamiento directo", icon:"❓",
+        base:"¿Cuál de los siguientes es un indicador general visible de que un alumno podría estar siendo víctima de acoso escolar?",
+        options:["Alto rendimiento académico y mayor participación activa en actividades escolares.",
+                 "Cambios bruscos de estado de ánimo o tendencia a aislarse.",
+                 "Mayor interés por actividades físicas y deportivas dentro del plantel."],
+        correct:1, just:"Los indicadores generales visibles incluyen cambios bruscos de estado de ánimo o tendencia a aislarse, descenso del rendimiento escolar, temor de ir al baño, cambios en hábitos alimentarios, entre otros síntomas observables." },
+
+      { id:5, type:"CD", label:"Cuestionamiento directo", icon:"❓",
+        base:"¿Qué acción corresponde exclusivamente al Director/Subdirector dentro del protocolo de atención inmediata, y que no está asignada al docente ni al personal administrativo?",
+        options:["Detener la agresión de forma inmediata.",
+                 "Llamar a instancias correspondientes si corre peligro la vida.",
+                 "Conformar el colegiado y dar seguimiento a estudiantes y familias."],
+        correct:2, just:"Las acciones de detener la agresión y llamar a emergencias son compartidas por las tres figuras. Solo el Director/Subdirector tiene la responsabilidad adicional y exclusiva de conformar el colegiado y dar seguimiento a estudiantes y familias." },
+
+      { id:6, type:"CD", label:"Cuestionamiento directo", icon:"❓",
+        base:"¿Qué debe hacer la familia cuando las autoridades del plantel no actúan ante una situación de acoso escolar reportada?",
+        options:["Retirar al alumno de la institución de forma definitiva.",
+                 "Reportar la situación a otras instancias mediante el proceso de escalamiento.",
+                 "Resolver el conflicto directamente con la familia del estudiante agresor."],
+        correct:1, just:"La Ruta de Notificación establece que ante la inacción de las autoridades del plantel, la familia tiene el derecho y la responsabilidad de escalar la situación reportándola a otras instancias superiores para garantizar la protección del alumno." },
+
+      { id:7, type:"CD", label:"Cuestionamiento directo", icon:"❓",
+        base:"¿Cuál de las siguientes conductas corresponde al acoso socioemocional según el protocolo de la Red de Seguridad Escolar?",
+        options:["Golpes, empujones y obligar a pelear.",
+                 "Criticar, ignorar, discriminar y marginar de juegos o equipos de trabajo.",
+                 "Burlas, insultos y retos a pelear."],
+        correct:1, just:"El acoso socioemocional lesiona la autoestima del alumno a través de conductas como criticar, ignorar, discriminar, marginar de juegos, fiestas o equipos de trabajo, y divulgar rumores. Se diferencia del acoso verbal en que busca la exclusión social." },
+
+      { id:8, type:"CD", label:"Cuestionamiento directo", icon:"❓",
+        base:"¿Cuál es el objetivo final del enfoque integral de La Red de Seguridad Escolar, según el protocolo?",
+        options:["Sancionar al estudiante agresor con medidas disciplinarias ejemplares.",
+                 "Lograr la Convivencia Armónica Restaurada entre todas las partes.",
+                 "Documentar todos los incidentes para reportes estadísticos anuales."],
+        correct:1, just:"El enfoque integral parte de la Detección Temprana, pasa por la Intervención y Documentación Compartida (Plantel + Familia), y su objetivo final es la Convivencia Armónica Restaurada, supervisada por el Colegiado." },
+
+      // ── COMPLETAMIENTO (6) ─────────────────────────────────────
+      { id:9, type:"CO", label:"Completamiento", icon:"✏️",
+        base:"El protocolo establece que toda atención al acoso escolar, en sus cuatro momentos, está subordinada a dos principios innegociables: el interés superior de la niñez y…",
+        options:["…la participación obligatoria de los padres de familia en todas las fases del proceso.",
+                 "…el respeto a la dignidad y los derechos humanos.",
+                 "…la intervención inmediata de las autoridades educativas regionales en cada caso."],
+        correct:1, just:"El Eje Rector del protocolo define explícitamente que los dos principios innegociables son: el interés superior de la niñez y el respeto a la dignidad y los derechos humanos, los cuales guían cada decisión en los momentos de Detección, Notificación, Intervención y Seguimiento." },
+
+      { id:10, type:"CO", label:"Completamiento", icon:"✏️",
+        base:"En la Ruta de Notificación y Documentación, el plantel debe citar y notificar a las familias para explicar los hechos y acuerdos…",
+        options:["…sin revelar la identidad del estudiante agresor para proteger su privacidad.",
+                 "…asegurando el respeto irrestricto a los derechos de ambas partes.",
+                 "…únicamente en presencia de autoridades educativas regionales externas."],
+        correct:1, just:"El protocolo establece que al citar y notificar a las familias se deben explicar los hechos y acuerdos asegurando el respeto irrestricto a los derechos de ambas partes, garantizando la equidad en el proceso." },
+
+      { id:11, type:"CO", label:"Completamiento", icon:"✏️",
+        base:"El Colegiado, como sistema de atención central, implementa Prácticas Restaurativas con el objetivo de…",
+        options:["…sancionar al estudiante agresor con suspensión temporal de clases.",
+                 "…recuperar la convivencia armónica entre todas las partes y la comunidad escolar.",
+                 "…archivar los incidentes en el expediente definitivo del alumno agresor."],
+        correct:1, just:"Las Prácticas Restaurativas buscan implementar la resolución pacífica de conflictos para recuperar la convivencia armónica entre todas las partes y la comunidad escolar, dentro de la fase de Seguimiento." },
+
+      { id:12, type:"CO", label:"Completamiento", icon:"✏️",
+        base:"Dentro del enfoque de La Red de Seguridad, la protección integral no es una acción aislada, sino una maquinaria sincronizada y documentada donde, desde los indicadores silenciosos hasta la restauración…",
+        options:["…el director es el único responsable de coordinar todas las intervenciones del plantel.",
+                 "…cada figura educativa es un nodo vital en la red.",
+                 "…la familia tiene prioridad sobre las decisiones del colegiado en todo momento."],
+        correct:1, just:"El enfoque integral establece que desde los indicadores silenciosos hasta la restauración, cada figura educativa es un nodo vital en la red de protección, lo que significa que todos son igualmente importantes en el proceso." },
+
+      { id:13, type:"CO", label:"Completamiento", icon:"✏️",
+        base:"El Control del Progreso, como acción del Colegiado en la fase de Seguimiento, implica establecer un seguimiento puntual tanto a la víctima como…",
+        options:["…a los padres de familia para verificar el cumplimiento de acuerdos en casa.",
+                 "…a las autoridades externas que intervinieron en el caso.",
+                 "…al estudiante que ejerció la conducta de acoso."],
+        correct:2, just:"El Control del Progreso establece seguimiento puntual para ambas partes: la víctima del acoso y el estudiante que ejerció la conducta de acoso, reconociendo que ambos requieren acompañamiento para la restauración." },
+
+      { id:14, type:"CO", label:"Completamiento", icon:"✏️",
+        base:"La acción de Vínculo Familiar, dentro del sistema de atención del Colegiado, consiste en mantener comunicación con madres y padres sobre medidas de crianza y…",
+        options:["…los antecedentes disciplinarios del estudiante registrados en el expediente escolar.",
+                 "…el progreso al interior del centro educativo.",
+                 "…las sanciones aplicadas al estudiante agresor por el Consejo Técnico Escolar."],
+        correct:1, just:"La acción de Vínculo Familiar se define como mantener comunicación con madres y padres sobre medidas de crianza y el progreso al interior del centro educativo, creando un puente entre el hogar y la escuela para la restauración." },
+
+      // ── ORDENAMIENTO (5) ───────────────────────────────────────
+      { id:15, type:"OR", label:"Ordenamiento", icon:"🔢",
+        base:"Ordene los cuatro momentos del protocolo de atención al acoso escolar en su secuencia correcta según el Momentum Timeline:",
+        extra:{ type:"tags", items:["1. Detección","2. Notificación","3. Intervención","4. Seguimiento"] },
+        options:["A) Detección → Notificación → Intervención → Seguimiento",
+                 "B) Notificación → Detección → Intervención → Seguimiento",
+                 "C) Detección → Intervención → Notificación → Seguimiento"],
+        correct:0, just:"El Momentum Timeline del protocolo establece: Detección → Notificación → Intervención → Seguimiento. Este orden es lógico: primero se identifica el problema, luego se comunica, después se actúa y finalmente se monitorea la evolución." },
+
+      { id:16, type:"OR", label:"Ordenamiento", icon:"🔢",
+        base:"Ordene las acciones que debe seguir la familia ante un caso de acoso escolar, según la Ruta de Notificación y Documentación del protocolo:",
+        extra:{ type:"tags", items:["Informar al plantel","Entregar evidencias","Reportar si hay inacción"] },
+        options:["A) Informar al plantel → Entregar evidencias → Reportar si hay inacción",
+                 "B) Entregar evidencias → Informar al plantel → Reportar si hay inacción",
+                 "C) Reportar a instancias → Entregar evidencias → Informar al plantel"],
+        correct:0, just:"La secuencia para la familia es: primero informar al plantel ante la mínima sospecha, luego entregar evidencias disponibles, y finalmente escalar a otras instancias solo si hay inacción por parte de las autoridades del plantel." },
+
+      { id:17, type:"OR", label:"Ordenamiento", icon:"🔢",
+        base:"Ordene los pasos que debe seguir el plantel en la Ruta de Notificación y Documentación ante un caso de acoso escolar:",
+        extra:{ type:"tags", items:["Informar por escrito","Citar a familias","Documentar el proceso","Recibir evidencia de familias"] },
+        options:["A) Informar → Citar familias → Documentar → Recibir evidencia",
+                 "B) Documentar → Informar → Recibir evidencia → Citar familias",
+                 "C) Citar familias → Informar → Recibir evidencia → Documentar"],
+        correct:0, just:"El orden correcto para el plantel es: 1) Informar a la autoridad por escrito, 2) Citar y notificar a las familias, 3) Documentar todo el proceso rigurosamente, 4) Recibir y documentar la evidencia entregada por las familias." },
+
+      { id:18, type:"OR", label:"Ordenamiento", icon:"🔢",
+        base:"Ordene las fases del enfoque integral de La Red de Seguridad Escolar, desde el inicio hasta el objetivo final:",
+        extra:{ type:"tags", items:["Detección Temprana","Intervención y Documentación Compartida","Convivencia Armónica Restaurada"] },
+        options:["A) Detección Temprana → Intervención y Documentación → Convivencia Restaurada",
+                 "B) Intervención → Detección → Convivencia Restaurada",
+                 "C) Convivencia Restaurada → Detección → Intervención"],
+        correct:0, just:"El enfoque integral sigue el flujo: Detección Temprana → Intervención y Documentación Compartida (Plantel + Familia) → Convivencia Armónica Restaurada (supervisada por el Colegiado)." },
+
+      { id:19, type:"OR", label:"Ordenamiento", icon:"🔢",
+        base:"Ordene las acciones de atención inmediata que debe realizar el docente ante una situación activa de acoso escolar:",
+        extra:{ type:"tags", items:["Investigar sin prejuzgar","Detener la agresión","Llamar a emergencias si hay riesgo de vida"] },
+        options:["A) Detener agresión → Llamar emergencias → Investigar",
+                 "B) Investigar → Detener agresión → Llamar emergencias",
+                 "C) Llamar emergencias → Investigar → Detener agresión"],
+        correct:0, just:"El protocolo establece que lo primero es detener la agresión para proteger la integridad física, luego solicitar apoyo de emergencia si hay riesgo de vida, y posteriormente iniciar la investigación sin prejuzgar a los involucrados." },
+
+      // ── RELACIÓN DE ELEMENTOS (6) ──────────────────────────────
+      { id:20, type:"RE", label:"Relación de elementos", icon:"🔗",
+        base:"Seleccione la opción que relacione correctamente cada tipo de acoso con su conducta característica:",
+        extra:{ type:"table",
+          left:["1. Acoso Físico","2. Ciberacoso","3. Acoso Socioemocional"],
+          right:["a) Marginar de juegos, criticar e ignorar al alumno.",
+                 "b) Robar pertenencias, esconder útiles o destruir objetos.",
+                 "c) Enviar mensajes hirientes y robo de contraseñas."] },
+        options:["A)  1-b,  2-c,  3-a","B)  1-c,  2-b,  3-a","C)  1-a,  2-b,  3-c"],
+        correct:0, just:"El Acoso Físico incluye deterioro patrimonial (robar pertenencias/esconder útiles). El Ciberacoso se realiza en entornos digitales (mensajes hirientes/robo de contraseñas). El Acoso Socioemocional lesiona la autoestima (marginar/criticar/ignorar)." },
+
+      { id:21, type:"RE", label:"Relación de elementos", icon:"🔗",
+        base:"Seleccione la opción que relacione correctamente cada momento del protocolo con su descripción principal:",
+        extra:{ type:"table",
+          left:["1. Detección","2. Notificación","3. Seguimiento"],
+          right:["a) Conformar el colegiado y dar seguimiento a estudiantes y familias.",
+                 "b) Identificar indicadores visibles y causas ocultas del acoso.",
+                 "c) Citar a familias y documentar el proceso de incidencia."] },
+        options:["A)  1-b,  2-c,  3-a","B)  1-c,  2-a,  3-b","C)  1-a,  2-b,  3-c"],
+        correct:0, just:"La Detección implica identificar síntomas visibles y causas ocultas. La Notificación incluye citar a familias y documentar el proceso. El Seguimiento comprende la conformación del colegiado y el seguimiento a estudiantes y familias." },
+
+      { id:22, type:"RE", label:"Relación de elementos", icon:"🔗",
+        base:"Seleccione la opción que relacione correctamente a cada figura educativa con su responsabilidad diferenciada en el protocolo de atención inmediata:",
+        extra:{ type:"table",
+          left:["1. Docente","2. Director/Subdirector","3. Personal Administrativo/Apoyo"],
+          right:["a) Detener agresión y llamar a emergencias únicamente.",
+                 "b) Conformar el colegiado y dar seguimiento a estudiantes y familias.",
+                 "c) Detener agresión, llamar emergencias e investigar sin prejuzgar."] },
+        options:["A)  1-c,  2-b,  3-a","B)  1-b,  2-c,  3-a","C)  1-a,  2-b,  3-c"],
+        correct:0, just:"El Docente detiene la agresión, llama a emergencias e investiga. El Director/Subdirector hace lo mismo y además conforma el colegiado y da seguimiento. El Personal Administrativo/Apoyo solo tiene asignadas las acciones de detener la agresión y llamar a emergencias." },
+
+      { id:23, type:"RE", label:"Relación de elementos", icon:"🔗",
+        base:"Seleccione la opción que relacione correctamente cada acción del Colegiado con su objetivo específico en la fase de Seguimiento:",
+        extra:{ type:"table",
+          left:["1. Prácticas Restaurativas","2. Vínculo Familiar","3. Control del Progreso"],
+          right:["a) Seguimiento puntual a la víctima y al estudiante agresor.",
+                 "b) Recuperar la convivencia armónica entre todas las partes.",
+                 "c) Comunicación con madres y padres sobre crianza y progreso escolar."] },
+        options:["A)  1-b,  2-c,  3-a","B)  1-a,  2-b,  3-c","C)  1-c,  2-a,  3-b"],
+        correct:0, just:"Las Prácticas Restaurativas buscan recuperar la convivencia armónica. El Vínculo Familiar mantiene la comunicación con madres y padres. El Control del Progreso da seguimiento puntual tanto a la víctima como al agresor." },
+
+      { id:24, type:"RE", label:"Relación de elementos", icon:"🔗",
+        base:"Seleccione la opción que relacione correctamente cada indicador general con el tipo de síntoma que representa en un alumno víctima de acoso escolar:",
+        extra:{ type:"table",
+          left:["1. Temor de ir al baño o negarse a ir al plantel",
+                "2. Descenso significativo del rendimiento escolar",
+                "3. Incontinencia urinaria"],
+          right:["a) Síntoma físico/fisiológico de estrés crónico.",
+                 "b) Síntoma de evasión y miedo al entorno escolar.",
+                 "c) Síntoma académico y de concentración."] },
+        options:["A)  1-b,  2-c,  3-a","B)  1-a,  2-b,  3-c","C)  1-c,  2-a,  3-b"],
+        correct:0, just:"El temor de ir al baño es una conducta de evasión por miedo. El descenso en rendimiento escolar es un síntoma académico y cognitivo. La incontinencia urinaria es una manifestación física/fisiológica del estrés crónico prolongado." },
+
+      { id:25, type:"RE", label:"Relación de elementos", icon:"🔗",
+        base:"Seleccione la opción que relacione correctamente los dos principios del Eje Rector con su aplicación concreta en el protocolo de atención al acoso escolar:",
+        extra:{ type:"table",
+          left:["1. Interés superior de la niñez",
+                "2. Respeto a la dignidad y derechos humanos"],
+          right:["a) Notificar a ambas familias asegurando el respeto irrestricto a los derechos de todas las partes.",
+                 "b) Actuar de forma inmediata priorizando la seguridad y bienestar del alumno afectado ante cualquier otra consideración."] },
+        options:["A)  1-b,  2-a","B)  1-a,  2-b","C) Ambos principios tienen la misma aplicación en todas las fases del protocolo."],
+        correct:0, just:"El Interés Superior de la Niñez implica priorizar la seguridad y bienestar del alumno afectado. El Respeto a la Dignidad y Derechos Humanos se aplica garantizando los derechos de todas las partes, incluyendo al agresor, durante el proceso." }
+    ];
+
+    // ================================================================
+    // ESTILOS POR TIPO DE PREGUNTA
+    // ================================================================
+    const TYPE_STYLE = {
+      CD: { badge:"badge-CD", border:"#1a6bbf", color:"#1a6bbf" },
+      CO: { badge:"badge-CO", border:"#7c3aed", color:"#7c3aed" },
+      OR: { badge:"badge-OR", border:"#0d9488", color:"#0d9488" },
+      RE: { badge:"badge-RE", border:"#ea6c00", color:"#ea6c00" }
+    };
+
+    // ================================================================
+    // ESTADO GLOBAL DEL SIMULADOR
+    // ================================================================
+    let current    = 0;        // Índice de la pregunta actual
+    let score      = 0;        // Contador de respuestas correctas
+    let answered   = false;    // Si la pregunta fue respondida
+    let answers    = [];       // Historial de respuestas
+    let justVisible= false;    // Visibilidad del bloque de argumentación
+
+    // ================================================================
+    // MODO DE ESTUDIO (elemento dinámico JavaScript)
+    // Los modos modifican: temporizador y visibilidad de argumentación
+    // ================================================================
+    let modoActual = 'normal'; // 'normal' | 'repaso' | 'examen'
+
+    /**
+     * cambiarModo(modo)
+     * Cambia el modo de estudio y actualiza la UI en tiempo real.
+     * @param {string} modo - 'normal', 'repaso' o 'examen'
+     */
+    function cambiarModo(modo) {
+      modoActual = modo;
+
+      // Actualizar botones: quitar y poner clase 'active'
+      document.querySelectorAll('.modo-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.modo === modo);
+      });
+
+      // Actualizar el chip de estado
+      const chip = document.getElementById('modo-chip');
+      const timerBar = document.getElementById('timer-bar');
+
+      if (modo === 'normal') {
+        chip.textContent = '✓ Cronómetro activo';
+        chip.style.background = 'var(--green-pale)';
+        chip.style.color = 'var(--green)';
+        timerBar.style.display = 'flex';
+        // Reiniciar si el timer estaba pausado
+        if (!timerInterval) startTimer();
+      } else if (modo === 'repaso') {
+        chip.textContent = '📖 Sin límite de tiempo';
+        chip.style.background = 'var(--purple-pale)';
+        chip.style.color = 'var(--purple)';
+        timerBar.style.display = 'none';
+        // Pausar temporizador en modo repaso
+        clearInterval(timerInterval);
+        timerInterval = null;
+      } else if (modo === 'examen') {
+        chip.textContent = '📝 Argumentación al final';
+        chip.style.background = 'var(--orange-pale)';
+        chip.style.color = 'var(--orange)';
+        timerBar.style.display = 'flex';
+        if (!timerInterval) startTimer();
+      }
+
+      // Re-renderizar para reflejar cambios (ej. mostrar/ocultar argumentación)
+      render();
+    }
+
+    // ================================================================
+    // FUNCIÓN PRINCIPAL: render()
+    // Dibuja el estado actual de la pregunta en el DOM.
+    // ================================================================
+    function render() {
+      const q  = QUESTIONS[current];
+      const ts = TYPE_STYLE[q.type];
+      // Porcentaje de progreso: si ya respondió, cuenta esta pregunta
+      const prog = ((current + (answered ? 1 : 0)) / QUESTIONS.length) * 100;
+
+      // ── Actualizar header (puntaje y progreso) ──────────────────
+      document.getElementById('score-display').textContent    = score;
+      document.getElementById('answered-display').textContent = '/' + (current + (answered ? 1 : 0));
+      document.getElementById('progress-fill').style.width   = prog + '%';
+      document.getElementById('progress-text').textContent   = (current + 1) + ' / ' + QUESTIONS.length;
+
+      // ── Badge de tipo ───────────────────────────────────────────
+      const badge = document.getElementById('type-badge');
+      badge.className   = 'badge ' + ts.badge;
+      badge.textContent = q.icon + ' ' + q.label;
+
+      // ── Número de reactivo ──────────────────────────────────────
+      document.getElementById('q-number').textContent = 'Reactivo ' + q.id + ' de 25';
+
+      // ── Enunciado ───────────────────────────────────────────────
+      const baseEl = document.getElementById('q-base');
+      baseEl.style.borderLeftColor = ts.border;
+      baseEl.textContent = q.base;
+
+      // ── Extra (tabla o tags de ordenamiento) ────────────────────
+      const extraEl = document.getElementById('q-extra');
+      extraEl.innerHTML = '';
+
+      if (q.extra) {
+        if (q.extra.type === 'tags') {
+          // Renderizar tags de ordenamiento
+          const wrap = document.createElement('div');
+          wrap.className = 'ord-tags';
+          q.extra.items.forEach(item => {
+            const tag = document.createElement('span');
+            tag.className = 'ord-tag';
+            tag.style.color       = ts.color;
+            tag.style.borderColor = ts.border + '55';
+            tag.style.background  = ts.border + '11';
+            tag.textContent       = item;
+            wrap.appendChild(tag);
+          });
+          extraEl.appendChild(wrap);
+          extraEl.style.marginBottom = '1rem';
+
+        } else if (q.extra.type === 'table') {
+          // Renderizar tabla de 2 columnas (colapsa a 1 en móvil por CSS)
+          const grid = document.createElement('div');
+          grid.className  = 'rel-table';
+          grid.style.marginTop = '1rem';
+
+          // Columna izquierda
+          const col1 = document.createElement('div');
+          const t1   = document.createElement('div');
+          t1.className = 'rel-col-title';
+          t1.textContent = 'Columna 1';
+          col1.appendChild(t1);
+          q.extra.left.forEach(item => {
+            const d = document.createElement('div');
+            d.className = 'rel-item left';
+            d.style.borderLeftColor = ts.border;
+            d.textContent = item;
+            col1.appendChild(d);
+          });
+
+          // Columna derecha
+          const col2 = document.createElement('div');
+          const t2   = document.createElement('div');
+          t2.className = 'rel-col-title';
+          t2.textContent = 'Columna 2';
+          col2.appendChild(t2);
+          q.extra.right.forEach(item => {
+            const d = document.createElement('div');
+            d.className = 'rel-item right';
+            d.textContent = item;
+            col2.appendChild(d);
+          });
+
+          grid.appendChild(col1);
+          grid.appendChild(col2);
+          extraEl.appendChild(grid);
+        }
+      }
+
+      // ── Opciones de respuesta ───────────────────────────────────
+      const optCont = document.getElementById('options-container');
+      optCont.innerHTML = '';
+      const letters = ['A','B','C'];
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerHTML = `<span class="opt-letter">${letters[idx]}</span><span class="opt-text">${opt}</span>`;
+
+        if (answered) {
+          btn.disabled = true;
+          const sel = answers[answers.length - 1].selected;
+          if (idx === q.correct) {
+            btn.classList.add('correct');
+            btn.querySelector('.opt-text').innerHTML = opt + ' <strong>✓</strong>';
+          } else if (idx === sel && idx !== q.correct) {
+            btn.classList.add('wrong');
+          } else {
+            btn.classList.add('dimmed');
+          }
+        } else {
+          btn.addEventListener('click', () => selectAnswer(idx));
+        }
+        optCont.appendChild(btn);
+      });
+
+      // ── Área de feedback (argumentación + botón siguiente) ──────
+      const fb = document.getElementById('feedback-area');
+      fb.innerHTML = '';
+
+      if (answered) {
+        justVisible = false;
+
+        // En modo "examen", no mostrar argumentación hasta el final
+        const mostrarArg = modoActual !== 'examen';
+
+        if (mostrarArg) {
+          // Botón para mostrar/ocultar argumentación
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'just-toggle';
+          toggleBtn.innerHTML = '▼ Ver argumentación de la respuesta correcta';
+          toggleBtn.onclick = () => {
+            justVisible = !justVisible;
+            justBox.style.display = justVisible ? 'block' : 'none';
+            toggleBtn.innerHTML = (justVisible ? '▲ Ocultar' : '▼ Ver') +
+                                  ' argumentación de la respuesta correcta';
+          };
+
+          const justBox = document.createElement('div');
+          justBox.className    = 'just-box';
+          justBox.style.display = 'none';
+          justBox.innerHTML    = `<span class="just-title">Argumentación</span>${q.just}`;
+
+          fb.appendChild(toggleBtn);
+          fb.appendChild(justBox);
+        }
+
+        // Botón siguiente / ver resultados
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'next-btn';
+        nextBtn.innerHTML = current < QUESTIONS.length - 1
+          ? 'SIGUIENTE REACTIVO <span>→</span>'
+          : 'VER RESULTADOS FINALES <span>→</span>';
+
+        nextBtn.onclick = () => {
+          if (current < QUESTIONS.length - 1) {
+            current++;
+            answered   = false;
+            justVisible = false;
+            document.getElementById('question-card').classList.remove('shake');
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            showResults();
+          }
+        };
+
+        fb.appendChild(nextBtn);
+      }
+    }
+
+    // ================================================================
+    // selectAnswer(idx)
+    // Registra la respuesta del usuario, actualiza el puntaje
+    // y aplica animación de error si es incorrecta.
+    // ================================================================
+    function selectAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      const q = QUESTIONS[current];
+      const isCorrect = (idx === q.correct);
+      if (isCorrect) {
+        score++;
+      } else {
+        // Animación de sacudida en error
+        const card = document.getElementById('question-card');
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 500);
+      }
+      answers.push({ selected: idx, correct: q.correct, isCorrect });
+      render();
+    }
+
+    // ================================================================
+    // showResults()
+    // Reemplaza la tarjeta de pregunta con la pantalla de resultados.
+    // ================================================================
+    function showResults() {
+      const pct = Math.round((score / QUESTIONS.length) * 100);
+      let emoji, label, color;
+      if (pct >= 90) { emoji = '🏆'; label = '¡Excelente dominio!'; color = '#16a34a'; }
+      else if (pct >= 70) { emoji = '✅'; label = 'Buen desempeño';   color = '#1a6bbf'; }
+      else if (pct >= 50) { emoji = '📚'; label = 'Desempeño regular'; color = '#ea6c00'; }
+      else                { emoji = '🔁'; label = 'Necesita refuerzo'; color = '#dc2626'; }
+
+      // Agrupar resultados por tipo de reactivo
+      const byType = {};
+      QUESTIONS.forEach((q, i) => {
+        if (!byType[q.type]) {
+          byType[q.type] = { label: q.label, total: 0, correct: 0, color: TYPE_STYLE[q.type].border };
+        }
+        byType[q.type].total++;
+        if (answers[i]?.isCorrect) byType[q.type].correct++;
+      });
+
+      // Construir filas del breakdown
+      const bkRows = Object.entries(byType).map(([, data]) => {
+        const p = Math.round((data.correct / data.total) * 100);
+        return `
+          <div class="breakdown-row">
+            <div class="breakdown-type" style="color:${data.color}">${data.label}</div>
+            <div class="bk-bar-wrap"><div class="bk-bar-fill" style="width:${p}%;background:${data.color}"></div></div>
+            <div class="breakdown-score" style="color:${data.color}">${data.correct}/${data.total}</div>
+          </div>`;
+      }).join('');
+
+      // Ocultar elementos de navegación
+      document.querySelector('.type-badges').style.display = 'none';
+      document.querySelector('.progress-wrap').style.display = 'none';
+      document.querySelector('.legend').style.display = 'none';
+      document.getElementById('main-header').style.display = 'none';
+      document.getElementById('timer-bar').style.display = 'none';
+      document.getElementById('modo-bar').style.display = 'none';
+      clearInterval(timerInterval);
+
+      // Reemplazar tarjeta con resultados
+      document.getElementById('question-card').outerHTML = `
+        <div class="results-wrap" id="results-wrap">
+          <div class="result-hero">
+            <span class="result-emoji">${emoji}</span>
+            <div class="result-label" style="color:${color}">${label}</div>
+            <div class="result-sub">Simulador · Red de Seguridad Escolar · Prof. Francisco De Jesus Luna Benitez</div>
+            <div class="result-pct" style="color:${color}">${pct}<span style="font-size:clamp(1.25rem,4vw,2rem);color:#8aa3bc">%</span></div>
+            <div class="result-detail">${score} de ${QUESTIONS.length} reactivos correctos</div>
+          </div>
+          <div class="breakdown-card">
+            <div class="breakdown-title">Desempeño por tipo de reactivo</div>
+            ${bkRows}
+          </div>
+          <button class="restart-btn" onclick="restartSim()">↺ &nbsp; REINICIAR SIMULADOR</button>
+        </div>`;
+    }
+
+    // ================================================================
+    // restartSim()
+    // Reinicia todas las variables y reconstruye la tarjeta de pregunta.
+    // ================================================================
+    function restartSim() {
+      current = 0; score = 0; answered = false; answers = []; justVisible = false;
+
+      // Restaurar visibilidad de elementos
+      document.querySelector('.type-badges').style.display = 'flex';
+      document.querySelector('.progress-wrap').style.display = 'flex';
+      document.querySelector('.legend').style.display = 'flex';
+      document.getElementById('main-header').style.display = 'flex';
+      document.getElementById('timeup-overlay').style.display = 'none';
+      document.getElementById('modo-bar').style.display = 'flex';
+
+      // Restaurar timer bar según el modo actual
+      if (modoActual !== 'repaso') {
+        document.getElementById('timer-bar').style.display = 'flex';
+      }
+
+      // Reconstruir estructura de la tarjeta de pregunta
+      document.getElementById('results-wrap').outerHTML = `
+        <div class="card" id="question-card">
+          <div class="card-type-row">
+            <span class="badge" id="type-badge"></span>
+            <span class="q-number" id="q-number"></span>
+          </div>
+          <div class="q-base" id="q-base"></div>
+          <div id="q-extra"></div>
+          <div class="options" id="options-container"></div>
+          <div id="feedback-area"></div>
+        </div>`;
+
+      render();
+      resetTimer();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ================================================================
+    // TEMPORIZADOR
+    // Cuenta regresiva de 40 minutos (2400 segundos).
+    // Cambia color según tiempo restante.
+    // ================================================================
+    const TOTAL_SECONDS = 40 * 60; // 2400 segundos
+    let timeLeft      = TOTAL_SECONDS;
+    let timerInterval = null;
+
+    /** Inicia el intervalo del temporizador */
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        // Cuando llega a 0, mostrar overlay de tiempo agotado
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('timeup-overlay').style.display = 'flex';
+        }
+      }, 1000);
+    }
+
+    /** Actualiza la visualización del temporizador */
+    function updateTimerDisplay() {
+      const m   = Math.floor(timeLeft / 60);
+      const s   = timeLeft % 60;
+      const str = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+      const el  = document.getElementById('timer-digits');
+      const fill= document.getElementById('timer-fill');
+      if (!el || !fill) return;
+
+      el.textContent = str;
+      const pct = (timeLeft / TOTAL_SECONDS) * 100;
+      fill.style.width = pct + '%';
+      el.className = 'timer-digits';
+
+      // Cambio de color según urgencia
+      if (timeLeft <= 60) {
+        el.classList.add('danger');
+        fill.style.background = 'linear-gradient(90deg, #dc2626, #f87171)';
+      } else if (timeLeft <= 300) {
+        el.classList.add('warn');
+        fill.style.background = 'linear-gradient(90deg, #ea6c00, #fb923c)';
+      } else if (timeLeft <= 600) {
+        fill.style.background = 'linear-gradient(90deg, #ca8a04, #facc15)';
+      } else {
+        fill.style.background = 'linear-gradient(90deg, #16a34a, #4ade80)';
+      }
+    }
+
+    /** Reinicia el temporizador al valor inicial */
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timeLeft = TOTAL_SECONDS;
+      updateTimerDisplay();
+      // Solo iniciar si el modo actual usa temporizador
+      if (modoActual !== 'repaso') {
+        startTimer();
+      }
+    }
+
+    // ================================================================
+    // INICIALIZACIÓN
+    // Se ejecuta al cargar la página.
+    // ================================================================
+    render();     // Renderizar la primera pregunta
+    startTimer(); // Iniciar el cronómetro
+  </script>
+</body>
+</html>

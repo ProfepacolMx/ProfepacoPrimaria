@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estrategia de Equidad e Inclusión</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Open Sans',sans-serif;background:linear-gradient(135deg,#FF6EC7 0%,#FF1493 100%);color:#333;line-height:1.6}
+.container{max-width:1200px;margin:0 auto;padding:2rem}
+.slide{background:white;border-radius:20px;padding:3rem;margin:2rem 0;box-shadow:0 20px 60px rgba(0,0,0,0.3);display:none;animation:slideIn 0.5s ease}
+.slide.active{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+h1{font-family:'Merriweather',serif;font-size:2.8rem;color:#FF1493;margin-bottom:1rem;line-height:1.2}
+h2{font-family:'Merriweather',serif;font-size:2.5rem;color:#FF1493;margin-bottom:1.5rem;border-bottom:3px solid #FFD700;padding-bottom:0.5rem}
+h3{font-family:'Merriweather',serif;font-size:1.8rem;color:#FF6EC7;margin:1.5rem 0 1rem 0}
+p{font-size:1.2rem;margin-bottom:1rem;color:#555}
+.subtitle{font-size:1.5rem;color:#FFD700;margin-bottom:2rem;font-weight:600}
+.professor-box{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:1.5rem;border-radius:15px;margin-bottom:2rem;text-align:center}
+.professor-box h3{color:white;font-size:1.3rem;margin:0}
+ul{margin:1rem 0;padding-left:2rem}
+li{font-size:1.2rem;margin-bottom:0.8rem;color:#555}
+.card{background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);padding:1.5rem;border-radius:10px;margin:1rem 0;border-left:5px solid #FF1493}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin:2rem 0}
+.box{background:white;padding:1.5rem;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,0.1);border-top:4px solid #FF1493;transition:transform 0.3s ease}
+.box:hover{transform:translateY(-5px)}
+.highlight{background:#FFE4F0;padding:1.5rem;border-radius:10px;border-left:5px solid #FF6EC7;margin:1.5rem 0;font-size:1.2rem}
+.controls{position:fixed;bottom:2rem;right:2rem;display:flex;gap:1rem;z-index:1000}
+button{background:#FF1493;color:white;border:none;padding:1rem 2rem;font-size:1.2rem;border-radius:50px;cursor:pointer;box-shadow:0 5px 15px rgba(255,20,147,0.4);transition:all 0.3s ease;font-weight:600}
+button:hover{background:#C71585;transform:translateY(-2px);box-shadow:0 8px 20px rgba(199,21,133,0.4)}
+.counter{position:fixed;top:2rem;right:2rem;background:white;padding:1rem 2rem;border-radius:50px;box-shadow:0 5px 15px rgba(0,0,0,0.2);font-weight:700;font-size:1.2rem;color:#FF1493;z-index:1000}
+.icon{font-size:3rem;margin-bottom:1rem;text-align:center}
+.section-box{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.section-box h3,.section-box p,.section-box li{color:white}
+.warning-box{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.warning-box h3,.warning-box p{color:white}
+.success-box{background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.success-box h3,.success-box p,.success-box li{color:white}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0}
+th,td{padding:1rem;border:2px solid #FF6EC7;text-align:left}
+th{background:#FF1493;color:white;font-weight:700}
+td{background:white}
+.correct{background:#d4edda!important}
+.incorrect{background:#f8d7da!important}
+@media (max-width:768px){
+h1{font-size:2rem}
+h2{font-size:1.8rem}
+.slide{padding:2rem}
+.controls{bottom:1rem;right:1rem}
+button{padding:0.8rem 1.5rem;font-size:1rem}
+}
+</style>
+</head>
+<body>
+<div class="counter" id="counter">1 / 16</div>
+<div class="container">
+
+<div class="slide active" id="slide1">
+<div class="professor-box"><h3>👨‍🏫 Profesor: Francisco De Jesus Luna Benitez</h3></div>
+<h1>Estrategia de Equidad e Inclusión</h1>
+<div class="subtitle">En la Educación Básica</div>
+<div class="highlight"><p><strong>Para alumnos con discapacidad, aptitudes sobresalientes y dificultades severas de aprendizaje, conducta o comunicación.</strong></p></div>
+<div class="section-box" style="margin-top:2rem"><div class="icon">🌈</div><h3>Aprendizajes Clave para la Educación Integral</h3><p style="color:white;margin-top:1rem">Una educación inclusiva que valora la diversidad y garantiza el derecho de todos a aprender</p></div>
+</div>
+
+<div class="slide" id="slide2">
+<h2>Fundamentos Jurídicos</h2>
+<div class="section-box"><h3>En el Ámbito Internacional</h3>
+<div class="grid">
+<div class="box"><p>📜 <strong>Declaración Universal de los Derechos Humanos</strong></p></div>
+<div class="box"><p>👶 <strong>Convención sobre los Derechos del Niño</strong></p></div>
+<div class="box"><p>♿ <strong>Convención sobre los Derechos de las Personas con Discapacidad</strong></p></div>
+<div class="box"><p>🌍 <strong>Agenda Mundial 2030 para el Desarrollo Sostenible</strong></p></div>
+</div></div>
+<div class="success-box"><h3>En el Ámbito Nacional</h3>
+<div class="grid">
+<div class="box"><p>🇲🇽 <strong>Constitución Política de los Estados Unidos Mexicanos</strong></p></div>
+<div class="box"><p>📚 <strong>Ley General de Educación</strong></p></div>
+<div class="box"><p>👧👦 <strong>Ley General de los Derechos de Niñas, Niños y Adolescentes</strong></p></div>
+<div class="box"><p>⚖️ <strong>Ley Federal para Prevenir y Eliminar la Discriminación</strong></p></div>
+</div></div>
+</div>
+
+<div class="slide" id="slide3">
+<h2>Definiciones</h2>
+<div class="highlight"><p><strong>La educación especial</strong> tiene como propósito identificar, prevenir y eliminar las barreras que limitan el aprendizaje y la participación de personas con discapacidad, con dificultades severas de aprendizaje, de conducta o de comunicación, así como de aquellas con aptitudes sobresalientes.</p></div>
+<div class="grid">
+<div class="box"><div class="icon">♿</div><h3>Alumnos con Discapacidad</h3><p>Por razón congénita o adquirida, tienen una o más deficiencias de carácter <strong>físico, mental, intelectual o sensorial</strong>, ya sea permanente o temporal.</p></div>
+<div class="box"><div class="icon">🌟</div><h3>Alumnos con Aptitudes Sobresalientes</h3><p>Son aquellos capaces de destacar significativamente en uno o más campos: <strong>científico-tecnológico, humanístico-social, artístico o de acción motriz</strong>.</p></div>
+<div class="box"><div class="icon">🧩</div><h3>Alumnos con Otras Condiciones</h3><p>Son aquellos con <strong>Trastorno del Espectro Autista</strong> o con dificultades severas de aprendizaje, de conducta o de comunicación.</p></div>
+</div>
+</div>
+
+<div class="slide" id="slide4">
+<h2>Terminología Correcta (1/2)</h2>
+<table>
+<thead><tr><th style="width:30%">✅ Términos Correctos</th><th>❌ Términos Incorrectos</th></tr></thead>
+<tbody>
+<tr><td class="correct"><strong>Persona con discapacidad</strong></td><td class="incorrect">Personas con capacidades diferentes • Discapacitados • Inválidos • Disminuidos • Personas especiales • Deficiente • Enfermito • Incapacitados • Angelitos</td></tr>
+<tr><td class="correct"><strong>Persona con discapacidad motriz</strong></td><td class="incorrect">Minusválido • Incapaz • Impedido • Lisiado • Inválido • Paralítico • Mutilado • Cojito • Tullido</td></tr>
+<tr><td class="correct"><strong>Persona con discapacidad auditiva<br>Persona con hipoacusia<br>Persona sorda</strong></td><td class="incorrect">Sordomudo • Hipoacústico • Sordito (todos los diminutivos)</td></tr>
+<tr><td class="correct"><strong>Persona con discapacidad visual<br>Persona con baja visión<br>Persona ciega</strong></td><td class="incorrect">Invidente • Cieguito (diminutivos) • No vidente • Corto de vista</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="slide" id="slide5">
+<h2>Terminología Correcta (2/2)</h2>
+<table>
+<thead><tr><th style="width:30%">✅ Términos Correctos</th><th>❌ Términos Incorrectos</th></tr></thead>
+<tbody>
+<tr><td class="correct"><strong>Persona con discapacidad intelectual<br>Persona con síndrome de Down, Rett</strong></td><td class="incorrect">Retrasado mental • Mongol • Tonto o tarado • Deficiente • Retardado</td></tr>
+<tr><td class="correct"><strong>Persona con discapacidad psicosocial o mental</strong></td><td class="incorrect">Loco • Loquito • Demente • Insano • Trastornado • Esquizofrénico</td></tr>
+<tr><td class="correct"><strong>Lengua de Señas Mexicana</strong></td><td class="incorrect">Lenguaje de Señas • Lenguaje de signos • Lenguaje manual</td></tr>
+<tr><td class="correct"><strong>Persona con Trastorno del Espectro Autista<br>Persona con autismo</strong></td><td class="incorrect">Autista • El autista • Deficiente • Tarado • El rarito</td></tr>
+<tr><td class="correct"><strong>Persona con aptitudes sobresalientes</strong></td><td class="incorrect">Genio • Cerebrito • Intelectual • Listo<br><em>(Sobredotado y superdotado contemplan un tipo específico)</em></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="slide" id="slide6">
+<h2>Modelo Inclusivo</h2>
+<div class="grid">
+<div class="box" style="border-top-color:#f5576c"><div class="icon">❌</div><h3>ELIMINAR</h3><p>Modelos segregadores donde sólo existe una opción especializada.</p></div>
+<div class="box" style="border-top-color:#ffa500"><div class="icon">⏱️</div><h3>ABANDONAR PAULATINAMENTE</h3><p>Modelos de atención donde reciben educación segregada en escuelas regulares.</p></div>
+<div class="box" style="border-top-color:#4facfe"><div class="icon">✅</div><h3>IMPULSAR</h3><p>Modelos de atención en contextos más normalizados posibles.</p></div>
+</div>
+<div class="section-box" style="margin-top:2rem"><h3>Principios Clave de la Educación Inclusiva</h3>
+<ul>
+<li><strong>La exclusión no es un problema de los alumnos sino de las escuelas</strong>; en consecuencia, son estas las que deben adecuarse.</li>
+<li><strong>Los alumnos deben ser atendidos en entornos inclusivos</strong> para que participen e interactúen en igualdad de condiciones.</li>
+<li><strong>Las diferencias no deben representar una barrera</strong>, sino una fuente de aprendizaje.</li>
+</ul></div>
+</div>
+
+<div class="slide" id="slide7">
+<h2>Características de las Escuelas Inclusivas</h2>
+<div class="grid">
+<div class="box"><p>🌈 Promueven la valoración de la diversidad</p></div>
+<div class="box"><p>👥 Reconocen que no existe un alumno estándar</p></div>
+<div class="box"><p>🔄 Se adaptan a las necesidades de los alumnos</p></div>
+<div class="box"><p>⚖️ Garantizan la participación con igualdad y equidad</p></div>
+<div class="box"><p>💡 Consideran conocimientos, capacidades, valores y actitudes</p></div>
+<div class="box"><p>🚧 Minimizan, eliminan o previenen las BAP</p></div>
+<div class="box"><p>🤝 Aseguran el trabajo en equipo</p></div>
+<div class="box"><p>💬 Desarrollan un lenguaje común</p></div>
+<div class="box"><p>📝 Planean con base a ritmos y estilos de aprendizaje</p></div>
+<div class="box"><p>📚 Seleccionan, diseñan y adaptan recursos educativos</p></div>
+<div class="box"><p>📊 Evalúan considerando contextos, capacidades e intereses</p></div>
+<div class="box"><p>🏆 Aseguran que todos experimenten sus logros</p></div>
+</div>
+</div>
+
+<div class="slide" id="slide8">
+<h2>Prácticas Inclusivas</h2>
+<div class="icon" style="font-size:4rem">🎯</div>
+<div class="grid">
+<div class="box"><div class="icon">🚧</div><h3>Eliminación de las BAP</h3><p>Barreras para el Aprendizaje y la Participación</p></div>
+<div class="box"><div class="icon">🤝</div><h3>El Uso de Apoyos</h3><p>Actividades que aumentan la capacidad de respuesta</p></div>
+<div class="box"><div class="icon">🎨</div><h3>Diseño Universal para el Aprendizaje (DUA)</h3><p>Materiales accesibles para todos</p></div>
+<div class="box"><div class="icon">⚙️</div><h3>Ajustes Razonables</h3><p>Modificaciones específicas necesarias</p></div>
+</div>
+</div>
+
+<div class="slide" id="slide9">
+<h2>Eliminación de las BAP</h2>
+<div class="highlight"><p>El término <strong>BAP</strong> se adopta en lugar de "necesidades educativas especiales" para hacer referencia a todas las dificultades que experimenta cualquier alumno.</p></div>
+<div class="card"><h3>Entre las más recurrentes:</h3>
+<ul>
+<li><strong>Actitudinales:</strong> rechazo, exclusión o sobreprotección</li>
+<li><strong>Pedagógicas:</strong> actividades que no corresponden al ritmo o estilo de aprendizaje</li>
+<li><strong>De organización:</strong> materiales, rutinas, espacios y mobiliario no accesibles</li>
+</ul></div>
+<table>
+<thead><tr><th>❌ Términos Incorrectos</th><th>✅ Términos Correctos</th></tr></thead>
+<tbody>
+<tr><td class="incorrect">• El alumno que tiene necesidades educativas especiales<br>• Mi alumno tiene BAP<br>• Los estudiantes con BAP</td>
+<td class="correct">• El alumnado que enfrenta BAP<br>• Esta niña experimenta barreras que obstaculizan su aprendizaje y participación</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="slide" id="slide10">
+<h2>El Uso de Apoyos</h2>
+<div class="section-box"><p>Se puede entender como <strong>"apoyo"</strong> a todas las actividades que aumentan la capacidad de una escuela para dar respuesta a la diversidad del alumnado.</p></div>
+<div class="card"><h3>Los apoyos pueden provenir de diferentes fuentes:</h3></div>
+<div class="grid">
+<div class="box"><div class="icon">🎒</div><p>Habilidades y competencias de <strong>todos los estudiantes</strong></p></div>
+<div class="box"><div class="icon">👨‍💼</div><p>Liderazgo de los <strong>directivos</strong></p></div>
+<div class="box"><div class="icon">👨‍🏫</div><p>Conocimientos y habilidades de los <strong>docentes</strong></p></div>
+<div class="box"><div class="icon">👨‍👩‍👧</div><p><strong>Familiares y amigos</strong> de cada estudiante</p></div>
+<div class="box"><div class="icon">💻</div><p>La <strong>tecnología</strong></p></div>
+<div class="box"><div class="icon">🏫</div><p>Servicios de <strong>educación especial</strong></p></div>
+<div class="box"><div class="icon">🏥</div><p>Servicios complementarios (terapéuticos, de salud, becas)</p></div>
+</div>
+<div class="highlight" style="margin-top:2rem"><p><strong>También es apoyo</strong> cuando se planifica y evalúa considerando intereses, capacidades, aptitudes y experiencias.</p></div>
+</div>
+
+<div class="slide" id="slide11">
+<h2>Diseño Universal para el Aprendizaje (DUA)</h2>
+<div class="card"><p>El <strong>DU</strong> tiene su origen en la arquitectura. Ron L. Mace lo definió como la creación de productos y entornos utilizables por <strong>todas las personas</strong>.</p></div>
+<div class="section-box"><p>En educación, el <strong>DUA</strong> se entiende como el diseño de materiales y actividades que permiten que los objetivos de aprendizaje sean alcanzados por individuos con <strong>amplias diferencias en sus capacidades</strong>.</p></div>
+<div class="highlight"><h3>Tres principios básicos:</h3></div>
+<div class="grid">
+<div class="box" style="background:linear-gradient(135deg,#e0f7fa 0%,#b2ebf2 100%)"><div class="icon">📚</div><h3>Múltiples Formas de Representación</h3><p>El "QUÉ" del aprendizaje</p></div>
+<div class="box" style="background:linear-gradient(135deg,#fff9c4 0%,#fff59d 100%)"><div class="icon">📣</div><h3>Múltiples Formas de Acción y Expresión</h3><p>El "CÓMO" del aprendizaje</p></div>
+<div class="box" style="background:linear-gradient(135deg,#f8bbd0 0%,#f48fb1 100%)"><div class="icon">🏅</div><h3>Múltiples Formas de Motivación</h3><p>El "POR QUÉ" del aprendizaje</p></div>
+</div>
+</div>
+
+<div class="slide" id="slide12">
+<h2>Pautas de los Principios Básicos del DUA</h2>
+<div class="success-box"><h3>Múltiples Formas de Representación</h3>
+<ol>
+<li>Opciones para la percepción</li>
+<li>Opciones para el lenguaje y los símbolos</li>
+<li>Opciones para la comprensión</li>
+</ol></div>
+<div class="warning-box"><h3>Múltiples Formas de Acción y Expresión</h3>
+<ol start="4">
+<li>Múltiples medios físicos de acción</li>
+<li>Opciones para la expresión y fluidez de comunicación</li>
+<li>Opciones para las funciones ejecutivas</li>
+</ol></div>
+<div class="section-box"><h3>Múltiples Formas de Motivación</h3>
+<ol start="7">
+<li>Opciones para captar el interés</li>
+<li>Opciones para mantener el esfuerzo y la persistencia</li>
+<li>Opciones para la autorregulación</li>
+</ol></div>
+</div>
+
+<div class="slide" id="slide13">
+<h2>Ajustes Razonables</h2>
+<div class="highlight"><p>Son las <strong>modificaciones y adaptaciones necesarias</strong> para garantizar a las personas con discapacidad el goce o ejercicio de todos los derechos humanos y libertades fundamentales.</p></div>
+<div class="card"><p>Los ajustes razonables se realizan cuando se requieren <strong>modificaciones específicas</strong> para que puedan ser utilizados por una persona.</p></div>
+<div class="section-box"><h3>En las escuelas y aulas pueden realizarse en:</h3></div>
+<div class="grid">
+<div class="box"><div class="icon">🏗️</div><h3>Infraestructura</h3></div>
+<div class="box"><div class="icon">📖</div><h3>Materiales Didácticos</h3></div>
+<div class="box"><div class="icon">💬</div><h3>Comunicación e Información</h3></div>
+<div class="box"><div class="icon">✏️</div><h3>Objetos de Uso Cotidiano</h3></div>
+<div class="box"><div class="icon">📅</div><h3>Organización de la Jornada Escolar</h3></div>
+</div>
+</div>
+
+<div class="slide" id="slide14">
+<h2>Implementación de la Estrategia</h2>
+<div class="section-box"><p>La Estrategia consiste en acciones de acuerdo con las condiciones actuales de las escuelas, con el fin de <strong>eliminar las barreras que limitan el aprendizaje y la participación</strong>.</p></div>
+<div class="highlight"><h3>Transformación de las tres dimensiones:</h3></div>
+<div class="grid">
+<div class="box" style="background:linear-gradient(135deg,#fff9c4 0%,#fff59d 100%)"><div class="icon">❤️</div><h3>Crear CULTURAS Inclusivas</h3><p>Valores y creencias compartidas</p></div>
+<div class="box" style="background:linear-gradient(135deg,#e0f7fa 0%,#b2ebf2 100%)"><div class="icon">📋</div><h3>Establecer POLÍTICAS Inclusivas</h3><p>Normas y procedimientos</p></div>
+<div class="box" style="background:linear-gradient(135deg,#f8bbd0 0%,#f48fb1 100%)"><div class="icon">🏫</div><h3>Desarrollar PRÁCTICAS Inclusivas</h3><p>Enseñanza y aprendizaje cotidiano</p></div>
+</div>
+</div>
+
+<div class="slide" id="slide15">
+<h2>Material de Trabajo: Índex de Inclusión</h2>
+<div class="success-box"><p>El <strong>Índex o índice de inclusión</strong> es una herramienta que facilita la elaboración de un diagnóstico para la planificación de la mejora escolar con orientación inclusiva.</p><p style="margin-top:1rem;color:white">Incorpora al personal directivo, administrativo, docente, maestros de apoyo y padres.</p></div>
+<div class="card"><h3>Incluye cuatro cuestionarios:</h3></div>
+<div class="grid">
+<div class="box"><div class="icon">👨‍💼</div><p><strong>1. Indicadores:</strong> para directivos y docentes</p></div>
+<div class="box"><div class="icon">👨‍👩‍👧</div><p><strong>2. El centro escolar de mi hijo:</strong> para padres, madres y tutores</p></div>
+<div class="box"><div class="icon">👦</div><p><strong>3. Mi centro escolar:</strong> para alumnos de 5° primaria a 3° secundaria</p></div>
+<div class="box"><div class="icon">👧</div><p><strong>4. Mi colegio:</strong> para alumnos de preescolar a 4° primaria</p></div>
+</div>
+</div>
+
+<div class="slide" id="slide16">
+<h2>Etapas y Acciones</h2>
+<div class="section-box"><h3>Proceso de Implementación</h3>
+<ol>
+<li><strong>Diagnóstico de las escuelas</strong> (Durante la fase intensiva del CTE)</li>
+<li><strong>Establecimiento de la ruta de trabajo</strong> (Fase intensiva y primera sesión del CTE)</li>
+<li><strong>Seguimiento y evaluación permanente</strong> (Durante todo el ciclo escolar)</li>
+<li><strong>Evaluación final</strong> (En cada sesión ordinaria del CTE, énfasis en la última)</li>
+</ol></div>
+<table style="margin-top:2rem">
+<thead><tr><th>Dimensiones</th><th>Posibles Acciones</th></tr></thead>
+<tbody>
+<tr><td><strong>Culturas</strong></td><td>• Actividades que promuevan colaboración y convivencia<br>• Apoyar conformación de redes de padres/madres</td></tr>
+<tr><td><strong>Políticas</strong></td><td>• Actividades de capacitación y actualización<br>• Vinculación o acuerdos con instituciones</td></tr>
+<tr><td><strong>Prácticas</strong></td><td>• Apoyos y facilitadores<br>• Adecuaciones arquitectónicas de accesibilidad</td></tr>
+</tbody>
+</table>
+</div>
+
+</div>
+<div class="controls">
+<button onclick="prevSlide()">← Anterior</button>
+<button onclick="nextSlide()">Siguiente →</button>
+</div>
+<script>
+let currentSlide=1;const totalSlides=16;
+function showSlide(n){
+const slides=document.querySelectorAll('.slide');
+slides.forEach(slide=>slide.classList.remove('active'));
+if(n>totalSlides)currentSlide=totalSlides;
+else if(n<1)currentSlide=1;
+else currentSlide=n;
+document.getElementById('slide'+currentSlide).classList.add('active');
+document.getElementById('counter').textContent=currentSlide+' / '+totalSlides;
+window.scrollTo({top:0,behavior:'smooth'});
+}
+function nextSlide(){showSlide(currentSlide+1)}
+function prevSlide(){showSlide(currentSlide-1)}
+document.addEventListener('keydown',function(e){
+if(e.key==='ArrowRight')nextSlide();
+if(e.key==='ArrowLeft')prevSlide();
+});
+showSlide(1);
+</script>
+</body>
+</html>

@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Interactivo de Evaluación – Fase 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #0f2d52;
+    --blue:   #1a5fa8;
+    --sky:    #3b9edd;
+    --teal:   #0d8c7a;
+    --orange: #f07d2a;
+    --amber:  #fbbf24;
+    --green:  #16a34a;
+    --red:    #dc2626;
+    --cream:  #fdf8f2;
+    --white:  #ffffff;
+    --gray1:  #f1f5f9;
+    --gray2:  #e2e8f0;
+    --gray3:  #94a3b8;
+    --text:   #1e293b;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(15,45,82,.12);
+    --shadow-lg: 0 12px 40px rgba(15,45,82,.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #e8f4fd 0%, #fdf8f2 50%, #e6f7f4 100%);
+    min-height: 100vh;
+    color: var(--text);
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 60%, var(--teal) 100%);
+    padding: 28px 20px 22px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .site-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+  }
+  .site-header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    color: #fff;
+    line-height: 1.15;
+    text-shadow: 0 2px 12px rgba(0,0,0,.25);
+    position: relative;
+  }
+  .site-header h1 span {
+    color: var(--amber);
+  }
+  .header-divider {
+    width: 60px; height: 3px;
+    background: var(--orange);
+    margin: 12px auto;
+    border-radius: 2px;
+  }
+  .site-header .credit {
+    color: rgba(255,255,255,.82);
+    font-size: .92rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    position: relative;
+  }
+
+  /* ── MAIN WRAPPER ── */
+  .main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 16px 60px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 36px 40px;
+    animation: fadeUp .4s ease both;
+  }
+  @media(max-width:560px){ .card { padding: 28px 20px; } }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes pop {
+    0%  { transform: scale(.92); opacity: 0; }
+    60% { transform: scale(1.03); }
+    100%{ transform: scale(1);   opacity: 1; }
+  }
+
+  /* ── PANTALLA INICIO ── */
+  #screen-start { text-align: center; }
+  #screen-start .icon-wrap {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--blue), var(--teal));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 6px 20px rgba(26,95,168,.3);
+  }
+  #screen-start .icon-wrap svg { width: 40px; height: 40px; fill: #fff; }
+  #screen-start h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.75rem;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  #screen-start p {
+    color: var(--gray3);
+    font-size: .97rem;
+    margin-bottom: 28px;
+  }
+  .info-chips {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  .chip {
+    background: var(--gray1);
+    border: 1px solid var(--gray2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .input-group { text-align: left; margin-bottom: 24px; }
+  .input-group label {
+    display: block;
+    font-weight: 700;
+    font-size: .9rem;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .input-group input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--gray2);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .input-group input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 4px rgba(26,95,168,.1);
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    border: none; cursor: pointer;
+    border-radius: 12px;
+    padding: 15px 32px;
+    transition: transform .15s, box-shadow .15s, filter .15s;
+    text-decoration: none;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue), var(--teal));
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(26,95,168,.3);
+    width: 100%;
+  }
+  .btn-primary:hover { filter: brightness(1.08); box-shadow: 0 6px 22px rgba(26,95,168,.4); }
+  .btn-next {
+    background: linear-gradient(135deg, var(--orange), #e8580a);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(240,125,42,.3);
+    min-width: 200px;
+  }
+  .btn-next:hover { filter: brightness(1.08); }
+  .btn-next:disabled {
+    background: var(--gray2);
+    color: var(--gray3);
+    box-shadow: none;
+    cursor: not-allowed;
+    filter: none;
+  }
+  .btn-restart {
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(15,45,82,.3);
+  }
+  .btn-restart:hover { filter: brightness(1.1); }
+
+  /* ── PROGRESS ── */
+  .progress-bar-wrap {
+    background: var(--gray1);
+    border-radius: 100px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--teal));
+    border-radius: 100px;
+    transition: width .5s ease;
+  }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: .8rem; font-weight: 700;
+    color: var(--gray3);
+    margin-bottom: 20px;
+  }
+
+  /* ── QUESTION ── */
+  .question-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .q-number {
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    padding: 5px 13px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .q-type {
+    background: var(--gray1);
+    color: var(--teal);
+    font-size: .78rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--gray2);
+  }
+  .question-text {
+    font-size: 1.06rem;
+    font-weight: 700;
+    line-height: 1.6;
+    color: var(--navy);
+    margin-bottom: 24px;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+  .option-label {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid var(--gray2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+    animation: fadeIn .3s ease both;
+  }
+  .option-label:hover:not(.disabled) {
+    border-color: var(--sky);
+    background: #f0f8ff;
+    box-shadow: 0 2px 10px rgba(59,158,221,.15);
+  }
+  .option-label input[type="radio"] { display: none; }
+  .option-letter {
+    width: 32px; height: 32px; min-width: 32px;
+    border-radius: 50%;
+    background: var(--gray1);
+    border: 2px solid var(--gray2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .82rem;
+    font-weight: 900;
+    color: var(--gray3);
+    transition: background .2s, border-color .2s, color .2s;
+    margin-top: 1px;
+  }
+  .option-text {
+    font-size: .95rem;
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--text);
+  }
+
+  /* selected */
+  .option-label.selected {
+    border-color: var(--blue);
+    background: #eef6ff;
+  }
+  .option-label.selected .option-letter {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+  }
+  /* correct */
+  .option-label.correct {
+    border-color: var(--green);
+    background: #f0fdf4;
+  }
+  .option-label.correct .option-letter {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+  /* wrong */
+  .option-label.wrong {
+    border-color: var(--red);
+    background: #fff5f5;
+  }
+  .option-label.wrong .option-letter {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+  .option-label.disabled { cursor: default; }
+
+  /* ── FEEDBACK ── */
+  .feedback-box {
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: .92rem;
+    font-weight: 700;
+    line-height: 1.55;
+    margin-bottom: 22px;
+    display: flex; gap: 12px; align-items: flex-start;
+    animation: pop .35s ease both;
+  }
+  .feedback-box .fb-icon { font-size: 1.3rem; margin-top: 1px; flex-shrink: 0; }
+  .feedback-correct {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #15803d;
+  }
+  .feedback-wrong {
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+  }
+
+  /* ── BOTTOM ROW ── */
+  .bottom-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* ── RESULTS ── */
+  #screen-results { animation: fadeUp .5s ease both; }
+  .result-hero {
+    text-align: center;
+    padding: 8px 0 28px;
+  }
+  .result-circle {
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: conic-gradient(var(--blue) 0%, var(--teal) var(--pct, 0%), var(--gray2) var(--pct, 0%) 100%);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: var(--shadow);
+    position: relative;
+    animation: pop .5s ease .1s both;
+  }
+  .result-circle-inner {
+    width: 96px; height: 96px;
+    background: var(--white);
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .result-pct-num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .result-pct-label {
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--gray3);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .result-name {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .result-name span { color: var(--blue); }
+  .result-motto {
+    font-size: .95rem;
+    color: var(--gray3);
+    font-style: italic;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 24px 0;
+  }
+  .stat-card {
+    border-radius: 12px;
+    padding: 18px 14px;
+    text-align: center;
+    animation: pop .4s ease both;
+  }
+  .stat-card:nth-child(1){ background: #eef6ff; border: 1px solid #bfdbfe; animation-delay:.05s }
+  .stat-card:nth-child(2){ background: #f0fdf4; border: 1px solid #bbf7d0; animation-delay:.1s }
+  .stat-card:nth-child(3){ background: #fff5f5; border: 1px solid #fecaca; animation-delay:.15s }
+  .stat-card:nth-child(4){ background: #fffbeb; border: 1px solid #fde68a; animation-delay:.2s }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-card:nth-child(1) .stat-num { color: var(--blue); }
+  .stat-card:nth-child(2) .stat-num { color: var(--green); }
+  .stat-card:nth-child(3) .stat-num { color: var(--red); }
+  .stat-card:nth-child(4) .stat-num { color: #b45309; }
+  .stat-lbl { font-size: .8rem; font-weight: 700; color: var(--gray3); letter-spacing: .04em; }
+  .motivator {
+    background: linear-gradient(135deg, var(--navy), var(--teal));
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    text-align: center;
+    font-size: .98rem;
+    font-weight: 700;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    animation: pop .4s ease .25s both;
+  }
+  .motivator .m-emoji { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+  .result-actions { display: flex; justify-content: center; }
+
+  /* ── HIDDEN ── */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-badge">SEP · Educación Primaria</div>
+  <h1>Simulador Interactivo de <span>Evaluación</span></h1>
+  <div class="header-divider"></div>
+  <p class="credit">Prof. Francisco De Jesus Luna Benitez</p>
+</header>
+
+<main class="main">
+
+  <!-- PANTALLA INICIO -->
+  <div id="screen-start" class="card">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm0 13.37L4.43 12.1 12 8.09l7.57 4.01L12 16.37zM1 9v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V9"/></svg>
+    </div>
+    <h2>Programa Sintético Fase 4</h2>
+    <p>Pon a prueba tus conocimientos sobre el programa de Educación Primaria</p>
+    <div class="info-chips">
+      <span class="chip">📝 30 preguntas</span>
+      <span class="chip">🎯 Opción múltiple</span>
+      <span class="chip">📚 4 campos formativos</span>
+      <span class="chip">💡 Con retroalimentación</span>
+    </div>
+    <div class="input-group">
+      <label for="student-name">✏️ Nombre del estudiante</label>
+      <input type="text" id="student-name" placeholder="Escribe tu nombre completo…" autocomplete="off">
+    </div>
+    <button class="btn btn-primary" onclick="startQuiz()">
+      🚀 Iniciar simulador
+    </button>
+  </div>
+
+  <!-- PANTALLA EXAMEN -->
+  <div id="screen-quiz" class="card hidden">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-label">
+      <span id="progress-text">Pregunta 1 de 30</span>
+      <span id="score-text">✅ 0 correctas</span>
+    </div>
+
+    <div class="question-header">
+      <span class="q-number" id="q-number">Pregunta 1</span>
+      <span class="q-type" id="q-type">Cuestionamiento directo</span>
+    </div>
+    <p class="question-text" id="q-text"></p>
+
+    <div class="options" id="options-container"></div>
+
+    <div id="feedback-box" class="feedback-box hidden"></div>
+
+    <div class="bottom-row">
+      <button class="btn btn-next" id="btn-next" onclick="nextQuestion()" disabled>
+        Siguiente pregunta →
+      </button>
+    </div>
+  </div>
+
+  <!-- PANTALLA RESULTADOS -->
+  <div id="screen-results" class="card hidden">
+    <div class="result-hero">
+      <div class="result-circle" id="result-circle">
+        <div class="result-circle-inner">
+          <span class="result-pct-num" id="res-pct">0%</span>
+          <span class="result-pct-label">Aciertos</span>
+        </div>
+      </div>
+      <p class="result-name">¡Felicidades, <span id="res-name"></span>!</p>
+      <p class="result-motto" id="res-motto"></p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="res-total">30</div>
+        <div class="stat-lbl">Total preguntas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="res-correct">0</div>
+        <div class="stat-lbl">Respuestas correctas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="res-wrong">0</div>
+        <div class="stat-lbl">Respuestas incorrectas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="res-pct2">0%</div>
+        <div class="stat-lbl">Porcentaje de aciertos</div>
+      </div>
+    </div>
+
+    <div class="motivator" id="motivator-box"></div>
+
+    <div class="result-actions">
+      <button class="btn btn-restart" onclick="restartQuiz()">🔄 Volver a intentarlo</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ─── BANCO DE PREGUNTAS ───────────────────────────────────────────────────────
+const questions = [
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué papel desempeñan las maestras y los maestros en el proceso de apropiación de la oralidad, lectura, escritura y lenguajes artísticos, según el Programa Sintético de la Fase 4?",
+    options: [
+      "Evaluadores del desempeño de los estudiantes mediante exámenes periódicos.",
+      "Mediadores del aprendizaje que consideran diversas estrategias para desafiar los conocimientos de los estudiantes y potenciarlos.",
+      "Transmisores de conocimientos establecidos en el programa oficial de la SEP.",
+      "Supervisores del cumplimiento de las actividades escolares programadas."
+    ],
+    correct: 1,
+    feedback: "Según el programa, se espera que las maestras y los maestros cumplan la función de mediadores del aprendizaje, considerando diversas estrategias que desafíen las posibilidades reales y los conocimientos de las niñas y los niños, a fin de potenciarlos."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "En los contextos bilingües donde coexisten el español con lenguas indígenas o la Lengua de Señas Mexicana, ¿qué se busca propiciar?",
+    options: [
+      "Que los estudiantes abandonen su lengua materna para adquirir el español.",
+      "Que la segunda lengua sustituya por completo a la lengua materna.",
+      "La participación bilingüe en prácticas sociales de los lenguajes, donde la segunda lengua enriquezca —y no sustituya— a la materna.",
+      "Que los estudiantes sordos aprendan únicamente oralidad y escritura convencional."
+    ],
+    correct: 2,
+    feedback: "El programa señala que en contextos bilingües se debe propiciar la participación bilingüe en prácticas sociales de los lenguajes, donde la segunda lengua enriquezca —y no sustituya— a la materna, valorando la pertenencia con los estudiantes sordos."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es el objeto de aprendizaje del campo 'De lo Humano y lo Comunitario'?",
+    options: [
+      "Experiencias de memorización de normas cívicas y procedimientos administrativos escolares.",
+      "Experiencias cognitivas, motrices, socioafectivas y creativas que permitan favorecer la construcción de identidad, sentido de pertenencia, conciencia de interdependencia, conexión emocional y compromiso ético.",
+      "Actividades de evaluación formativa para medir el rendimiento individual de los estudiantes.",
+      "Habilidades laborales y técnicas para el mundo productivo futuro."
+    ],
+    correct: 1,
+    feedback: "El campo 'De lo Humano y lo Comunitario' tiene como objeto de aprendizaje experiencias cognitivas, motrices, socioafectivas y creativas que permitan favorecer la construcción de la identidad, el sentido de pertenencia, la conciencia de interdependencia, la conexión emocional y el compromiso ético."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué se busca desarrollar en los estudiantes de la Fase 4 mediante los lenguajes artísticos?",
+    options: [
+      "La memorización de obras artísticas reconocidas a nivel nacional.",
+      "La reproducción exacta de técnicas artísticas establecidas por expertos.",
+      "La competencia individual para ganar concursos escolares de arte.",
+      "La combinación expresiva de movimientos corporales, ritmos visuales, sonidos y juegos dramáticos para fomentar el bienestar comunitario y fortalecer identidades."
+    ],
+    correct: 3,
+    feedback: "El programa establece que a través de los lenguajes artísticos se busca que los estudiantes experimenten la combinación expresiva de movimientos corporales, ritmos visuales, sonidos y juegos dramáticos, con la finalidad de proponer intervenciones en su entorno para fomentar el bienestar de la comunidad y fortalecer sus identidades."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es la característica principal del campo 'De lo Humano y lo Comunitario' respecto a la construcción personal y social?",
+    options: [
+      "Se centra únicamente en el desarrollo cognitivo mediante actividades académicas formales.",
+      "Reconoce que el ser humano interactúa con su comunidad mediante un proceso dinámico y continuo de construcción personal y social, participando auténticamente en colectividad.",
+      "Se enfoca en la transmisión de valores culturales de manera unidireccional por parte del docente.",
+      "Promueve la competencia individual sobre la colaboración colectiva en el aula."
+    ],
+    correct: 1,
+    feedback: "El campo reconoce que el ser humano interactúa con su comunidad mediante un proceso dinámico y continuo de construcción personal y social, y de participación auténtica en un espacio donde toda persona en colectividad puede acceder a una vida digna, justa y solidaria."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es la función de las matemáticas dentro del campo de Saberes y Pensamiento Científico?",
+    options: [
+      "Constituyen una materia aislada que se trabaja de forma independiente al resto del campo.",
+      "Son únicamente un requisito formal del currículo nacional sin vinculación práctica.",
+      "Sirven como herramienta para la construcción de conocimientos y como referente para el desarrollo del pensamiento.",
+      "Se usan exclusivamente para resolver operaciones aritméticas básicas en el aula."
+    ],
+    correct: 2,
+    feedback: "El programa establece que los estudiantes deben comprender la relevancia de las matemáticas en tanto herramientas para la construcción de conocimientos y como referente para el desarrollo del pensamiento."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué tipo de situaciones deben diseñar los docentes del campo Saberes y Pensamiento Científico para que el aprendizaje sea auténtico?",
+    options: [
+      "Situaciones teóricas basadas exclusivamente en libros de texto aprobados.",
+      "Situaciones reales acordes a la edad, contexto, características, necesidades e intereses de niñas y niños, que den lugar a preguntas retadoras.",
+      "Situaciones competitivas que fomenten el individualismo y el alto rendimiento académico.",
+      "Situaciones que repliquen los exámenes nacionales estandarizados para preparar a los estudiantes."
+    ],
+    correct: 1,
+    feedback: "Los docentes deben diseñar, seleccionar, organizar y desarrollar situaciones reales acordes a la edad, contexto, características, necesidades e intereses de niñas y niños, que den lugar a preguntas retadoras cuya solución implique el trabajo dentro y fuera del aula y la experimentación."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué papel juegan las emociones en el desarrollo humano según el campo 'De lo Humano y lo Comunitario'?",
+    options: [
+      "Un papel secundario que puede abordarse de manera opcional según el criterio del docente.",
+      "Un obstáculo para el aprendizaje cognitivo que debe controlarse y minimizarse en el aula.",
+      "Un tema exclusivo para especialistas en psicología escolar.",
+      "Un papel determinante, por lo que se busca que los estudiantes identifiquen las características y funciones de las emociones en sí mismos y en los demás."
+    ],
+    correct: 3,
+    feedback: "Según el programa, la comprensión del mundo emocional juega un papel determinante en el desarrollo humano. Por ello, se busca que los estudiantes identifiquen en ellas y ellos, así como en otras personas, las características y funciones de las emociones que expresan."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué se pretende lograr en los estudiantes al abordar los Contenidos del campo Saberes y Pensamiento Científico?",
+    options: [
+      "Que memoricen conceptos científicos para reproducirlos correctamente en exámenes.",
+      "Que comprendan paulatinamente la relación vital de interdependencia entre los seres humanos y la naturaleza, y la importancia de protegerla.",
+      "Que adquieran conocimientos científicos completamente desvinculados de su entorno cotidiano.",
+      "Que desarrollen únicamente habilidades para el pensamiento lógico-matemático formal."
+    ],
+    correct: 1,
+    feedback: "El programa señala que se pretende que los estudiantes comprendan paulatinamente la relación vital de interdependencia entre los seres humanos y la naturaleza, así como la importancia de fortalecer prácticas, actitudes y valores que fomenten el respeto, cuidado y protección de esta."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cómo deben abordarse los contenidos matemáticos para que adquieran significado para las niñas y los niños?",
+    options: [
+      "Explicándolos de manera expositiva y verificando que sean memorizados correctamente.",
+      "Usando exclusivamente el libro de texto como recurso didáctico principal.",
+      "A través de situaciones problemáticas interesantes que tengan sentido para los estudiantes y que puedan aplicarse en cualquier campo formativo o actividad cotidiana.",
+      "Aplicando los contenidos exclusivamente durante la clase formal de matemáticas."
+    ],
+    correct: 2,
+    feedback: "El programa indica que habrá que identificar y dar significado a los contenidos matemáticos a través de situaciones problemáticas que sean interesantes y tengan sentido para niñas y niños, desarrollarlos en el aula y aplicarlos en el momento en que surja la oportunidad en cualquier campo formativo o actividad cotidiana."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cómo contribuye el campo 'De lo Humano y lo Comunitario' a la formación del proyecto de vida de los estudiantes?",
+    options: [
+      "Limitándose a enseñar competencias laborales y profesionales para el futuro.",
+      "Apuntando a la construcción de aprendizajes en la perspectiva del proyecto de vida para afrontar retos en la familia, la escuela y la comunidad, incidiendo en su confianza, seguridad y autonomía.",
+      "Enfocándose exclusivamente en el rendimiento académico individual de cada estudiante.",
+      "Preparando a los estudiantes para seguir instrucciones de autoridades externas a la escuela."
+    ],
+    correct: 1,
+    feedback: "El programa señala que lo humano y lo comunitario apunta a la construcción de aprendizajes en la perspectiva del proyecto de vida de niñas, niños y adolescentes para afrontar los retos que tienen en la familia, la escuela y la comunidad, incidiendo positivamente en su confianza, seguridad y autonomía."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cómo se aborda la construcción de la imagen corporal en la Fase 4 dentro del campo 'De lo Humano y lo Comunitario'?",
+    options: [
+      "Es un tema secundario que no requiere atención específica en la etapa primaria.",
+      "Se aborda exclusivamente desde la perspectiva de la educación física y el deporte.",
+      "En esta etapa las niñas y niños son más conscientes de su cuerpo y los cambios que experimentan, por lo que se enfoca el autoconocimiento y la comprensión de dichos cambios.",
+      "Se trabaja solo si los estudiantes presentan problemas detectados por especialistas en psicología."
+    ],
+    correct: 2,
+    feedback: "El programa señala que en esta etapa las niñas y niños son más conscientes de su cuerpo y los cambios que experimentan, por lo que se hace necesario enfocar algunas actividades al desarrollo del autoconocimiento, la construcción de la imagen corporal y la comprensión de los cambios que tienen."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué se pretende al establecer vinculaciones entre los Contenidos del campo Saberes y Pensamiento Científico?",
+    options: [
+      "Separar el aprendizaje matemático del científico para lograr mayor claridad conceptual.",
+      "Garantizar que cada disciplina se enseñe de forma independiente y especializada.",
+      "Promover una comprensión integrada de los procesos y fenómenos naturales, considerando el orden de aprendizaje y la relación complementaria entre matemáticas y ciencias naturales.",
+      "Reducir el tiempo de cada materia para hacer más eficiente la jornada escolar."
+    ],
+    correct: 2,
+    feedback: "El programa indica que para promover una comprensión integrada de los procesos y fenómenos naturales es pertinente establecer vinculaciones entre los Contenidos, atendiendo al orden de aprendizaje, la construcción de significados y la relación complementaria entre las matemáticas y las ciencias naturales."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿En qué ámbitos se fortalecen las emociones de niñas y niños durante la Fase 4?",
+    options: [
+      "Únicamente en el ámbito escolar, bajo la supervisión directa del docente.",
+      "En las interacciones con distintos actores en el ámbito familiar, escolar y comunitario.",
+      "Solo en actividades de educación socioemocional planificadas formalmente.",
+      "Exclusivamente a través de la terapia psicológica individual especializada."
+    ],
+    correct: 1,
+    feedback: "El programa señala que las emociones se fortalecen a partir de las interacciones con distintos actores en el ámbito familiar, escolar y comunitario, siendo fundamentales para el desarrollo integral de niñas y niños y de una sana relación interpersonal."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes situaciones refleja mejor las finalidades del campo 'De lo Humano y lo Comunitario'?",
+    options: [
+      "La maestra entrega a los estudiantes una lista de valores que deben memorizar y recitar diariamente.",
+      "El maestro expone los problemas sociales del país para que los estudiantes los conozcan y los reporten en un examen.",
+      "Los estudiantes realizan un proyecto comunitario donde identifican una problemática de salud, proponen soluciones colectivas y las presentan a la comunidad escolar.",
+      "Los estudiantes leen textos sobre identidad cultural y responden preguntas de comprensión lectora de forma individual."
+    ],
+    correct: 2,
+    feedback: "Las finalidades del campo apuntan a que los estudiantes construyan su identidad, desarrollen conciencia de interdependencia y realicen análisis críticos de su entorno con intervención colectiva. La opción C refleja estas finalidades: identificar una problemática real, trabajar colaborativamente y proponer soluciones con impacto comunitario."
+  },
+
+  // ─── COMPLETAMIENTO ────────────────────────────────────────────────────────
+  {
+    type: "Completamiento",
+    text: "En el campo de Lenguajes, al trabajar con producciones artísticas se busca que los estudiantes experimenten la combinación expresiva de movimientos corporales, ritmos visuales, sonidos y juegos dramáticos, con la finalidad de…",
+    options: [
+      "…competir con otros grupos en festivales escolares institucionales de nivel regional.",
+      "…desarrollar únicamente las habilidades físicas y motrices individuales de los estudiantes.",
+      "…proponer intervenciones en los espacios de su entorno para fomentar el bienestar de la comunidad y fortalecer sus identidades personal y colectiva.",
+      "…cumplir con los requerimientos mínimos del programa oficial de educación artística de la SEP."
+    ],
+    correct: 2,
+    feedback: "El propósito de las producciones artísticas en Lenguajes es que los estudiantes propongan intervenciones en los espacios de su entorno para fomentar el bienestar de la comunidad, así como fortalecer sus identidades personal y colectiva."
+  },
+  {
+    type: "Completamiento",
+    text: "El campo 'De lo Humano y lo Comunitario' utiliza el análisis de situaciones reales para el desarrollo y enriquecimiento mutuo, impulsando la reciprocidad, la ayuda y el diálogo de saberes, con el propósito de…",
+    options: [
+      "…establecer jerarquías entre los diferentes grupos culturales de la comunidad escolar.",
+      "…que los estudiantes exploren, comprendan, reflexionen e intervengan en la prevención de problemáticas como la exclusión, la desigualdad de género y la interculturalidad crítica.",
+      "…enseñar a los estudiantes a aceptar pasivamente las condiciones sociales de su entorno.",
+      "…homogeneizar las prácticas culturales de todas las comunidades escolares del país."
+    ],
+    correct: 1,
+    feedback: "El programa establece que el propósito es que niñas, niños y adolescentes exploren, comprendan, reflexionen e intervengan en la prevención y atención de problemáticas asociadas a la vida saludable, la inclusión, la igualdad de género y la interculturalidad crítica."
+  },
+  {
+    type: "Completamiento",
+    text: "Para promover una comprensión integrada de los procesos y fenómenos naturales en el campo de Saberes y Pensamiento Científico, es pertinente establecer vinculaciones entre los Contenidos; para ello, habrá que atender criterios claros como…",
+    options: [
+      "…la cantidad de horas asignadas a cada materia y el número de evaluaciones aplicadas.",
+      "…el orden de aprendizaje derivado de las especificidades de las disciplinas, la construcción de significados de los objetos de estudio y la relación complementaria entre matemáticas y ciencias naturales.",
+      "…la preferencia de los docentes por ciertos temas y la disposición de los estudiantes.",
+      "…el nivel socioeconómico de la comunidad y los recursos materiales disponibles en la escuela."
+    ],
+    correct: 1,
+    feedback: "El programa señala que las vinculaciones entre Contenidos deben atender criterios como el orden de aprendizaje derivado de las especificidades de las disciplinas, la construcción de significados de los objetos de estudio y la relación complementaria entre las matemáticas y las ciencias naturales."
+  },
+  {
+    type: "Completamiento",
+    text: "En los espacios de socialización de la Fase 4, niñas y niños construyen conocimientos, actitudes y valores, y adquieren saberes para asumir compromisos y responsabilidades que requieren del manejo de reglas y tareas específicas para el trabajo colaborativo; en este sentido, la comprensión del mundo emocional…",
+    options: [
+      "…es un obstáculo para el rendimiento académico que debe minimizarse en el aula.",
+      "…juega un papel secundario frente a los contenidos disciplinares del currículo.",
+      "…juega un papel determinante en el desarrollo humano, por lo que se busca que los estudiantes identifiquen las características y funciones de las emociones.",
+      "…solo debe trabajarse en contextos de conflicto o crisis emocional detectada por el orientador."
+    ],
+    correct: 2,
+    feedback: "El programa señala que la comprensión del mundo emocional juega un papel determinante en el desarrollo humano. Por ello, se busca que los estudiantes identifiquen en ellas y ellos, así como en otras personas, las características y funciones de las emociones que expresan."
+  },
+  {
+    type: "Completamiento",
+    text: "El abordaje de los Contenidos y Procesos de desarrollo de aprendizaje del campo Saberes y Pensamiento Científico implica partir de lo concreto y relacionarlo con las vivencias, contextos y situaciones relevantes; en ese sentido, es importante que niñas y niños…",
+    options: [
+      "…copien y memoricen los conceptos tal como aparecen en el libro de texto oficial.",
+      "…expresen verbalmente y por escrito lo aprendido, utilizando palabras y símbolos, para fortalecer el pensamiento.",
+      "…aprendan primero la teoría y luego, al llegar a secundaria, apliquen los conocimientos.",
+      "…eviten mezclar el lenguaje cotidiano con el lenguaje científico o matemático formal."
+    ],
+    correct: 1,
+    feedback: "El programa establece que es importante que niñas y niños expresen verbalmente y por escrito lo aprendido, utilizando palabras y símbolos, ya que esto fortalece la construcción de conocimientos y el desarrollo del pensamiento."
+  },
+  {
+    type: "Completamiento",
+    text: "El campo 'De lo Humano y lo Comunitario' aborda el cuidado de la salud y del medio ambiente, así como la prevención de riesgos en la comunidad; en este sentido es esencial propiciar el desarrollo de acciones que promuevan el bienestar a través de…",
+    options: [
+      "…la imposición de reglas de conducta establecidas por las autoridades educativas.",
+      "…la competencia individual entre estudiantes para identificar quién conoce más sobre salud.",
+      "…la reflexión sobre las problemáticas socioambientales tanto locales como globales, analizando críticamente la relación humanidad-cultura-naturaleza.",
+      "…la memorización de conceptos médicos y normas sanitarias establecidas por expertos."
+    ],
+    correct: 2,
+    feedback: "El programa señala que es esencial propiciar el desarrollo de acciones que promuevan el bienestar en el contexto a través de la reflexión sobre problemáticas socioambientales locales y globales, analizando de forma crítica las tensiones entre distintas comunidades en torno a la relación humanidad-cultura-naturaleza."
+  },
+
+  // ─── RELACIÓN DE ELEMENTOS ─────────────────────────────────────────────────
+  {
+    type: "Relación de elementos",
+    text: "Seleccione la opción que relacione correctamente el campo formativo con su descripción central.\n\nCampos: 1) Lenguajes · 2) Saberes y Pensamiento Científico · 3) De lo Humano y lo Comunitario\n\nDescripciones:\na) Favorece la construcción de la identidad, el sentido de pertenencia y el compromiso ético para la satisfacción de necesidades humanas.\nb) Busca que los estudiantes comprendan la interdependencia entre los seres humanos y la naturaleza, y el valor de las matemáticas como herramienta del pensamiento.\nc) Promueve la apropiación de la oralidad, lectura, escritura y lenguajes artísticos, reconociendo los distintos niveles de avance de los estudiantes.",
+    options: [
+      "1c, 2b, 3a",
+      "1a, 2c, 3b",
+      "1b, 2a, 3c",
+      "1c, 2a, 3b"
+    ],
+    correct: 0,
+    feedback: "La relación correcta es: Lenguajes (1c) se vincula con la oralidad, lectura, escritura y lenguajes artísticos; Saberes y Pensamiento Científico (2b) con la interdependencia humano-naturaleza y el valor de las matemáticas; y De lo Humano y lo Comunitario (3a) con la identidad, pertenencia y compromiso ético."
+  },
+  {
+    type: "Relación de elementos",
+    text: "Seleccione la opción que relacione correctamente el grado escolar con el proceso de desarrollo de aprendizaje del contenido 'Toma de decisiones ante situaciones cotidianas y de riesgos'.\n\nGrados: 1) Tercer grado · 2) Cuarto grado\n\nProcesos:\na) Analiza situaciones cotidianas para la toma de decisiones, priorizando el cuidado de la dignidad propia, de otras personas y colectivos.\nb) Analiza críticamente y distingue situaciones cotidianas en las que se ejerce la capacidad para tomar decisiones, empleando los criterios de valoración de los riesgos del entorno.",
+    options: [
+      "1a, 2b",
+      "1b, 2a",
+      "1b, 2b",
+      "1a, 2a"
+    ],
+    correct: 1,
+    feedback: "En tercer grado (1b) el estudiante analiza críticamente y distingue situaciones cotidianas empleando criterios de valoración de riesgos. En cuarto grado (2a) el proceso avanza hacia analizar situaciones priorizando el cuidado de la dignidad propia, de otras personas y colectivos."
+  },
+  {
+    type: "Relación de elementos",
+    text: "Relacione cada finalidad del campo 'De lo Humano y lo Comunitario' con el aspecto al que corresponde.\n\nFinalidades: 1) Construcción de la identidad personal · 2) Cuidado de la salud individual y comunitaria · 3) Análisis crítico de situaciones y problemas sociales\n\nAspectos:\na) Reflexionar sobre problemáticas de la vida cotidiana y su relación con el contexto social.\nb) Explorar gustos, intereses, necesidades y formas de interactuar en diversos contextos.\nc) Propiciar acciones que promuevan el bienestar en el contexto local y global.",
+    options: [
+      "1b, 2c, 3a",
+      "1a, 2b, 3c",
+      "1c, 2a, 3b",
+      "1b, 2a, 3c"
+    ],
+    correct: 0,
+    feedback: "La relación correcta es: Construcción de identidad personal (1b) implica explorar gustos, intereses y necesidades en contextos sociales; Cuidado de la salud (2c) implica acciones que promuevan el bienestar local y global; y Análisis crítico (3a) implica reflexionar sobre problemáticas cotidianas y su contexto social."
+  },
+  {
+    type: "Relación de elementos",
+    text: "Seleccione la opción que relacione el grado escolar con el proceso de desarrollo de aprendizaje del contenido 'Desigualdades por diferencias de género'.\n\nGrados: 1) Tercer grado · 2) Cuarto grado\n\nProcesos:\na) Analiza críticamente situaciones de desigualdad de género en ámbitos educativo, laboral, cultural o de participación política, comparando el pasado y el presente; argumenta en favor de la igualdad.\nb) Analiza desigualdades de género en la casa, la escuela y la comunidad; propone acciones en favor de la igualdad respetando los derechos de todas las personas y colectivos.",
+    options: [
+      "1a, 2b",
+      "1b, 2a",
+      "1a, 2a",
+      "1b, 2b"
+    ],
+    correct: 1,
+    feedback: "En tercer grado (1b) el proceso se enfoca en analizar desigualdades de género en la casa, la escuela y la comunidad, y proponer acciones de igualdad. En cuarto grado (2a) el proceso avanza hacia el análisis crítico comparando el pasado y el presente en ámbitos más amplios, y argumentando en favor de la igualdad."
+  },
+
+  // ─── ORDENAMIENTO ──────────────────────────────────────────────────────────
+  {
+    type: "Ordenamiento",
+    text: "Ordene las dimensiones que aborda el campo 'De lo Humano y lo Comunitario' en el orden en que aparecen descritas en el Programa Sintético de la Fase 4.\n\n1. Cuidado de la salud individual y comunitaria\n2. Conocimiento de sí y de los demás\n3. Análisis crítico de situaciones y problemas sociales\n4. Comprensión consciente de la vida emocional y afectiva propia\n5. Valoración y construcción de saberes e intervenciones en la satisfacción de necesidades",
+    options: [
+      "2, 4, 1, 3, 5",
+      "1, 2, 3, 4, 5",
+      "3, 1, 4, 2, 5",
+      "4, 2, 3, 5, 1"
+    ],
+    correct: 0,
+    feedback: "El programa describe estas dimensiones en el siguiente orden: conocimiento de sí y de los demás (2), comprensión de la vida emocional y afectiva (4), cuidado de la salud (1), análisis crítico de situaciones sociales (3) y valoración de saberes e intervenciones para satisfacer necesidades (5)."
+  },
+  {
+    type: "Ordenamiento",
+    text: "Ordene las acciones que los docentes deben llevar a cabo al diseñar situaciones de aprendizaje en el campo de Saberes y Pensamiento Científico, de acuerdo con el Programa Sintético de la Fase 4.\n\n1. Secuenciar el conocimiento e integrarlo a partir de diversas estrategias\n2. Diseñar situaciones reales acordes a la edad, contexto e intereses de los estudiantes\n3. Proponer preguntas retadoras que impliquen recuperar experiencias y experimentar\n4. Evaluar las producciones y expresiones verbales y escritas de los estudiantes",
+    options: [
+      "2, 3, 1, 4",
+      "3, 2, 4, 1",
+      "1, 3, 2, 4",
+      "4, 1, 2, 3"
+    ],
+    correct: 0,
+    feedback: "Según el programa, la secuencia lógica es: primero diseñar situaciones reales acordes a los estudiantes (2), luego proponer preguntas retadoras que impliquen experiencias y experimentación (3), después secuenciar e integrar el conocimiento con diversas estrategias (1) y finalmente evaluar las producciones de los estudiantes (4)."
+  },
+  {
+    type: "Ordenamiento",
+    text: "Ordene los elementos que componen el objeto de aprendizaje del campo 'De lo Humano y lo Comunitario' según aparecen descritos en el Programa Sintético de la Fase 4.\n\n1. Conexión emocional\n2. Sentido de pertenencia a diversos grupos\n3. Conciencia de interdependencia\n4. Construcción de identidad\n5. Compromiso ético para la satisfacción de necesidades humanas",
+    options: [
+      "4, 2, 3, 1, 5",
+      "1, 3, 4, 2, 5",
+      "5, 4, 1, 3, 2",
+      "2, 4, 5, 3, 1"
+    ],
+    correct: 0,
+    feedback: "El programa describe los elementos del objeto de aprendizaje en el siguiente orden: construcción de identidad (4), sentido de pertenencia a diversos grupos (2), conciencia de interdependencia (3), conexión emocional (1) y compromiso ético para la satisfacción de necesidades humanas (5)."
+  },
+  {
+    type: "Ordenamiento",
+    text: "Ordene los aspectos que se busca trabajar respecto al cuerpo y las emociones en la Fase 4, de acuerdo con el Programa Sintético.\n\n1. Comprensión de los cambios corporales que experimentan\n2. Identificación de emociones en sí mismos y en los demás\n3. Desarrollo del autoconocimiento\n4. Construcción de la imagen corporal",
+    options: [
+      "2, 3, 4, 1",
+      "3, 4, 1, 2",
+      "1, 2, 4, 3",
+      "4, 1, 3, 2"
+    ],
+    correct: 0,
+    feedback: "Según el programa, la secuencia contempla primero identificar emociones en sí mismos y en los demás (2), luego desarrollar el autoconocimiento (3), después trabajar la construcción de la imagen corporal (4) y finalmente la comprensión de los cambios que experimentan (1)."
+  },
+
+  // ─── ÚLTIMAS PREGUNTAS ─────────────────────────────────────────────────────
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes situaciones refleja correctamente la atención a la diversidad lingüística en el campo de Lenguajes de la Fase 4?",
+    options: [
+      "El maestro enseña únicamente en español, ya que es el idioma oficial de instrucción en México.",
+      "La maestra propicia que los estudiantes abandonen su lengua originaria para facilitar el aprendizaje del español.",
+      "El docente promueve que la segunda lengua enriquezca la materna sin sustituirla, y valora la pertenencia de los estudiantes sordos al propiciar el uso de la Lengua de Señas Mexicana.",
+      "Se utiliza material didáctico solo en español para garantizar la equidad entre todos los estudiantes."
+    ],
+    correct: 2,
+    feedback: "El programa señala que en contextos bilingües es necesario no solo profundizar en la oralidad —valorando la pertenencia con los estudiantes sordos—, sino también propiciar la participación bilingüe donde la segunda lengua enriquezca —y no sustituya— a la materna."
+  },
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué comprende la conciencia de interdependencia como objeto de aprendizaje del campo 'De lo Humano y lo Comunitario'?",
+    options: [
+      "La dependencia total de los estudiantes hacia sus maestros y padres de familia para tomar decisiones.",
+      "La comprensión de que los seres humanos se relacionan entre sí y con su entorno de manera interdependiente, siendo fundamental para la identidad y el compromiso ético.",
+      "La capacidad de actuar de forma completamente independiente sin considerar a los demás.",
+      "El conocimiento teórico de los sistemas políticos y económicos nacionales e internacionales."
+    ],
+    correct: 1,
+    feedback: "La conciencia de interdependencia es uno de los objetos de aprendizaje del campo, que permite comprender que los seres humanos se relacionan entre sí y con su entorno de manera interdependiente, siendo fundamental para la construcción de la identidad y el compromiso ético para la satisfacción de necesidades humanas."
+  }
+];
+
+// ─── ESTADO ─────────────────────────────────────────────────────────────────
+let current = 0;
+let score = 0;
+let answered = false;
+let studentName = "";
+
+// ─── FUNCIONES ───────────────────────────────────────────────────────────────
+function startQuiz() {
+  const nameInput = document.getElementById("student-name").value.trim();
+  if (!nameInput) {
+    document.getElementById("student-name").focus();
+    document.getElementById("student-name").style.borderColor = "var(--red)";
+    return;
+  }
+  studentName = nameInput;
+  current = 0; score = 0;
+  document.getElementById("screen-start").classList.add("hidden");
+  document.getElementById("screen-quiz").classList.remove("hidden");
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  answered = false;
+
+  // progress
+  const pct = (current / questions.length) * 100;
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-text").textContent = `Pregunta ${current + 1} de ${questions.length}`;
+  document.getElementById("score-text").textContent = `✅ ${score} correctas`;
+
+  // question
+  document.getElementById("q-number").textContent = `Pregunta ${current + 1}`;
+  document.getElementById("q-type").textContent = q.type;
+  document.getElementById("q-text").textContent = q.text;
+
+  // options
+  const letters = ["A", "B", "C", "D"];
+  const container = document.getElementById("options-container");
+  container.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const label = document.createElement("label");
+    label.className = "option-label";
+    label.style.animationDelay = (i * 0.07) + "s";
+    label.innerHTML = `
+      <input type="radio" name="option" value="${i}">
+      <span class="option-letter">${letters[i]}</span>
+      <span class="option-text">${opt}</span>
+    `;
+    label.addEventListener("click", () => selectOption(i));
+    container.appendChild(label);
+  });
+
+  // hide feedback, disable next
+  document.getElementById("feedback-box").classList.add("hidden");
+  const btnNext = document.getElementById("btn-next");
+  btnNext.disabled = true;
+  btnNext.textContent = current === questions.length - 1 ? "Ver resultados →" : "Siguiente pregunta →";
+
+  // animate card
+  const card = document.getElementById("screen-quiz");
+  card.style.animation = "none";
+  card.offsetHeight;
+  card.style.animation = "slideIn .35s ease both";
+}
+
+function selectOption(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[current];
+  const labels = document.querySelectorAll(".option-label");
+
+  labels.forEach((lbl, i) => {
+    lbl.classList.add("disabled");
+    if (i === q.correct) lbl.classList.add("correct");
+    else if (i === idx) lbl.classList.add("wrong");
+  });
+  if (idx === q.correct) labels[idx].classList.remove("wrong");
+
+  const isCorrect = idx === q.correct;
+  if (isCorrect) score++;
+
+  const fb = document.getElementById("feedback-box");
+  fb.className = "feedback-box " + (isCorrect ? "feedback-correct" : "feedback-wrong");
+  fb.innerHTML = isCorrect
+    ? `<span class="fb-icon">🎉</span><span>¡Correcto! ${q.feedback}</span>`
+    : `<span class="fb-icon">💡</span><span><strong>La respuesta correcta es la opción ${["A","B","C","D"][q.correct]}.</strong> ${q.feedback}</span>`;
+  fb.classList.remove("hidden");
+
+  document.getElementById("btn-next").disabled = false;
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) {
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById("screen-quiz").classList.add("hidden");
+  const screen = document.getElementById("screen-results");
+  screen.classList.remove("hidden");
+
+  const total = questions.length;
+  const wrong = total - score;
+  const pct = Math.round((score / total) * 100);
+
+  // circle
+  const circle = document.getElementById("result-circle");
+  circle.style.setProperty("--pct", pct + "%");
+  document.getElementById("res-pct").textContent = pct + "%";
+  document.getElementById("res-pct2").textContent = pct + "%";
+
+  document.getElementById("res-name").textContent = studentName;
+  document.getElementById("res-total").textContent = total;
+  document.getElementById("res-correct").textContent = score;
+  document.getElementById("res-wrong").textContent = wrong;
+
+  // motto + motivador
+  let motto, motivMsg;
+  if (pct === 100) {
+    motto = "¡Resultado perfecto!";
+    motivMsg = "🏆 ¡Extraordinario! Dominas completamente el Programa Sintético de la Fase 4. ¡Eres un ejemplo de dedicación y conocimiento!";
+  } else if (pct >= 90) {
+    motto = "¡Resultado excelente!";
+    motivMsg = "⭐ ¡Excelente desempeño! Tienes un dominio sólido del contenido. Revisa los reactivos incorrectos para alcanzar la perfección.";
+  } else if (pct >= 75) {
+    motto = "¡Buen resultado!";
+    motivMsg = "📚 Buen trabajo. Tienes una comprensión firme del programa. Sigue estudiando para fortalecer los temas donde tuviste dificultades.";
+  } else if (pct >= 60) {
+    motto = "Resultado aceptable";
+    motivMsg = "💪 Vas por buen camino. Refuerza los campos formativos donde cometiste errores y vuelve a intentarlo. ¡Tú puedes superarte!";
+  } else {
+    motto = "Sigue practicando";
+    motivMsg = "📖 Este es tu punto de partida. Repasa el Programa Sintético de la Fase 4 con calma, identifica tus áreas de oportunidad y vuelve a intentarlo. ¡El esfuerzo siempre rinde frutos!";
+  }
+
+  document.getElementById("res-motto").textContent = motto;
+  document.getElementById("motivator-box").innerHTML = `<span class="m-emoji">💬</span>${motivMsg}`;
+
+  screen.style.animation = "none";
+  screen.offsetHeight;
+  screen.style.animation = "fadeUp .5s ease both";
+}
+
+function restartQuiz() {
+  current = 0; score = 0; studentName = "";
+  document.getElementById("screen-results").classList.add("hidden");
+  document.getElementById("screen-start").classList.remove("hidden");
+  document.getElementById("student-name").value = "";
+  document.getElementById("screen-start").style.animation = "none";
+  document.getElementById("screen-start").offsetHeight;
+  document.getElementById("screen-start").style.animation = "fadeUp .4s ease both";
+}
+
+// Enter en el input
+document.getElementById("student-name").addEventListener("keydown", function(e){
+  if (e.key === "Enter") startQuiz();
+  this.style.borderColor = "";
+});
+</script>
+</body>
+</html>

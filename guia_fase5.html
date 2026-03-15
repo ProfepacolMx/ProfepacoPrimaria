@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Estudio Interactiva – Fase 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rojo:   #C0392B;
+    --dorado: #E67E22;
+    --verde:  #27AE60;
+    --azul:   #2980B9;
+    --morado: #8E44AD;
+    --crema:  #FDF6EC;
+    --texto:  #2C2C2C;
+    --radio:  16px;
+    --sombra: 0 8px 30px rgba(0,0,0,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;color:var(--texto);}
+
+  #app{
+    display:grid;
+    grid-template-rows:auto auto 1fr auto;
+    height:100vh;
+    background:var(--crema);
+  }
+
+  /* HEADER */
+  header{
+    background:linear-gradient(135deg,#7B1818 0%,#C0392B 45%,#E67E22 100%);
+    color:#fff;text-align:center;padding:14px 20px 11px;position:relative;overflow:hidden;
+  }
+  header::before{
+    content:'';position:absolute;inset:0;
+    background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='0.05'%3E%3Cpath d='M20 20h4v4h-4zM20 12h4v4h-4zM12 20h4v4h-4z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  header .badge{
+    display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+    border-radius:40px;font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+    padding:3px 14px;margin-bottom:4px;position:relative;
+  }
+  header h1{
+    font-family:'Playfair Display',serif;font-size:clamp(1.1rem,2.5vw,1.75rem);
+    font-weight:900;line-height:1.1;text-shadow:0 2px 8px rgba(0,0,0,.3);position:relative;
+  }
+  header h1 span{color:#FFE08A;}
+  header .prof{font-size:.72rem;opacity:.85;font-weight:700;margin-top:3px;position:relative;}
+
+  /* NAV */
+  nav{
+    background:#fff;border-bottom:3px solid var(--rojo);
+    box-shadow:0 2px 10px rgba(0,0,0,.08);overflow-x:auto;white-space:nowrap;
+    scrollbar-width:none;
+  }
+  nav::-webkit-scrollbar{display:none;}
+  nav ul{display:inline-flex;list-style:none;padding:0 6px;}
+  nav ul li a{
+    display:block;padding:9px 13px;font-size:.71rem;font-weight:800;
+    color:#666;text-decoration:none;letter-spacing:.3px;text-transform:uppercase;
+    border-bottom:3px solid transparent;margin-bottom:-3px;transition:all .2s;white-space:nowrap;
+  }
+  nav ul li a:hover{color:var(--rojo);}
+  nav ul li a.active{color:var(--rojo);border-bottom-color:var(--rojo);}
+
+  /* CONTENT */
+  #content-area{
+    overflow-y:auto;overflow-x:hidden;
+    scrollbar-width:thin;scrollbar-color:#ddd transparent;
+  }
+  #content-area::-webkit-scrollbar{width:5px;}
+  #content-area::-webkit-scrollbar-thumb{background:#ddd;border-radius:4px;}
+
+  .page{display:none;padding:20px 18px 16px;max-width:980px;margin:0 auto;animation:fadeIn .3s;}
+  .page.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* FOOTER */
+  footer{
+    background:#fff;border-top:2px solid #eee;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 18px;box-shadow:0 -2px 10px rgba(0,0,0,.06);gap:12px;
+  }
+  .fn-btn{
+    display:flex;align-items:center;gap:6px;background:var(--rojo);color:#fff;
+    border:none;border-radius:9px;padding:8px 18px;font-family:'Nunito',sans-serif;
+    font-weight:700;font-size:.8rem;cursor:pointer;transition:background .2s;white-space:nowrap;
+  }
+  .fn-btn:hover{background:#a93226;}
+  .fn-btn:disabled{background:#ccc;cursor:not-allowed;}
+  .fn-btn.ghost{background:transparent;color:var(--rojo);border:2px solid var(--rojo);}
+  .fn-btn.ghost:hover{background:var(--rojo);color:#fff;}
+  #page-indicator{font-size:.76rem;font-weight:800;color:#888;text-align:center;flex-shrink:0;}
+  #page-indicator span{color:var(--rojo);}
+  .dots{display:flex;gap:5px;justify-content:center;margin-top:3px;}
+  .dot{width:6px;height:6px;border-radius:50%;background:#ddd;transition:background .25s;cursor:pointer;}
+  .dot.active{background:var(--rojo);}
+
+  /* SHARED */
+  .section-label{font-size:.68rem;letter-spacing:2px;color:var(--rojo);font-weight:800;text-transform:uppercase;margin-bottom:4px;}
+  .section-title{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,2.2vw,1.7rem);font-weight:900;margin-bottom:5px;}
+  .sep{width:44px;height:4px;border-radius:4px;margin-bottom:14px;background:var(--rojo);}
+  .intro-text{font-size:.88rem;color:#555;line-height:1.75;margin-bottom:16px;}
+
+  /* INTRO */
+  .intro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:13px;margin-bottom:16px;}
+  .intro-card{
+    background:#fff;border-radius:13px;padding:17px 14px;box-shadow:var(--sombra);
+    text-align:center;transition:transform .25s;border-top:4px solid var(--rojo);
+  }
+  .intro-card:hover{transform:translateY(-3px);}
+  .intro-card .emoji{font-size:1.8rem;margin-bottom:8px;display:block;}
+  .intro-card h3{font-size:.85rem;font-weight:800;margin-bottom:5px;}
+  .intro-card p{font-size:.76rem;color:#666;line-height:1.5;}
+  .highlight-box{background:#fff;border-radius:13px;padding:18px 20px;box-shadow:var(--sombra);border-left:5px solid var(--rojo);}
+  .highlight-box h3{font-size:.9rem;font-weight:800;margin-bottom:7px;}
+  .highlight-box p{font-size:.84rem;line-height:1.7;color:#444;}
+
+  /* CAMPO HEADER */
+  .campo-header-card{
+    border-radius:14px;padding:16px 20px;margin-bottom:15px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .campo-icon-big{
+    width:46px;height:46px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;
+    background:rgba(255,255,255,.35);
+  }
+  .campo-header-card h2{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:900;color:#fff;}
+  .campo-header-card p{font-size:.78rem;color:rgba(255,255,255,.9);margin-top:3px;line-height:1.45;}
+
+  /* ACCORDION */
+  .accordion{display:flex;flex-direction:column;gap:7px;}
+  .acc-item{background:#fff;border-radius:11px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+  .acc-btn{
+    width:100%;border:none;background:transparent;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 16px;font-family:'Nunito',sans-serif;font-size:.87rem;
+    font-weight:700;color:var(--texto);text-align:left;transition:background .2s;gap:10px;
+  }
+  .acc-btn:hover{background:rgba(0,0,0,.025);}
+  .acc-arrow{
+    width:22px;height:22px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.8rem;transition:transform .3s;flex-shrink:0;color:#fff;
+  }
+  .acc-btn.open .acc-arrow{transform:rotate(180deg);}
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+  .acc-body.open{max-height:2000px;}
+  .acc-body-inner{padding:4px 16px 14px;}
+
+  /* TABLE */
+  .compare-table{width:100%;border-collapse:collapse;font-size:.79rem;margin-top:8px;}
+  .compare-table th{padding:8px 11px;text-align:left;font-weight:800;font-size:.72rem;letter-spacing:.4px;text-transform:uppercase;color:#fff;}
+  .compare-table td{padding:8px 11px;vertical-align:top;border-bottom:1px solid #f0f0f0;line-height:1.55;}
+  .compare-table tr:last-child td{border-bottom:none;}
+  .compare-table tr:nth-child(even) td{background:rgba(0,0,0,.02);}
+  .th-contenido{background:#555;}
+
+  /* TAGS */
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+  .tag{border-radius:40px;padding:3px 11px;font-size:.72rem;font-weight:700;border:2px solid;}
+
+  /* GRID */
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0;}
+  .mini-card{background:#fff;border-radius:9px;padding:11px;text-align:center;box-shadow:0 2px 7px rgba(0,0,0,.06);}
+  .mini-card .mi{font-size:1.4rem;margin-bottom:5px;}
+  .mini-card h4{font-size:.78rem;font-weight:800;margin-bottom:3px;}
+  .mini-card p{font-size:.72rem;color:#666;line-height:1.45;}
+
+  /* INFO BOX */
+  .info-box{border-radius:11px;padding:12px 15px;margin-top:10px;border-left:4px solid;font-size:.82rem;line-height:1.65;}
+
+  /* HISTORY BADGES */
+  .hist-badges{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0;}
+  .hist-badge{border-radius:7px;padding:4px 11px;font-size:.77rem;font-weight:700;}
+
+  /* FLASHCARDS */
+  .fc-wrap{perspective:800px;width:100%;max-width:420px;margin:0 auto 12px;}
+  .flashcard{
+    position:relative;width:100%;padding-top:50%;
+    transform-style:preserve-3d;transition:transform .48s ease;cursor:pointer;
+  }
+  .flashcard.flipped{transform:rotateY(180deg);}
+  .card-face{
+    position:absolute;inset:0;border-radius:14px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:20px;backface-visibility:hidden;box-shadow:var(--sombra);
+  }
+  .card-front{background:linear-gradient(135deg,#C0392B,#E67E22);color:#fff;}
+  .card-back{background:linear-gradient(135deg,#2980B9,#27AE60);color:#fff;transform:rotateY(180deg);}
+  .card-face .ci{font-size:1.8rem;margin-bottom:8px;}
+  .card-face h3{font-size:.95rem;font-weight:800;text-align:center;line-height:1.3;}
+  .card-face p{font-size:.76rem;text-align:center;opacity:.9;margin-top:5px;line-height:1.5;}
+  .fc-hint{text-align:center;font-size:.72rem;color:#999;font-weight:700;margin-bottom:9px;}
+  .fc-controls{display:flex;justify-content:center;gap:10px;}
+  .fc-btn{
+    background:#fff;border:2px solid #ddd;border-radius:40px;
+    padding:6px 16px;font-family:'Nunito',sans-serif;font-weight:700;
+    font-size:.78rem;cursor:pointer;transition:all .2s;
+  }
+  .fc-btn:hover{background:var(--rojo);color:#fff;border-color:var(--rojo);}
+  .fc-counter{text-align:center;font-size:.74rem;color:#888;font-weight:700;margin-top:7px;}
+
+  /* GLOSARIO */
+  .glosario-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+  .glos-card{background:#fff;border-radius:11px;padding:14px;box-shadow:0 3px 10px rgba(0,0,0,.07);border-top:4px solid var(--rojo);transition:transform .2s;}
+  .glos-card:hover{transform:translateY(-3px);}
+  .glos-card h4{font-size:.86rem;font-weight:800;margin-bottom:4px;}
+  .glos-card p{font-size:.77rem;color:#555;line-height:1.55;}
+
+  /* QUIZ */
+  .quiz-progress-wrap{background:#eee;border-radius:20px;height:6px;margin-bottom:18px;overflow:hidden;}
+  .quiz-progress-fill{height:100%;border-radius:20px;transition:width .4s;background:linear-gradient(90deg,var(--rojo),var(--dorado));}
+  .question-card{display:none;}
+  .question-card.active{display:block;animation:fadeIn .3s;}
+  .q-label-sm{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:7px;}
+  .q-text{font-size:.97rem;font-weight:700;margin-bottom:15px;line-height:1.5;}
+  .options{display:grid;gap:7px;}
+  .opt-btn{
+    width:100%;border:2px solid #e0e0e0;background:#fafafa;border-radius:10px;
+    padding:10px 14px;text-align:left;cursor:pointer;font-family:'Nunito',sans-serif;
+    font-size:.83rem;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:9px;
+  }
+  .opt-letter{
+    width:24px;height:24px;border-radius:6px;background:#e8e8e8;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:.74rem;flex-shrink:0;transition:all .2s;
+  }
+  .opt-btn:hover{border-color:#aaa;background:#f0f0f0;}
+  .opt-btn.correct{border-color:#27AE60;background:#EAFAF1;color:#1a6b3a;}
+  .opt-btn.correct .opt-letter{background:#27AE60;color:#fff;}
+  .opt-btn.wrong{border-color:#E74C3C;background:#FDEDEC;color:#922b21;}
+  .opt-btn.wrong .opt-letter{background:#E74C3C;color:#fff;}
+  .opt-btn:disabled{cursor:not-allowed;}
+  .feedback-box{border-radius:9px;padding:10px 13px;margin-top:10px;font-size:.82rem;font-weight:700;display:none;}
+  .feedback-box.show{display:block;animation:fadeIn .25s;}
+  .feedback-box.ok{background:#EAFAF1;color:#1a6b3a;border-left:4px solid #27AE60;}
+  .feedback-box.fail{background:#FDEDEC;color:#922b21;border-left:4px solid #E74C3C;}
+  .q-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:14px;}
+  .q-score{font-size:.77rem;font-weight:700;color:#888;}
+  .q-next-btn{
+    background:var(--rojo);color:#fff;border:none;border-radius:8px;
+    padding:8px 20px;font-family:'Nunito',sans-serif;font-weight:700;
+    font-size:.82rem;cursor:pointer;transition:background .2s;
+  }
+  .q-next-btn:hover{background:#a93226;}
+  .q-next-btn:disabled{background:#ccc;cursor:not-allowed;}
+  #score-screen{display:none;text-align:center;padding:14px 0;}
+  .score-circle{
+    width:100px;height:100px;border-radius:50%;
+    border:6px solid var(--rojo);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;margin:0 auto 14px;
+    background:linear-gradient(135deg,#fff0f0,#fff);
+  }
+  .score-circle .big-num{font-size:1.9rem;font-weight:900;color:var(--rojo);}
+  .score-circle small{font-size:.68rem;color:#888;font-weight:700;}
+  #score-msg{font-size:.95rem;font-weight:700;margin-bottom:14px;}
+  #restart-btn{
+    background:var(--rojo);color:#fff;border:none;border-radius:10px;
+    padding:10px 26px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;
+  }
+
+  @media(max-width:600px){
+    .page{padding:14px 10px 10px;}
+    .intro-grid{grid-template-columns:repeat(2,1fr);}
+    .campo-header-card{flex-direction:column;align-items:flex-start;gap:8px;}
+    .compare-table{font-size:.72rem;}
+    .compare-table th,.compare-table td{padding:6px 8px;}
+    nav ul li a{padding:8px 9px;font-size:.64rem;}
+    .fn-btn{padding:7px 12px;font-size:.74rem;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="badge">📚 Educación Primaria · 5° y 6° Grado</div>
+    <h1>Guía de Estudio <span>Interactiva</span> · <span style="font-size:.78em;">Fase 5</span></h1>
+    <p class="prof">✏️ Prof. Francisco De Jesus Luna Benitez</p>
+  </header>
+
+  <nav>
+    <ul id="navTabs">
+      <li><a href="#" data-page="0" class="active">🏠 Inicio</a></li>
+      <li><a href="#" data-page="1">📖 Lenguajes</a></li>
+      <li><a href="#" data-page="2">🔬 Saberes</a></li>
+      <li><a href="#" data-page="3">🌍 Ética</a></li>
+      <li><a href="#" data-page="4">❤️ Lo Humano</a></li>
+      <li><a href="#" data-page="5">🃏 Flashcards</a></li>
+      <li><a href="#" data-page="6">📝 Glosario</a></li>
+      <li><a href="#" data-page="7">🎯 Quiz</a></li>
+    </ul>
+  </nav>
+
+  <div id="content-area">
+
+    <!-- PAGE 0 -->
+    <div class="page active" id="page-0">
+      <p class="section-label">¿Qué es la Fase 5?</p>
+      <h2 class="section-title">Introducción al Programa</h2>
+      <div class="sep"></div>
+      <p class="intro-text">La <strong>Fase 5</strong> comprende el <strong>5° y 6° grado</strong> de educación primaria y se organiza en cuatro <em>Campos Formativos</em> que integran de forma articulada conocimientos, habilidades, valores y actitudes.</p>
+      <div class="intro-grid">
+        <div class="intro-card" style="border-top-color:#C0392B;"><span class="emoji">📖</span><h3>Lenguajes</h3><p>Comunicación, lectura crítica, lengua indígena y expresión artística.</p></div>
+        <div class="intro-card" style="border-top-color:#2980B9;"><span class="emoji">🔬</span><h3>Saberes Científicos</h3><p>Matemáticas, ciencias naturales y pensamiento lógico.</p></div>
+        <div class="intro-card" style="border-top-color:#27AE60;"><span class="emoji">🌍</span><h3>Ética y Sociedades</h3><p>Valores, democracia, derechos, historia y geografía.</p></div>
+        <div class="intro-card" style="border-top-color:#8E44AD;"><span class="emoji">❤️</span><h3>Lo Humano</h3><p>Identidad, emociones, salud e integración comunitaria.</p></div>
+      </div>
+      <div class="highlight-box">
+        <h3>🎯 Propósito General de la Fase 5</h3>
+        <p>Consolidar habilidades para <strong>leer y escribir críticamente</strong>, desarrollar el <strong>pensamiento científico y matemático</strong>, comprender el entorno natural y social, fortalecer la identidad personal y aprender a convivir de manera ética, democrática e inclusiva.</p>
+      </div>
+    </div>
+
+    <!-- PAGE 1: LENGUAJES -->
+    <div class="page" id="page-1">
+      <div class="campo-header-card" style="background:linear-gradient(135deg,#7B1818,#C0392B);">
+        <div class="campo-icon-big">📖</div>
+        <div><h2>Campo: Lenguajes</h2><p>Comunicación oral/escrita, lectura crítica, lengua indígena y lenguajes artísticos.</p></div>
+      </div>
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>📝 Lectura y Producción de Textos</span>
+            <span class="acc-arrow" style="background:#C0392B;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <table class="compare-table">
+              <thead><tr><th class="th-contenido" style="width:24%;">Contenido</th><th style="background:#C0392B;">5° Grado</th><th style="background:#E74C3C;">6° Grado</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Lectura crítica</strong></td><td>Cuestiona lo que lee, identifica propósitos y distingue información engañosa.</td><td>Compara fuentes, desarrolla autonomía lectora y lee más allá de las letras.</td></tr>
+                <tr><td><strong>Escritura</strong></td><td>Planea, escribe y revisa textos verificando su propósito comunicativo.</td><td>Corrige, edita y mejora producciones escritas con criterios objetivos.</td></tr>
+                <tr><td><strong>Mitos y leyendas</strong></td><td>Lee mitos mexicanos; identifica realidad y fantasía; escenifica un mito.</td><td>Analiza mitos del mundo; elabora compendio con portada, índice e introducción.</td></tr>
+              </tbody>
+            </table>
+            <div class="tags" style="margin-top:10px;">
+              <span class="tag" style="color:#C0392B;border-color:#C0392B;">📌 Lectura crítica</span>
+              <span class="tag" style="color:#C0392B;border-color:#C0392B;">📌 Escritura reflexiva</span>
+              <span class="tag" style="color:#C0392B;border-color:#C0392B;">📌 Propósito comunicativo</span>
+            </div>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🌿 Lengua Indígena y Bilingüismo</span>
+            <span class="acc-arrow" style="background:#C0392B;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="font-size:.84rem;line-height:1.7;margin-bottom:10px;">En el <strong>medio indígena</strong> es fundamental favorecer prácticas orales y escritas de forma <strong>bilingüe</strong>. La escritura en lengua indígena tiene sentido solo si se usa; se impulsa el acopio, producción y conservación de textos, incluyendo manuscritos.</p>
+            <div class="info-box" style="background:#fff3f0;border-color:#C0392B;">
+              <strong>🔑 Idea clave:</strong> La escritura en lengua indígena es un derecho cultural y un medio para preservar la identidad de los pueblos originarios.
+            </div>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🎨 Lenguajes Artísticos</span>
+            <span class="acc-arrow" style="background:#C0392B;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="font-size:.84rem;line-height:1.7;margin-bottom:10px;">Exploración <strong>creativa y lúdica</strong> de lenguajes artísticos para expresar sensaciones, emociones e ideas. Se desarrolla el pensamiento artístico mediante producción e interpretación.</p>
+            <div class="grid3">
+              <div class="mini-card"><div class="mi">🎭</div><h4>Teatro</h4><p>Escenificación de mitos y textos literarios.</p></div>
+              <div class="mini-card"><div class="mi">🎨</div><h4>Artes plásticas</h4><p>Escultura, cómic e instalación.</p></div>
+              <div class="mini-card"><div class="mi">🎵</div><h4>Música</h4><p>Exploración sonora y rítmica.</p></div>
+              <div class="mini-card"><div class="mi">💃</div><h4>Danza</h4><p>Expresión corporal y cultural.</p></div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: SABERES -->
+    <div class="page" id="page-2">
+      <div class="campo-header-card" style="background:linear-gradient(135deg,#1a5276,#2980B9);">
+        <div class="campo-icon-big">🔬</div>
+        <div><h2>Campo: Saberes y Pensamiento Científico</h2><p>Matemáticas y Ciencias Naturales integradas al contexto real.</p></div>
+      </div>
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🔢 Matemáticas – Números y Operaciones</span>
+            <span class="acc-arrow" style="background:#2980B9;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <table class="compare-table">
+              <thead><tr><th class="th-contenido" style="width:24%;">Contenido</th><th style="background:#2980B9;">5° Grado</th><th style="background:#27AE60;">6° Grado</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Números</strong></td><td>Lee, escribe y ordena naturales hasta 9 cifras y decimales hasta diezmilésimos. Fracciones: ½, ¼, ¾, ⅕, ⅛.</td><td>Sucesiones hasta billones. Semejanzas entre sistema decimal, maya y romano.</td></tr>
+                <tr><td><strong>Suma y resta</strong></td><td>Decimales y fracciones de distintos denominadores. Cálculo mental con múltiplos de 100.</td><td>Decimales hasta centésimos y fracciones en situaciones problemáticas reales.</td></tr>
+              </tbody>
+            </table>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🪐 Sistema Solar y Universo</span>
+            <span class="acc-arrow" style="background:#2980B9;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <table class="compare-table">
+              <thead><tr><th class="th-contenido" style="width:24%;">Contenido</th><th style="background:#2980B9;">5° Grado</th><th style="background:#27AE60;">6° Grado</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Sistema Solar</strong></td><td>Describe planetas, satélites y asteroides. Explica rotación y traslación: velocidad, dirección y trayectoria.</td><td>Describe galaxias y estrellas. Reconoce la Vía Láctea como galaxia del Sistema Solar.</td></tr>
+                <tr><td><strong>Tecnología</strong></td><td>Valora la invención del telescopio para el conocimiento del Sistema Solar.</td><td>Argumenta importancia de telescopios, satélites artificiales y sondas espaciales.</td></tr>
+              </tbody>
+            </table>
+            <div class="info-box" style="background:#e8f4fd;border-color:#2980B9;">
+              <strong>🌟 Clave:</strong> <em>Rotación</em> = giro sobre el propio eje → día y noche (24 h). &nbsp; <em>Traslación</em> = movimiento alrededor del Sol → estaciones (365 días).
+            </div>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🌱 Ciencias Naturales y Ecosistemas</span>
+            <span class="acc-arrow" style="background:#2980B9;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="font-size:.84rem;line-height:1.7;margin-bottom:10px;">Los estudiantes comprenden los <strong>ecosistemas</strong>, interacciones entre seres vivos, cuidado ambiental y relación entre salud individual y colectiva. Reconocen que los <strong>desastres no son naturales</strong>, sino consecuencia de actividades humanas.</p>
+            <div class="tags">
+              <span class="tag" style="color:#2980B9;border-color:#2980B9;">🌿 Ecosistemas</span>
+              <span class="tag" style="color:#2980B9;border-color:#2980B9;">♻️ Cuidado ambiental</span>
+              <span class="tag" style="color:#2980B9;border-color:#2980B9;">🏥 Salud colectiva</span>
+              <span class="tag" style="color:#2980B9;border-color:#2980B9;">⚠️ Prevención desastres</span>
+            </div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: ÉTICA -->
+    <div class="page" id="page-3">
+      <div class="campo-header-card" style="background:linear-gradient(135deg,#1a5c2e,#27AE60);">
+        <div class="campo-icon-big">🌍</div>
+        <div><h2>Campo: Ética, Naturaleza y Sociedades</h2><p>Democracia, derechos humanos, historia de México y conciencia ciudadana.</p></div>
+      </div>
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🏛️ Democracia y Derechos Humanos</span>
+            <span class="acc-arrow" style="background:#27AE60;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="font-size:.84rem;line-height:1.7;margin-bottom:10px;"><strong>México</strong> es una república <strong>representativa, democrática, laica, federal, pluricultural y plurilingüe</strong>, basada en el respeto a la dignidad y los derechos humanos.</p>
+            <div class="grid3">
+              <div class="mini-card"><div class="mi">⚖️</div><h4>Cultura de paz</h4><p>Conflictos resueltos por diálogo y mediación.</p></div>
+              <div class="mini-card"><div class="mi">🚫</div><h4>Sin violencia</h4><p>Erradicación de toda forma de violencia.</p></div>
+              <div class="mini-card"><div class="mi">🤝</div><h4>Sujetos de derecho</h4><p>Niñas y niños titulares de derechos humanos.</p></div>
+            </div>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🗺️ Historia de México</span>
+            <span class="acc-arrow" style="background:#27AE60;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="font-size:.84rem;line-height:1.7;margin-bottom:10px;">Análisis <strong>crítico del pasado</strong> para interpretar el presente. Perspectiva inclusiva que revaloriza mujeres, pueblos originarios y afrodescendientes.</p>
+            <div class="hist-badges">
+              <span class="hist-badge" style="background:#27AE6020;color:#1a5c2e;border:1.5px solid #27AE60;">🏳️ La Independencia</span>
+              <span class="hist-badge" style="background:#27AE6020;color:#1a5c2e;border:1.5px solid #27AE60;">📜 La Reforma</span>
+              <span class="hist-badge" style="background:#27AE6020;color:#1a5c2e;border:1.5px solid #27AE60;">⚔️ Revolución Mexicana</span>
+              <span class="hist-badge" style="background:#27AE6020;color:#1a5c2e;border:1.5px solid #27AE60;">🛕 El Porfiriato</span>
+              <span class="hist-badge" style="background:#27AE6020;color:#1a5c2e;border:1.5px solid #27AE60;">⛪ Guerra Cristera</span>
+              <span class="hist-badge" style="background:#27AE6020;color:#1a5c2e;border:1.5px solid #27AE60;">🌾 El Cardenismo</span>
+            </div>
+            <div class="info-box" style="background:#eafaf1;border-color:#27AE60;">
+              <strong>🔑 Perspectiva inclusiva:</strong> Se revaloriza la participación histórica de mujeres, pueblos originarios y afromexicanos, visibilizando agentes sociales no reconocidos.
+            </div>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>✈️ Migración y Derechos</span>
+            <span class="acc-arrow" style="background:#27AE60;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <table class="compare-table">
+              <thead><tr><th class="th-contenido" style="width:24%;">Contenido</th><th style="background:#27AE60;">5° Grado</th><th style="background:#F39C12;">6° Grado</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Migración e identidad</strong></td><td>Reflexiona sobre impactos en identidad y pertenencia. Dialoga sobre dificultades de personas migrantes para ejercer derechos.</td><td>Analiza reglas de ciudadanía y elabora juicios éticos sobre derechos de migrantes.</td></tr>
+                <tr><td><strong>Tratados</strong></td><td>Identifica tratados que protegen a todas las personas sin distinción migratoria.</td><td>Propone acciones para la protección de derechos de personas migrantes.</td></tr>
+              </tbody>
+            </table>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4: LO HUMANO -->
+    <div class="page" id="page-4">
+      <div class="campo-header-card" style="background:linear-gradient(135deg,#5b2c6f,#8E44AD);">
+        <div class="campo-icon-big">❤️</div>
+        <div><h2>Campo: De lo Humano y lo Comunitario</h2><p>Autoconocimiento, emociones, salud integral y participación comunitaria.</p></div>
+      </div>
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🧠 Identidad Personal y Autoconcepto</span>
+            <span class="acc-arrow" style="background:#8E44AD;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="font-size:.84rem;line-height:1.7;margin-bottom:10px;">Se desarrollan <strong>potencialidades afectivas, motrices, creativas y de solución de problemas</strong> para construir un autoconcepto positivo y promover relaciones basadas en el aprecio a la diversidad.</p>
+            <div class="info-box" style="background:#f3e8fd;border-color:#8E44AD;">
+              <strong>💜 Clave:</strong> La personalidad es el conjunto de rasgos únicos de cada persona. Adaptar comportamientos al contexto favorece la autoestima y la convivencia armónica.
+            </div>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>💚 Gestión Emocional y Empatía</span>
+            <span class="acc-arrow" style="background:#8E44AD;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="font-size:.84rem;line-height:1.7;margin-bottom:10px;">Los estudiantes identifican el vínculo entre emociones y estados de ánimo, reconocen factores que las determinan y desarrollan <strong>estrategias de regulación emocional</strong>.</p>
+            <div class="grid3">
+              <div class="mini-card"><div class="mi">🤗</div><h4>Empatía</h4><p>Comprender sentimientos de los demás.</p></div>
+              <div class="mini-card"><div class="mi">🧘</div><h4>Autorregulación</h4><p>Adaptar emociones al contexto.</p></div>
+              <div class="mini-card"><div class="mi">💬</div><h4>Comunicación asertiva</h4><p>Expresar con respeto lo que sentimos.</p></div>
+            </div>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🏃 Salud Integral y Prevención</span>
+            <span class="acc-arrow" style="background:#8E44AD;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="font-size:.84rem;line-height:1.7;margin-bottom:9px;">Seguimiento de <strong>hábitos de salud</strong> e identificación de prácticas de riesgo: accidentes, adicciones y violencia.</p>
+            <div class="tags">
+              <span class="tag" style="color:#8E44AD;border-color:#8E44AD;">🥗 Hábitos alimenticios</span>
+              <span class="tag" style="color:#8E44AD;border-color:#8E44AD;">🚴 Actividad física</span>
+              <span class="tag" style="color:#8E44AD;border-color:#8E44AD;">😴 Descanso</span>
+              <span class="tag" style="color:#8E44AD;border-color:#8E44AD;">🚫 Prevención adicciones</span>
+            </div>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="toggleAcc(this)">
+            <span>🌈 Inclusión y Participación Comunitaria</span>
+            <span class="acc-arrow" style="background:#8E44AD;">▼</span>
+          </button>
+          <div class="acc-body"><div class="acc-body-inner">
+            <p style="font-size:.84rem;line-height:1.7;">Estrategias para incluir a todos los estudiantes sin importar su condición: discapacidad, lengua materna o aptitudes sobresalientes. Se impulsa la participación equitativa en tareas familiares, comunitarias y recreativas.</p>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 5: FLASHCARDS -->
+    <div class="page" id="page-5">
+      <p class="section-label">Memorización activa</p>
+      <h2 class="section-title">🃏 Flashcards – Conceptos Clave</h2>
+      <div class="sep"></div>
+      <p class="fc-hint">👆 Haz clic en la tarjeta para voltearla</p>
+      <div class="fc-wrap">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+          <div class="card-face card-front">
+            <span class="ci" id="fcIcon">📖</span>
+            <h3 id="fcTerm">Lectura crítica</h3>
+            <p id="fcHint">Campo: Lenguajes</p>
+          </div>
+          <div class="card-face card-back">
+            <span class="ci">💡</span>
+            <h3 id="fcDef">Habilidad para cuestionar, comparar y evaluar lo que se lee, distinguiendo la información veraz de la engañosa.</h3>
+          </div>
+        </div>
+      </div>
+      <div class="fc-controls">
+        <button class="fc-btn" onclick="prevCard()">← Anterior</button>
+        <button class="fc-btn" onclick="flipCard()">🔄 Voltear</button>
+        <button class="fc-btn" onclick="nextCard()">Siguiente →</button>
+      </div>
+      <p class="fc-counter" id="fcCounter">Tarjeta 1 de 12</p>
+    </div>
+
+    <!-- PAGE 6: GLOSARIO -->
+    <div class="page" id="page-6">
+      <p class="section-label">Términos esenciales</p>
+      <h2 class="section-title">📝 Glosario de Conceptos</h2>
+      <div class="sep"></div>
+      <div class="glosario-grid">
+        <div class="glos-card"><h4>Campo Formativo</h4><p>Área organizadora del currículo que integra saberes, habilidades y valores de forma articulada.</p></div>
+        <div class="glos-card" style="border-top-color:#2980B9;"><h4>Fase 5</h4><p>Corresponde a 5° y 6° grado de Educación Primaria en el Plan de Estudios 2022 de México.</p></div>
+        <div class="glos-card" style="border-top-color:#27AE60;"><h4>Propósito comunicativo</h4><p>Intención con la que se produce o recibe un texto: informar, persuadir, entretener o instruir.</p></div>
+        <div class="glos-card" style="border-top-color:#8E44AD;"><h4>Traslación</h4><p>Movimiento de la Tierra alrededor del Sol. Dura 365 días y produce las cuatro estaciones.</p></div>
+        <div class="glos-card"><h4>Rotación</h4><p>Giro de la Tierra sobre su propio eje. Dura 24 horas y produce el día y la noche.</p></div>
+        <div class="glos-card" style="border-top-color:#2980B9;"><h4>Democracia</h4><p>Forma de vida y gobierno basada en el respeto a la dignidad, los derechos humanos y acuerdos colectivos.</p></div>
+        <div class="glos-card" style="border-top-color:#27AE60;"><h4>Inclusión educativa</h4><p>Garantía de igualdad de oportunidades para todos los estudiantes, sin discriminación alguna.</p></div>
+        <div class="glos-card" style="border-top-color:#8E44AD;"><h4>Autorregulación emocional</h4><p>Capacidad de identificar, comprender y gestionar las propias emociones de manera adaptativa.</p></div>
+        <div class="glos-card"><h4>Lenguaje artístico</h4><p>Medio de expresión estética: música, danza, teatro, artes plásticas y otras formas creativas.</p></div>
+        <div class="glos-card" style="border-top-color:#2980B9;"><h4>Vía Láctea</h4><p>Galaxia espiral donde se encuentra el Sistema Solar. Contiene cientos de miles de millones de estrellas.</p></div>
+        <div class="glos-card" style="border-top-color:#27AE60;"><h4>Cultura de paz</h4><p>Actitudes que resuelven conflictos mediante el diálogo, la justicia y la mediación.</p></div>
+        <div class="glos-card" style="border-top-color:#8E44AD;"><h4>Bilingüismo</h4><p>Uso de dos lenguas (español y lengua indígena) en los procesos educativos de comunidades originarias.</p></div>
+      </div>
+    </div>
+
+    <!-- PAGE 7: QUIZ -->
+    <div class="page" id="page-7">
+      <p class="section-label">¡A practicar!</p>
+      <h2 class="section-title">🎯 Quiz de Repaso – Fase 5</h2>
+      <div class="sep"></div>
+      <div class="quiz-progress-wrap"><div class="quiz-progress-fill" id="qProgress" style="width:0%;"></div></div>
+      <div id="qContainer"></div>
+      <div id="score-screen">
+        <div class="score-circle">
+          <span class="big-num" id="scoreNum">0</span>
+          <small id="scoreTotal">/10</small>
+        </div>
+        <p id="score-msg"></p>
+        <button id="restart-btn" onclick="startQuiz()">🔄 Reiniciar Quiz</button>
+      </div>
+    </div>
+
+  </div><!-- /content-area -->
+
+  <footer>
+    <button class="fn-btn ghost" id="prevPageBtn" onclick="changePage(currentPage-1)" disabled>← Anterior</button>
+    <div style="text-align:center;">
+      <div id="page-indicator"><span id="piCurrent">1</span> / <span id="piTotal">8</span></div>
+      <div class="dots" id="dotsWrap"></div>
+    </div>
+    <button class="fn-btn" id="nextPageBtn" onclick="changePage(currentPage+1)">Siguiente →</button>
+  </footer>
+
+</div>
+
+<script>
+const totalPages=8;
+let currentPage=0;
+const pageNames=['Inicio','Lenguajes','Saberes','Ética','Lo Humano','Flashcards','Glosario','Quiz'];
+
+function buildDots(){
+  const wrap=document.getElementById('dotsWrap');
+  wrap.innerHTML='';
+  for(let i=0;i<totalPages;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===0?' active':'');
+    d.onclick=()=>changePage(i);
+    d.title=pageNames[i];
+    wrap.appendChild(d);
+  }
+}
+buildDots();
+document.getElementById('piTotal').textContent=totalPages;
+
+function changePage(n){
+  if(n<0||n>=totalPages)return;
+  document.getElementById('page-'+currentPage).classList.remove('active');
+  document.querySelectorAll('nav ul li a')[currentPage].classList.remove('active');
+  document.querySelectorAll('.dot')[currentPage].classList.remove('active');
+  document.getElementById('content-area').scrollTop=0;
+  currentPage=n;
+  document.getElementById('page-'+currentPage).classList.add('active');
+  document.querySelectorAll('nav ul li a')[currentPage].classList.add('active');
+  document.querySelectorAll('.dot')[currentPage].classList.add('active');
+  document.getElementById('piCurrent').textContent=currentPage+1;
+  document.getElementById('prevPageBtn').disabled=currentPage===0;
+  const nb=document.getElementById('nextPageBtn');
+  nb.disabled=currentPage===totalPages-1;
+  nb.textContent=currentPage===totalPages-1?'✓ Final':'Siguiente →';
+  // scroll nav tab into view
+  document.querySelectorAll('nav ul li a')[currentPage].scrollIntoView({inline:'center',behavior:'smooth'});
+}
+
+document.querySelectorAll('nav ul li a').forEach((a,i)=>{
+  a.addEventListener('click',e=>{e.preventDefault();changePage(i);});
+});
+
+// ACCORDION
+function toggleAcc(btn){
+  const body=btn.nextElementSibling;
+  const isOpen=body.classList.contains('open');
+  const parentPage=btn.closest('.page');
+  parentPage.querySelectorAll('.acc-body.open').forEach(b=>{
+    b.classList.remove('open');
+    b.previousElementSibling.classList.remove('open');
+  });
+  if(!isOpen){body.classList.add('open');btn.classList.add('open');}
+}
+
+// FLASHCARDS
+const cards=[
+  {icon:'📖',term:'Lectura crítica',campo:'Lenguajes',def:'Habilidad para cuestionar, comparar y evaluar lo que se lee, distinguiendo la información veraz de la engañosa.'},
+  {icon:'✍️',term:'Propósito comunicativo',campo:'Lenguajes',def:'La intención con la que se produce o recibe un texto: informar, persuadir, entretener o instruir.'},
+  {icon:'🌿',term:'Bilingüismo educativo',campo:'Lenguajes',def:'Uso y desarrollo de dos lenguas (español y lengua indígena) en los procesos de enseñanza-aprendizaje.'},
+  {icon:'🪐',term:'Rotación terrestre',campo:'Saberes Científicos',def:'Giro de la Tierra sobre su propio eje. Dura 24 horas y produce el ciclo del día y la noche.'},
+  {icon:'🌍',term:'Traslación terrestre',campo:'Saberes Científicos',def:'Movimiento de la Tierra alrededor del Sol. Dura 365 días y genera las cuatro estaciones del año.'},
+  {icon:'🔢',term:'Fracciones equivalentes',campo:'Matemáticas',def:'Fracciones que representan la misma cantidad con numerador y denominador distintos. Ej: ½ = 2/4.'},
+  {icon:'🏛️',term:'Democracia',campo:'Ética y Sociedades',def:'Forma de gobierno y de vida basada en el respeto a la dignidad y los derechos humanos.'},
+  {icon:'⚖️',term:'Cultura de paz',campo:'Ética y Sociedades',def:'Actitudes y comportamientos que resuelven conflictos mediante el diálogo, la negociación y la mediación.'},
+  {icon:'✈️',term:'Migración',campo:'Ética y Sociedades',def:'Movimiento de personas entre lugares. Su impacto en la identidad y los derechos es un eje de estudio en Fase 5.'},
+  {icon:'🧠',term:'Autoconcepto positivo',campo:'Lo Humano y Comunitario',def:'Imagen favorable de uno mismo basada en el reconocimiento de fortalezas y áreas de mejora.'},
+  {icon:'🤗',term:'Empatía',campo:'Lo Humano y Comunitario',def:'Capacidad de comprender y compartir los sentimientos y perspectivas de otras personas.'},
+  {icon:'🌟',term:'Inclusión educativa',campo:'Lo Humano y Comunitario',def:'Garantía de igualdad de oportunidades para todos los estudiantes, sin importar sus condiciones.'},
+];
+let fcIndex=0,fcFlipped=false;
+function updateCard(){
+  const c=cards[fcIndex];
+  if(fcFlipped){document.getElementById('flashcard').classList.remove('flipped');fcFlipped=false;}
+  setTimeout(()=>{
+    document.getElementById('fcIcon').textContent=c.icon;
+    document.getElementById('fcTerm').textContent=c.term;
+    document.getElementById('fcHint').textContent='Campo: '+c.campo;
+    document.getElementById('fcDef').textContent=c.def;
+    document.getElementById('fcCounter').textContent='Tarjeta '+(fcIndex+1)+' de '+cards.length;
+  },200);
+}
+function flipCard(){document.getElementById('flashcard').classList.toggle('flipped');fcFlipped=!fcFlipped;}
+function nextCard(){fcIndex=(fcIndex+1)%cards.length;updateCard();}
+function prevCard(){fcIndex=(fcIndex-1+cards.length)%cards.length;updateCard();}
+
+// QUIZ
+const questions=[
+  {q:'¿Qué comprende la Fase 5 del Programa de Educación Primaria?',opts:['1° y 2° grado','3° y 4° grado','5° y 6° grado','Solo 6° grado'],correct:2,fb:'✅ Correcto. La Fase 5 abarca 5° y 6° grado de educación primaria.'},
+  {q:'¿Cuántos Campos Formativos integran el Programa Sintético de la Fase 5?',opts:['Dos','Tres','Cuatro','Cinco'],correct:2,fb:'✅ Correcto. Son cuatro: Lenguajes, Saberes Científicos, Ética/Naturaleza/Sociedades, y De lo Humano y lo Comunitario.'},
+  {q:'¿Qué produce el movimiento de ROTACIÓN de la Tierra?',opts:['Las cuatro estaciones del año','El ciclo del día y la noche','Los eclipses lunares','Las fases de la Luna'],correct:1,fb:'✅ Correcto. La rotación es el giro sobre el propio eje (24 h) y produce el día y la noche.'},
+  {q:'En el medio indígena, ¿qué se busca fomentar en el campo de Lenguajes?',opts:['Solo el aprendizaje del español','Prácticas orales y escritas bilingües en español y lengua indígena','El uso exclusivo de lengua indígena','La traducción de textos al inglés'],correct:1,fb:'✅ Correcto. Es fundamental propiciar la escritura comunicativa en lengua indígena y el bilingüismo.'},
+  {q:'¿Cómo se describe México en el campo de Ética, Naturaleza y Sociedades?',opts:['Una monarquía constitucional','Una república representativa, democrática, laica, federal, pluricultural y plurilingüe','Un estado unitario y monolingüe','Una federación de repúblicas independientes'],correct:1,fb:'✅ Correcto. México es una república representativa, democrática, laica, federal, pluricultural y plurilingüe.'},
+  {q:'¿Qué habilidad se relaciona con entender los sentimientos de otros?',opts:['Pensamiento crítico','Empatía','Resolución algebraica','Lectura veloz'],correct:1,fb:'✅ Correcto. La empatía es comprender y compartir los sentimientos de otras personas.'},
+  {q:'En 5° grado, ¿hasta qué valor decimal se trabajan los números?',opts:['Centésimos','Milésimos','Diezmilésimos','Millonésimos'],correct:2,fb:'✅ Correcto. En 5° grado se trabajan decimales hasta diezmilésimos en notación decimal y letra.'},
+  {q:'¿Qué galaxia alberga a nuestro Sistema Solar?',opts:['Andrómeda','Magallanes','La Vía Láctea','Triangulum'],correct:2,fb:'✅ Correcto. La Vía Láctea es la galaxia espiral donde se ubica nuestro Sistema Solar.'},
+  {q:'¿Por qué se estudian los movimientos históricos de México?',opts:['Solo para memorizar fechas','Analizar el pasado críticamente para interpretar el presente y construir un futuro mejor','Comparar a México con países europeos','Memorizar nombres de héroes nacionales'],correct:1,fb:'✅ Correcto. El análisis crítico del pasado permite interpretar el presente con perspectiva ética e inclusiva.'},
+  {q:'¿Qué garantiza la inclusión educativa en la Fase 5?',opts:['Solo beneficia a estudiantes con discapacidad','Igualdad de oportunidades para todos, incluyendo estudiantes con discapacidad, lengua diferente o aptitudes sobresalientes','Separar estudiantes según sus capacidades','Solo aplica en escuelas urbanas'],correct:1,fb:'✅ Correcto. La inclusión garantiza las mismas posibilidades de avance para todos, evitando la discriminación.'},
+];
+let qIndex=0,score=0,answered=false;
+function startQuiz(){
+  qIndex=0;score=0;answered=false;
+  document.getElementById('score-screen').style.display='none';
+  renderQuestion();
+}
+function renderQuestion(){
+  document.getElementById('qProgress').style.width=((qIndex/questions.length)*100)+'%';
+  const q=questions[qIndex];
+  document.getElementById('qContainer').innerHTML=`
+    <div class="question-card active">
+      <p class="q-label-sm">Pregunta ${qIndex+1} de ${questions.length}</p>
+      <p class="q-text">${q.q}</p>
+      <div class="options">
+        ${q.opts.map((o,i)=>`
+          <button class="opt-btn" onclick="checkAnswer(this,${i},${q.correct},'${q.fb.replace(/'/g,"\\'")}')">
+            <span class="opt-letter">${['A','B','C','D'][i]}</span>${o}
+          </button>`).join('')}
+      </div>
+      <div class="feedback-box" id="fb"></div>
+      <div class="q-bottom">
+        <span class="q-score">📊 Puntos: <strong>${score}</strong></span>
+        <button class="q-next-btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente →</button>
+      </div>
+    </div>`;
+  answered=false;
+}
+function checkAnswer(btn,chosen,correct,fb){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  if(chosen===correct){btn.classList.add('correct');score++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('.opt-btn')[correct].classList.add('correct');}
+  const fbBox=document.getElementById('fb');
+  fbBox.className='feedback-box show '+(chosen===correct?'ok':'fail');
+  fbBox.innerHTML=chosen===correct?fb:'❌ Incorrecto. '+fb;
+  document.getElementById('nextBtn').disabled=false;
+}
+function nextQuestion(){
+  qIndex++;
+  if(qIndex>=questions.length)showScore();
+  else renderQuestion();
+}
+function showScore(){
+  document.getElementById('qContainer').innerHTML='';
+  document.getElementById('score-screen').style.display='block';
+  document.getElementById('qProgress').style.width='100%';
+  document.getElementById('scoreNum').textContent=score;
+  document.getElementById('scoreTotal').textContent='/'+questions.length;
+  const pct=Math.round(score/questions.length*100);
+  document.getElementById('score-msg').textContent=
+    pct===100?'🏆 ¡Perfecto! Dominas completamente la Fase 5.':
+    pct>=80?'🌟 ¡Excelente! Tienes muy buen dominio del contenido.':
+    pct>=60?'👍 ¡Bien! Repasa los temas en que fallaste.':
+    '📚 Necesitas repasar más. ¡Revisa los Campos Formativos!';
+}
+startQuiz();
+</script>
+</body>
+</html>

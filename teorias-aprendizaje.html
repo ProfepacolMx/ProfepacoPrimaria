@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teorías del Aprendizaje</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Open Sans',sans-serif;background:linear-gradient(135deg,#2c5364 0%,#203a43 50%,#0f2027 100%);color:#333;line-height:1.6}
+.container{max-width:1200px;margin:0 auto;padding:2rem}
+.slide{background:white;border-radius:20px;padding:3rem;margin:2rem 0;box-shadow:0 20px 60px rgba(0,0,0,0.3);display:none;animation:slideIn 0.5s ease}
+.slide.active{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+h1{font-family:'Merriweather',serif;font-size:2.8rem;color:#2c5364;margin-bottom:1rem;line-height:1.2}
+h2{font-family:'Merriweather',serif;font-size:2.5rem;color:#2c5364;margin-bottom:1.5rem;border-bottom:3px solid #4a90a4;padding-bottom:0.5rem}
+h3{font-family:'Merriweather',serif;font-size:1.8rem;color:#4a7c8e;margin:1.5rem 0 1rem 0}
+p{font-size:1.2rem;margin-bottom:1rem;color:#555}
+.subtitle{font-size:1.5rem;color:#4a90a4;margin-bottom:2rem;font-weight:600}
+.professor-box{background:linear-gradient(135deg,#5f72bd 0%,#4a5f9d 100%);color:white;padding:1.5rem;border-radius:15px;margin-bottom:2rem;text-align:center}
+.professor-box h3{color:white;font-size:1.3rem;margin:0}
+ul{margin:1rem 0;padding-left:2rem}
+li{font-size:1.2rem;margin-bottom:0.8rem;color:#555}
+ol{margin:1rem 0;padding-left:2rem}
+ol li{font-size:1.2rem;margin-bottom:0.8rem;color:#555}
+.card{background:linear-gradient(135deg,#e8eef2 0%,#d1dde4 100%);padding:1.5rem;border-radius:10px;margin:1rem 0;border-left:5px solid #2c5364}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin:2rem 0}
+.box{background:white;padding:1.5rem;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,0.1);border-top:4px solid #4a90a4;transition:transform 0.3s ease}
+.box:hover{transform:translateY(-5px)}
+.highlight{background:#e3f2fd;padding:1.5rem;border-radius:10px;border-left:5px solid #4a7c8e;margin:1.5rem 0;font-size:1.2rem}
+.controls{position:fixed;bottom:2rem;right:2rem;display:flex;gap:1rem;z-index:1000}
+button{background:#2c5364;color:white;border:none;padding:1rem 2rem;font-size:1.2rem;border-radius:50px;cursor:pointer;box-shadow:0 5px 15px rgba(44,83,100,0.4);transition:all 0.3s ease;font-weight:600}
+button:hover{background:#1a3744;transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,55,68,0.4)}
+.counter{position:fixed;top:2rem;right:2rem;background:white;padding:1rem 2rem;border-radius:50px;box-shadow:0 5px 15px rgba(0,0,0,0.2);font-weight:700;font-size:1.2rem;color:#2c5364;z-index:1000}
+.icon{font-size:3rem;margin-bottom:1rem;text-align:center}
+.section-box{background:linear-gradient(135deg,#5f72bd 0%,#4a5f9d 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.section-box h3,.section-box p,.section-box li{color:white}
+.piaget-box{background:linear-gradient(135deg,#3498db 0%,#2980b9 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.piaget-box h3,.piaget-box p,.piaget-box li{color:white}
+.vygotsky-box{background:linear-gradient(135deg,#16a085 0%,#138d75 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.vygotsky-box h3,.vygotsky-box p,.vygotsky-box li{color:white}
+.bruner-box{background:linear-gradient(135deg,#9b59b6 0%,#8e44ad 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.bruner-box h3,.bruner-box p,.bruner-box li{color:white}
+.bandura-box{background:linear-gradient(135deg,#e67e22 0%,#d35400 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.bandura-box h3,.bandura-box p,.bandura-box li{color:white}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0}
+th,td{padding:1rem;border:2px solid #4a90a4;text-align:left;font-size:1.1rem}
+th{background:#2c5364;color:white;font-weight:700}
+td{background:white}
+.author-name{font-size:2.2rem;color:#2c5364;font-weight:700;margin:1rem 0}
+@media (max-width:768px){
+h1{font-size:2rem}
+h2{font-size:1.8rem}
+.slide{padding:2rem}
+.controls{bottom:1rem;right:1rem}
+button{padding:0.8rem 1.5rem;font-size:1rem}
+}
+</style>
+</head>
+<body>
+<div class="counter" id="counter">1 / 12</div>
+<div class="container">
+
+<div class="slide active" id="slide1">
+<div class="professor-box"><h3>👨‍🏫 Profesor: Francisco De Jesus Luna Benitez</h3></div>
+<h1>Teorías del Aprendizaje</h1>
+<div class="subtitle">Piaget, Vygotsky, Bruner y Bandura</div>
+<div class="highlight"><p>De manera clara, sencilla, con <strong>ejemplos aplicables al aula</strong> para Promoción Horizontal USICAMM</p></div>
+<div class="grid" style="margin-top:2rem">
+<div class="box" style="border-top-color:#3498db">
+<div class="icon">🧠</div>
+<h3 style="color:#2874a6">Jean Piaget</h3>
+<p>Constructivismo Cognitivo</p>
+</div>
+<div class="box" style="border-top-color:#16a085">
+<div class="icon">👥</div>
+<h3 style="color:#117a65">Lev Vygotsky</h3>
+<p>Constructivismo Sociocultural</p>
+</div>
+<div class="box" style="border-top-color:#9b59b6">
+<div class="icon">🔍</div>
+<h3 style="color:#76448a">Jerome Bruner</h3>
+<p>Aprendizaje por Descubrimiento</p>
+</div>
+<div class="box" style="border-top-color:#e67e22">
+<div class="icon">👀</div>
+<h3 style="color:#d35400">Albert Bandura</h3>
+<p>Aprendizaje Social</p>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide2">
+<h2>1️⃣ Jean Piaget - Constructivismo Cognitivo</h2>
+<div class="piaget-box">
+<h3>🔎 Idea Central</h3>
+<p>El aprendizaje ocurre cuando el estudiante <strong>construye su propio conocimiento</strong> al interactuar con el entorno.</p>
+<p style="margin-top:1rem">No aprende por repetición, sino cuando:</p>
+<ul>
+<li>Explora</li>
+<li>Se equivoca</li>
+<li>Reflexiona</li>
+<li>Ajusta sus esquemas mentales</li>
+</ul>
+</div>
+<div class="card">
+<h3>🧠 Conceptos Clave</h3>
+<div class="grid">
+<div class="box">
+<p><strong>Esquemas:</strong> Estructuras mentales</p>
+</div>
+<div class="box">
+<p><strong>Asimilación:</strong> Incorporar nueva información a lo que ya sabe</p>
+</div>
+<div class="box">
+<p><strong>Acomodación:</strong> Modificar lo que sabe para entender algo nuevo</p>
+</div>
+<div class="box">
+<p><strong>Etapas del desarrollo:</strong> Sensorimotriz, preoperacional, operaciones concretas, formales</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide3">
+<h2>Piaget - Ejemplo en Secundaria</h2>
+<div class="highlight">
+<h3>📚 Tema: Proporciones en Matemáticas</h3>
+</div>
+<div class="card">
+<h3>❌ Método tradicional:</h3>
+<p>El docente explica la fórmula directamente y los alumnos la memorizan.</p>
+</div>
+<div class="piaget-box">
+<h3>✅ Método Constructivista (Piaget):</h3>
+<ol>
+<li>El docente plantea un <strong>problema real</strong> (receta de cocina, escala de mapa)</li>
+<li>Los alumnos <strong>intentan resolverlo</strong></li>
+<li><strong>Detectan errores</strong> en sus intentos</li>
+<li><strong>Ajustan su razonamiento</strong></li>
+<li>El alumno <strong>construye el concepto</strong> por sí mismo</li>
+</ol>
+</div>
+<div class="highlight" style="margin-top:2rem">
+<h3>🎯 Aplicación para USICAMM</h3>
+<p>Se vincula con:</p>
+<ul>
+<li>Aprendizaje activo</li>
+<li>Resolución de problemas</li>
+<li>Desarrollo del pensamiento lógico</li>
+</ul>
+</div>
+</div>
+
+<div class="slide" id="slide4">
+<h2>2️⃣ Lev Vygotsky - Constructivismo Sociocultural</h2>
+<div class="vygotsky-box">
+<h3>🔎 Idea Central</h3>
+<p>El aprendizaje es un <strong>proceso social</strong>.</p>
+<p>Se aprende primero <strong>con otros</strong> y luego de forma individual.</p>
+</div>
+<div class="card">
+<h3>🧠 Conceptos Clave</h3>
+<div class="grid">
+<div class="box">
+<div class="icon">📈</div>
+<h3>Zona de Desarrollo Próximo (ZDP)</h3>
+<p>Lo que el alumno <strong>no puede hacer solo</strong>, pero <strong>sí con ayuda</strong></p>
+</div>
+<div class="box">
+<div class="icon">🏗️</div>
+<h3>Andamiaje</h3>
+<p>Apoyo temporal del docente que se retira gradualmente</p>
+</div>
+<div class="box">
+<div class="icon">💬</div>
+<h3>Lenguaje</h3>
+<p>Herramienta fundamental de pensamiento</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide5">
+<h2>Vygotsky - Ejemplo en Secundaria</h2>
+<div class="highlight">
+<h3>📚 Tema: Análisis de un texto histórico</h3>
+</div>
+<div class="vygotsky-box">
+<h3>✅ Método Sociocultural (Vygotsky):</h3>
+<ol>
+<li>El docente <strong>guía con preguntas</strong> iniciales</li>
+<li>Los alumnos <strong>trabajan en equipos</strong></li>
+<li>Se <strong>apoyan entre compañeros</strong> (zona de desarrollo próximo)</li>
+<li>El docente <strong>retira poco a poco la ayuda</strong> (andamiaje)</li>
+<li>El aprendizaje ocurre en <strong>interacción social</strong></li>
+</ol>
+</div>
+<div class="card" style="margin-top:2rem">
+<p><strong>Clave:</strong> El alumno logra hacer con ayuda de otros lo que no podría hacer solo. Gradualmente, internaliza ese conocimiento.</p>
+</div>
+<div class="highlight" style="margin-top:2rem">
+<h3>🎯 Aplicación para USICAMM</h3>
+<p>Se vincula con:</p>
+<ul>
+<li>Trabajo colaborativo</li>
+<li>Tutoría entre pares</li>
+<li>Evaluación formativa</li>
+<li>Mediación pedagógica</li>
+</ul>
+</div>
+</div>
+
+<div class="slide" id="slide6">
+<h2>3️⃣ Jerome Bruner - Aprendizaje por Descubrimiento</h2>
+<div class="bruner-box">
+<h3>🔎 Idea Central</h3>
+<p>El alumno aprende mejor cuando <strong>descubre los conceptos por sí mismo</strong>, guiado por el docente.</p>
+</div>
+<div class="card">
+<h3>🧠 Conceptos Clave</h3>
+<div class="grid">
+<div class="box">
+<div class="icon">🔍</div>
+<h3>Aprendizaje por Descubrimiento</h3>
+<p>El alumno es protagonista activo</p>
+</div>
+<div class="box">
+<div class="icon">🌀</div>
+<h3>Currículo en Espiral</h3>
+<p>Volver al mismo tema con mayor profundidad</p>
+</div>
+</div>
+</div>
+<div class="card">
+<h3>Tres Tipos de Representaciones:</h3>
+<ul>
+<li><strong>Enactiva:</strong> A través de la acción (manipular objetos)</li>
+<li><strong>Icónica:</strong> A través de imágenes</li>
+<li><strong>Simbólica:</strong> A través del lenguaje abstracto</li>
+</ul>
+</div>
+</div>
+
+<div class="slide" id="slide7">
+<h2>Bruner - Ejemplo en Secundaria</h2>
+<div class="highlight">
+<h3>📚 Tema: Leyes de Newton</h3>
+</div>
+<div class="card">
+<h3>❌ Método tradicional:</h3>
+<p>El docente da las definiciones de las tres leyes y los alumnos las memorizan.</p>
+</div>
+<div class="bruner-box">
+<h3>✅ Método por Descubrimiento (Bruner):</h3>
+<ol>
+<li>Se hacen <strong>experimentos sencillos</strong> (carrito, rampa, diferentes masas)</li>
+<li>Los alumnos <strong>observan resultados</strong></li>
+<li><strong>Formulan hipótesis</strong> sobre lo que sucede</li>
+<li><strong>Llegan a la ley física</strong> por deducción</li>
+<li>El docente <strong>guía, no impone</strong> las respuestas</li>
+</ol>
+</div>
+<div class="highlight" style="margin-top:2rem">
+<h3>🎯 Aplicación para USICAMM</h3>
+<p>Se relaciona con:</p>
+<ul>
+<li>Metodologías activas</li>
+<li>Aprendizaje basado en proyectos</li>
+<li>Indagación científica</li>
+</ul>
+</div>
+</div>
+
+<div class="slide" id="slide8">
+<h2>4️⃣ Albert Bandura - Aprendizaje Social</h2>
+<div class="bandura-box">
+<h3>🔎 Idea Central</h3>
+<p><strong>Aprendemos observando a otros.</strong></p>
+<p style="margin-top:1rem">No todo aprendizaje ocurre por experiencia directa; también aprendemos por <strong>modelado</strong>.</p>
+</div>
+<div class="card">
+<h3>🧠 Conceptos Clave</h3>
+<div class="grid">
+<div class="box">
+<div class="icon">👀</div>
+<h3>Aprendizaje Vicario</h3>
+<p>Aprender observando las consecuencias de las acciones de otros</p>
+</div>
+<div class="box">
+<div class="icon">🎭</div>
+<h3>Modelado</h3>
+<p>Imitar comportamientos observados en modelos</p>
+</div>
+<div class="box">
+<div class="icon">💪</div>
+<h3>Autoeficacia</h3>
+<p>Creencia en la propia capacidad para lograr algo</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide9">
+<h2>Bandura - Ejemplo en Secundaria</h2>
+<div class="highlight">
+<h3>📚 Ejemplo: Participación en Clase</h3>
+</div>
+<div class="bandura-box">
+<h3>✅ Aprendizaje Social (Bandura):</h3>
+<p>Si un estudiante observa que:</p>
+<ol>
+<li>Un <strong>compañero participa</strong> activamente en clase</li>
+<li>Recibe <strong>reconocimiento positivo</strong> del docente</li>
+<li>Es más probable que <strong>imite esa conducta</strong></li>
+</ol>
+</div>
+<div class="card" style="margin-top:2rem">
+<h3>También aplica en:</h3>
+<ul>
+<li><strong>Resolución pacífica de conflictos:</strong> Observar cómo otros resuelven problemas sin violencia</li>
+<li><strong>Conductas de respeto:</strong> Modelar el comportamiento que queremos ver</li>
+<li><strong>Hábitos de estudio:</strong> Ver a compañeros exitosos y sus estrategias</li>
+</ul>
+</div>
+<div class="highlight" style="margin-top:2rem">
+<h3>🎯 Aplicación para USICAMM</h3>
+<p>Se vincula con:</p>
+<ul>
+<li>Clima escolar</li>
+<li>Liderazgo docente</li>
+<li>Educación socioemocional</li>
+<li>Desarrollo de habilidades sociales</li>
+</ul>
+</div>
+</div>
+
+<div class="slide" id="slide10">
+<h2>📊 Comparación de las Teorías</h2>
+<table>
+<thead>
+<tr>
+<th>Teoría</th>
+<th>Autor</th>
+<th>Enfoque Principal</th>
+<th>Clave del Aprendizaje</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Constructivismo Cognitivo</strong></td>
+<td>Piaget</td>
+<td>Individual - Cognitivo</td>
+<td>Construir conocimiento mediante exploración</td>
+</tr>
+<tr>
+<td><strong>Constructivismo Sociocultural</strong></td>
+<td>Vygotsky</td>
+<td>Social - Cultural</td>
+<td>Aprender con otros (ZDP y andamiaje)</td>
+</tr>
+<tr>
+<td><strong>Aprendizaje por Descubrimiento</strong></td>
+<td>Bruner</td>
+<td>Descubrimiento guiado</td>
+<td>Descubrir conceptos por sí mismo</td>
+</tr>
+<tr>
+<td><strong>Aprendizaje Social</strong></td>
+<td>Bandura</td>
+<td>Observación - Imitación</td>
+<td>Aprender observando modelos</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="slide" id="slide11">
+<h2>🎓 Relación con Promoción Horizontal USICAMM</h2>
+<div class="section-box">
+<h3>Estas teorías fundamentan:</h3>
+</div>
+<div class="grid">
+<div class="box">
+<div class="icon">📝</div>
+<h3>Planeación Didáctica Argumentada</h3>
+<p>Justificar decisiones pedagógicas con base teórica</p>
+</div>
+<div class="box">
+<div class="icon">🎯</div>
+<h3>Metodologías Activas</h3>
+<p>Estrategias centradas en el estudiante</p>
+</div>
+<div class="box">
+<div class="icon">📊</div>
+<h3>Evaluación Formativa</h3>
+<p>Seguimiento del proceso de aprendizaje</p>
+</div>
+<div class="box">
+<div class="icon">👥</div>
+<h3>Enfoque Centrado en el Estudiante</h3>
+<p>El alumno como constructor activo</p>
+</div>
+<div class="box">
+<div class="icon">🤝</div>
+<h3>Trabajo Colaborativo</h3>
+<p>Aprendizaje social y cooperativo</p>
+</div>
+<div class="box">
+<div class="icon">❤️</div>
+<h3>Desarrollo Socioemocional</h3>
+<p>Formación integral del estudiante</p>
+</div>
+</div>
+<div class="highlight" style="margin-top:2rem">
+<p><strong>En entrevistas o proyectos de mejora:</strong> Puede argumentar su práctica docente con estas bases teóricas sólidas.</p>
+</div>
+</div>
+
+<div class="slide" id="slide12">
+<h2>Resumen y Conclusión</h2>
+<div class="grid">
+<div class="box" style="border-top-color:#3498db">
+<div class="author-name" style="color:#2874a6">Piaget</div>
+<p><strong>"El niño construye"</strong></p>
+<p>El conocimiento se construye activamente</p>
+</div>
+<div class="box" style="border-top-color:#16a085">
+<div class="author-name" style="color:#117a65">Vygotsky</div>
+<p><strong>"Aprendemos juntos"</strong></p>
+<p>El aprendizaje es social y cultural</p>
+</div>
+<div class="box" style="border-top-color:#9b59b6">
+<div class="author-name" style="color:#76448a">Bruner</div>
+<p><strong>"Descubrir es aprender"</strong></p>
+<p>El descubrimiento guiado es clave</p>
+</div>
+<div class="box" style="border-top-color:#e67e22">
+<div class="author-name" style="color:#d35400">Bandura</div>
+<p><strong>"Observar es aprender"</strong></p>
+<p>Aprendemos de los modelos</p>
+</div>
+</div>
+<div class="section-box" style="margin-top:2rem">
+<h3>💡 Para la práctica docente</h3>
+<p>Todas estas teorías se complementan y pueden aplicarse simultáneamente en el aula:</p>
+<ul>
+<li>Diseñar situaciones de <strong>exploración</strong> (Piaget)</li>
+<li>Promover el <strong>trabajo colaborativo</strong> (Vygotsky)</li>
+<li>Facilitar el <strong>descubrimiento</strong> (Bruner)</li>
+<li>Ser un <strong>modelo positivo</strong> (Bandura)</li>
+</ul>
+</div>
+</div>
+
+</div>
+<div class="controls">
+<button onclick="prevSlide()">← Anterior</button>
+<button onclick="nextSlide()">Siguiente →</button>
+</div>
+<script>
+let currentSlide=1;const totalSlides=12;
+function showSlide(n){
+const slides=document.querySelectorAll('.slide');
+slides.forEach(slide=>slide.classList.remove('active'));
+if(n>totalSlides)currentSlide=totalSlides;
+else if(n<1)currentSlide=1;
+else currentSlide=n;
+document.getElementById('slide'+currentSlide).classList.add('active');
+document.getElementById('counter').textContent=currentSlide+' / '+totalSlides;
+window.scrollTo({top:0,behavior:'smooth'});
+}
+function nextSlide(){showSlide(currentSlide+1)}
+function prevSlide(){showSlide(currentSlide-1)}
+document.addEventListener('keydown',function(e){
+if(e.key==='ArrowRight')nextSlide();
+if(e.key==='ArrowLeft')prevSlide();
+});
+showSlide(1);
+</script>
+</body>
+</html>

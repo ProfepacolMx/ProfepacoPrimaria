@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuerdo 14/12/23 - Erradicación del Acoso Escolar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #4A90E2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.8rem;
+            color: #4A90E2;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            color: #4A90E2;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #FFD700;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            color: #5DADE2;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .profesor-header {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            font-size: 1rem;
+            color: #4A90E2;
+            z-index: 1000;
+        }
+
+        .professor-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .professor-box h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .author-box {
+            background: linear-gradient(135deg, #87CEEB 0%, #4A90E2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #555;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 5px solid #4A90E2;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #4A90E2;
+            transition: transform 0.3s ease;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+        }
+
+        .highlight {
+            background: #E3F2FD;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #5DADE2;
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        button {
+            background: #4A90E2;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #357ABD;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(53, 122, 189, 0.4);
+        }
+
+        .counter {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #4A90E2;
+            z-index: 1000;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .tipo-box {
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .tipo-box h3 {
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .tipo-box p {
+            color: white;
+        }
+
+        .principio-box {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            border-left: 4px solid #4A90E2;
+            font-size: 1.1rem;
+        }
+
+        .proceso-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .proceso-box h3 {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .proceso-box p {
+            color: white;
+        }
+
+        strong {
+            color: #4A90E2;
+        }
+
+        .portada {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .portada h1 {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .portada .icon {
+            font-size: 5rem;
+        }
+
+        .fecha-box {
+            background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);
+            color: #333;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .profesor-header {
+                font-size: 0.8rem;
+                padding: 0.8rem 1rem;
+                left: 1rem;
+                top: 1rem;
+            }
+
+            .counter {
+                right: 1rem;
+                top: 1rem;
+                font-size: 1rem;
+                padding: 0.8rem 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .portada h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profesor-header">👨‍🏫 Profesor Francisco De Jesus Luna Benitez</div>
+    <div class="counter" id="counter">1 / 14</div>
+
+    <div class="container">
+        <!-- SLIDE 1: PORTADA -->
+        <div class="slide active" id="slide1">
+            <div class="portada">
+                <div class="icon">🏫</div>
+                <h1>ACUERDO 14/12/23</h1>
+                <div class="subtitle">Lineamientos para el Protocolo de Erradicación del Acoso Escolar</div>
+                <div class="fecha-box">
+                    📅 Publicado: 7 de diciembre de 2023
+                </div>
+                <div class="professor-box" style="margin-top: 2rem;">
+                    <h3>Educación Básica</h3>
+                    <p style="color: white; font-size: 1.2rem;">Preescolar • Primaria • Secundaria</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: PROPÓSITO -->
+        <div class="slide" id="slide2">
+            <h2>Propósito del Acuerdo</h2>
+            
+            <div class="highlight">
+                <div class="icon">🎯</div>
+                <h3>Objetivo Principal</h3>
+                <p>Establecer <strong>acciones para la prevención, atención y medidas de no repetición</strong> que permitan la erradicación del acoso escolar en los planteles educativos de tipo básico.</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">🛡️</div>
+                    <h3>Prevención</h3>
+                    <p>Medidas anticipadas para evitar situaciones de acoso escolar</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">👁️</div>
+                    <h3>Atención</h3>
+                    <p>Detección, notificación, intervención y seguimiento de casos</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🔄</div>
+                    <h3>No Repetición</h3>
+                    <p>Garantizar que los actos de acoso no vuelvan a ocurrir</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: ¿QUÉ ES ACOSO ESCOLAR? -->
+        <div class="slide" id="slide3">
+            <h2>¿Qué es el Acoso Escolar?</h2>
+            
+            <div class="highlight">
+                <p><strong>Conducta intencional, direccionada, frecuente y en desigualdad de poder</strong> que se ejerce entre educandos en el entorno escolar, con objeto de someter, explotar y causar daño.</p>
+            </div>
+
+            <h3>Tres Características Distintivas:</h3>
+
+            <div class="grid">
+                <div class="tipo-box">
+                    <div class="icon">🎯</div>
+                    <h3>1. Intención</h3>
+                    <p>Voluntad de someter, explotar y causar daño</p>
+                </div>
+                
+                <div class="tipo-box">
+                    <div class="icon">🔁</div>
+                    <h3>2. Repetición</h3>
+                    <p>Actitud o conducta violenta persistente</p>
+                </div>
+                
+                <div class="tipo-box">
+                    <div class="icon">⏱️</div>
+                    <h3>3. Duración</h3>
+                    <p>Tiempo transcurrido desde el inicio de las acciones</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: TIPOS DE ACOSO ESCOLAR -->
+        <div class="slide" id="slide4">
+            <h2>Tipos de Acoso Escolar</h2>
+            
+            <div class="card">
+                <h3>🤛 Acoso Físico</h3>
+                <p>Agresiones repetidas: golpes, heridas, zancadillas, patadas, empujones, encierros, coacción o daño a bienes personales.</p>
+            </div>
+
+            <div class="card">
+                <h3>💔 Acoso Socioemocional</h3>
+                <p>Comportamientos dirigidos a lesionar emocionalmente: aislar, marginar, ignorar, dar mala imagen y avergonzar en público.</p>
+            </div>
+
+            <div class="card">
+                <h3>💬 Acoso Verbal</h3>
+                <p>Expresiones con palabras desagradables o agresivas: burlas, insultos, sobrenombres, chismes o amenazas para humillar o intimidar.</p>
+            </div>
+
+            <div class="card">
+                <h3>📱 Ciberacoso</h3>
+                <p>Publicación o envío de mensajes electrónicos (textos, imágenes, videos) para amenazar, atacar, difundir rumores o humillar a través de plataformas digitales.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: PRINCIPIOS RECTORES (PARTE 1) -->
+        <div class="slide" id="slide5">
+            <h2>Principios Rectores (1/2)</h2>
+            
+            <div class="highlight">
+                <p style="text-align: center;">Los lineamientos se rigen bajo <strong>16 principios fundamentales</strong> para garantizar los derechos de niñas, niños y adolescentes.</p>
+            </div>
+
+            <div class="grid">
+                <div class="principio-box">
+                    ⭐ Interés superior de la niñez
+                </div>
+                <div class="principio-box">
+                    🤝 No discriminación
+                </div>
+                <div class="principio-box">
+                    🌈 Inclusión
+                </div>
+                <div class="principio-box">
+                    ⚖️ Igualdad sustantiva
+                </div>
+                <div class="principio-box">
+                    🗣️ Participación infantil y adolescente
+                </div>
+                <div class="principio-box">
+                    🌍 Interculturalidad
+                </div>
+                <div class="principio-box">
+                    👨‍👩‍👧‍👦 Corresponsabilidad
+                </div>
+                <div class="principio-box">
+                    👤 Principio pro persona
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: PRINCIPIOS RECTORES (PARTE 2) -->
+        <div class="slide" id="slide6">
+            <h2>Principios Rectores (2/2)</h2>
+            
+            <div class="grid">
+                <div class="principio-box">
+                    🌱 Adecuado desarrollo evolutivo de la personalidad
+                </div>
+                <div class="principio-box">
+                    💎 Respeto, protección y garantía de la dignidad
+                </div>
+                <div class="principio-box">
+                    ☮️ Acceso a una vida libre de violencia
+                </div>
+                <div class="principio-box">
+                    ⚖️ Acceso a la justicia
+                </div>
+                <div class="principio-box">
+                    🔒 Confidencialidad
+                </div>
+                <div class="principio-box">
+                    ✅ Debida diligencia
+                </div>
+                <div class="principio-box">
+                    ⚡ Celeridad
+                </div>
+                <div class="principio-box">
+                    🛡️ No revictimización
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: ENFOQUES TRANSVERSALES -->
+        <div class="slide" id="slide7">
+            <h2>Enfoques Transversales</h2>
+            
+            <div class="highlight">
+                <p style="text-align: center;">Perspectivas que guían la interpretación y aplicación de los lineamientos:</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">❤️</div>
+                    <h3>Enfoque Humanista</h3>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🏘️</div>
+                    <h3>Enfoque Comunitario</h3>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">⚖️</div>
+                    <h3>Perspectiva de Género</h3>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🌟</div>
+                    <h3>Enfoque de Derechos Humanos</h3>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">👶</div>
+                    <h3>Enfoque de Derechos de NNA</h3>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🛡️</div>
+                    <h3>Enfoque Centrado en Víctimas</h3>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🩹</div>
+                    <h3>Enfoque de Acción sin Daño</h3>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🔍</div>
+                    <h3>Enfoque Diferencial y Especializado</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: MEDIDAS PREVENTIVAS -->
+        <div class="slide" id="slide8">
+            <h2>Medidas Preventivas</h2>
+            
+            <div class="card">
+                <h3>📋 Respuesta Normativa</h3>
+                <ul>
+                    <li>Emisión del Protocolo de erradicación del acoso escolar</li>
+                    <li>Difusión del marco de convivencia con derechos y responsabilidades</li>
+                    <li>Actualización del marco jurídico local</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>📚 Formación Continua</h3>
+                <ul>
+                    <li>Cursos especializados en cultura de paz y resolución de conflictos</li>
+                    <li>Capacitación en derechos humanos y desarrollo socioemocional</li>
+                    <li>Programas para todo el personal educativo</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>👥 Participación Comunitaria</h3>
+                <ul>
+                    <li>Campañas de sensibilización</li>
+                    <li>Talleres para madres, padres y tutores</li>
+                    <li>Jornadas escolares con actividades permanentes</li>
+                    <li>Mecanismos de participación efectiva de NNA</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: PROCESO DE ATENCIÓN - DETECCIÓN -->
+        <div class="slide" id="slide9">
+            <h2>Proceso de Atención: 1. Detección</h2>
+            
+            <div class="proceso-box">
+                <div class="icon">🔍</div>
+                <h3>Detección</h3>
+                <p>Observación y reconocimiento de comportamientos que indican acoso escolar</p>
+            </div>
+
+            <div class="highlight">
+                <h3>¿Quién puede detectar?</h3>
+                <ul>
+                    <li>Educandos (víctimas o testigos)</li>
+                    <li>Madres, padres o tutores</li>
+                    <li>Personal docente</li>
+                    <li>Autoridades escolares</li>
+                    <li>Espectadores</li>
+                </ul>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">📋</div>
+                    <h3>Herramientas</h3>
+                    <p>Guías de observación de indicadores y factores de riesgo</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">👥</div>
+                    <h3>Dinámicas</h3>
+                    <p>Actividades grupales periódicas para detección oportuna</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: PROCESO DE ATENCIÓN - NOTIFICACIÓN -->
+        <div class="slide" id="slide10">
+            <h2>Proceso de Atención: 2. Notificación</h2>
+            
+            <div class="proceso-box">
+                <div class="icon">📢</div>
+                <h3>Notificación</h3>
+                <p>Proceso de informar la detección a las autoridades competentes</p>
+            </div>
+
+            <h3>Vías de Notificación:</h3>
+
+            <div class="grid">
+                <div class="tipo-box">
+                    <div class="icon">📝</div>
+                    <h3>Quejas</h3>
+                    <p>Notificación verbal, digital o escrita de la posible víctima, madres, padres o tutores</p>
+                </div>
+                
+                <div class="tipo-box">
+                    <div class="icon">🗣️</div>
+                    <h3>Denuncia</h3>
+                    <p>Notificación presentada por terceros ante autoridades educativas</p>
+                </div>
+                
+                <div class="tipo-box">
+                    <div class="icon">⚖️</div>
+                    <h3>Solicitud de Atención</h3>
+                    <p>Notificación de organismos de Derechos Humanos o procuración de justicia</p>
+                </div>
+            </div>
+
+            <div class="highlight">
+                <p><strong>Principios clave:</strong> No revictimización, confidencialidad, no discriminación, no criminalización e interés superior de la niñez.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: PROCESO DE ATENCIÓN - INTERVENCIÓN -->
+        <div class="slide" id="slide11">
+            <h2>Proceso de Atención: 3. Intervención</h2>
+            
+            <div class="proceso-box">
+                <div class="icon">🤝</div>
+                <h3>Intervención</h3>
+                <p>Respuesta de las autoridades al recibir una notificación de acoso escolar</p>
+            </div>
+
+            <h3>Acciones de Intervención:</h3>
+
+            <div class="card">
+                <h3>📄 Documentación</h3>
+                <ul>
+                    <li>Elaboración de actas de hechos</li>
+                    <li>Redacción de carta de compromisos del educando</li>
+                    <li>Carta de compromisos de madres, padres o tutores</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🛡️ Protección y Acompañamiento</h3>
+                <ul>
+                    <li>Establecer reglas mínimas de convivencia</li>
+                    <li>Implementar prácticas restaurativas</li>
+                    <li>Medidas de acompañamiento a involucrados</li>
+                    <li>Canalización ante autoridades competentes</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <p><strong>Importante:</strong> Si hay riesgo a la integridad o posible delito, se debe dar parte a las autoridades competentes de inmediato.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: PROCESO DE ATENCIÓN - SEGUIMIENTO -->
+        <div class="slide" id="slide12">
+            <h2>Proceso de Atención: 4. Seguimiento</h2>
+            
+            <div class="proceso-box">
+                <div class="icon">📊</div>
+                <h3>Seguimiento</h3>
+                <p>Monitoreo continuo del caso para verificar cumplimiento de acuerdos</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">👨‍🏫</div>
+                    <h3>Acompañamiento Pedagógico</h3>
+                    <p>Apoyo continuo a los involucrados en el proceso educativo</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">📝</div>
+                    <h3>Documentación</h3>
+                    <p>Bitácoras del progreso y evolución del caso</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">✅</div>
+                    <h3>Verificación</h3>
+                    <p>Cumplimiento de acuerdos establecidos</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">💬</div>
+                    <h3>Comunicación</h3>
+                    <p>Ruta de comunicación con familias e instancias</p>
+                </div>
+            </div>
+
+            <div class="highlight">
+                <h3>Registro Estatal</h3>
+                <p>Sistema de registro de casos atendidos para contar con información sistematizada y estadística que permita diseñar mejores estrategias.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: MEDIDAS DE NO REPETICIÓN -->
+        <div class="slide" id="slide13">
+            <h2>Medidas de No Repetición</h2>
+            
+            <div class="highlight">
+                <div class="icon">🔄</div>
+                <h3>Finalidad</h3>
+                <p>Evitar que se repitan actos de acoso escolar y lograr el restablecimiento de la sana convivencia libre de violencia en el ámbito educativo.</p>
+            </div>
+
+            <div class="card">
+                <h3>🎯 Involucrados</h3>
+                <p>Las medidas deben involucrar a:</p>
+                <ul>
+                    <li>La víctima</li>
+                    <li>Educandos que ejercieron actos de acoso</li>
+                    <li>Comunidad escolar en general</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>📋 Diseño de Medidas</h3>
+                <ul>
+                    <li>Identificar impactos individuales y escolares</li>
+                    <li>Detectar patrones de acoso similares</li>
+                    <li>Diseñar medidas según necesidades restaurativas</li>
+                    <li>Garantizar dignidad y no revictimización</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <p><strong>Principios:</strong> Respeto a la dignidad, no revictimización, evitar estigmatización y no vulneración de otros derechos.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: CONCLUSIÓN -->
+        <div class="slide" id="slide14">
+            <h2>Implementación del Acuerdo</h2>
+            
+            <div class="highlight">
+                <h3>Responsabilidad Compartida</h3>
+                <p>Las Autoridades Educativas Locales tienen <strong>90 días</strong> a partir de la publicación para emitir o actualizar sus protocolos locales de erradicación del acoso escolar.</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">📅</div>
+                    <h3>Entrada en Vigor</h3>
+                    <p>8 de diciembre de 2023</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">📍</div>
+                    <h3>Ámbito</h3>
+                    <p>Educación Básica en todo el país</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🤝</div>
+                    <h3>Coordinación</h3>
+                    <p>Interinstitucional y comunitaria</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">📊</div>
+                    <h3>Monitoreo</h3>
+                    <p>Sistema nacional de registro</p>
+                </div>
+            </div>
+
+            <div class="author-box" style="margin-top: 2rem;">
+                <div class="icon">✨</div>
+                <h3>Por una Educación Libre de Violencia</h3>
+                <p style="color: white; margin-top: 1rem;">Acuerdo 14/12/23 - Secretaría de Educación Pública</p>
+                <p style="color: white; font-size: 1rem; margin-top: 0.5rem;">Construyendo escuelas seguras, pacíficas e inclusivas</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevSlide()">← Anterior</button>
+        <button onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 14;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => slide.classList.remove('active'));
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            else if (n < 1) currentSlide = 1;
+            else currentSlide = n;
+
+            document.getElementById('slide' + currentSlide).classList.add('active');
+            document.getElementById('counter').textContent = currentSlide + ' / ' + totalSlides;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(1);
+    </script>
+</body>
+</html>

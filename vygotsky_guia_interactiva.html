@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>La Arquitectura del Aprendizaje — Guía Interactiva Vygotsky</title>
+<style>
+  :root {
+    --navy:   #0D1B3E;
+    --navy2:  #142250;
+    --terra:  #C25B3A;
+    --amber:  #D4A83A;
+    --cream:  #F5F0E6;
+    --cream2: #EDE7D8;
+    --white:  #FFFFFF;
+    --text:   #1A1A2E;
+    --muted:  #5C6080;
+    --green:  #2ECC71;
+    --red:    #E74C3C;
+    --radius: 14px;
+    --shadow: 0 8px 32px rgba(13,27,62,.15);
+    --trans:  all .4s cubic-bezier(.4,0,.2,1);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Georgia', serif;
+    background: var(--navy);
+    color: var(--text);
+  }
+
+  /* ── SCREENS ─────────────────────────────── */
+  .screen {
+    position: absolute; inset: 0;
+    display: none; flex-direction: column;
+    background: var(--cream);
+    overflow: hidden;
+    animation: fadeIn .45s ease;
+  }
+  .screen.active { display: flex; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TOP NAV BAR ─────────────────────────── */
+  .topbar {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--navy);
+    padding: clamp(8px,1.5vw,14px) clamp(14px,3vw,28px);
+    gap: 10px;
+  }
+  .topbar-title {
+    color: var(--amber); font-size: clamp(.7rem,.9vw+.3rem,.95rem);
+    font-style: italic; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .topbar-counter {
+    color: var(--white); font-size: clamp(.65rem,.7vw+.3rem,.85rem);
+    background: rgba(255,255,255,.12); border-radius: 20px;
+    padding: 3px 12px; white-space: nowrap; flex-shrink: 0;
+  }
+  .progress-bar-wrap { flex: 1; height: 5px; background: rgba(255,255,255,.15); border-radius: 10px; min-width: 40px; }
+  .progress-bar { height: 100%; background: var(--amber); border-radius: 10px; transition: width .5s ease; }
+
+  /* ── NAV BUTTONS ─────────────────────────── */
+  .nav-row {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; gap: clamp(8px,1.5vw,16px);
+    padding: clamp(6px,1vw,12px) clamp(14px,3vw,28px);
+    background: var(--navy2);
+  }
+  .btn {
+    font-family: inherit; cursor: pointer; border: none; outline: none;
+    border-radius: 50px; font-size: clamp(.75rem,.85vw+.3rem,.95rem);
+    padding: clamp(8px,1vw,12px) clamp(16px,2.5vw,28px);
+    font-weight: 700; transition: var(--trans); letter-spacing: .03em;
+  }
+  .btn-nav { background: var(--terra); color: var(--white); }
+  .btn-nav:hover { background: #d96843; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(194,91,58,.4); }
+  .btn-nav:disabled { background: rgba(255,255,255,.15); color: rgba(255,255,255,.4); cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-secondary { background: transparent; color: var(--amber); border: 2px solid var(--amber); }
+  .btn-secondary:hover { background: var(--amber); color: var(--navy); }
+  .btn-menu { background: rgba(255,255,255,.1); color: var(--white); font-size: clamp(.65rem,.7vw+.25rem,.8rem); padding: 8px 14px; }
+  .btn-menu:hover { background: rgba(255,255,255,.22); }
+
+  /* ── CONTENT AREA ────────────────────────── */
+  .content {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding: clamp(14px,2vw,28px) clamp(16px,3vw,40px);
+    scroll-behavior: smooth;
+  }
+  .content::-webkit-scrollbar { width: 5px; }
+  .content::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 10px; }
+
+  /* ── COVER ───────────────────────────────── */
+  #s0 { background: var(--navy); }
+  .cover-body {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: clamp(20px,4vw,60px);
+    text-align: center; gap: clamp(12px,2vw,24px);
+    position: relative; overflow: hidden;
+  }
+  .cover-deco {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,168,58,.18) 0%, transparent 70%);
+  }
+  .cover-deco.d1 { width: 60vmin; height: 60vmin; top: -15vmin; right: -15vmin; }
+  .cover-deco.d2 { width: 40vmin; height: 40vmin; bottom: -10vmin; left: -10vmin; background: radial-gradient(circle, rgba(194,91,58,.15) 0%, transparent 70%); }
+  .cover-tag {
+    display: inline-block; background: var(--terra); color: var(--white);
+    font-size: clamp(.65rem,.7vw+.25rem,.85rem); border-radius: 50px;
+    padding: 5px 18px; letter-spacing: .1em; text-transform: uppercase;
+  }
+  .cover-title {
+    color: var(--white); font-size: clamp(1.8rem,4vw+.5rem,4rem);
+    line-height: 1.1; font-style: italic;
+    text-shadow: 0 4px 24px rgba(0,0,0,.4);
+  }
+  .cover-title span { color: var(--amber); }
+  .cover-sub {
+    color: rgba(255,255,255,.75); font-size: clamp(.85rem,1vw+.3rem,1.2rem);
+    max-width: 600px; line-height: 1.6;
+  }
+  .cover-author {
+    color: var(--amber); font-size: clamp(.8rem,.9vw+.25rem,1rem);
+    margin-top: 4px; font-style: italic;
+  }
+  .cover-btn {
+    margin-top: 8px;
+    background: var(--amber); color: var(--navy); border: none;
+    font-size: clamp(.85rem,1vw+.2rem,1.1rem);
+    padding: clamp(10px,1.5vw,16px) clamp(28px,4vw,52px);
+    border-radius: 50px; cursor: pointer; font-weight: 900;
+    transition: var(--trans); letter-spacing: .04em;
+    font-family: inherit;
+  }
+  .cover-btn:hover { background: #f0c040; transform: scale(1.06); box-shadow: 0 8px 28px rgba(212,168,58,.4); }
+
+  /* ── INDEX MODAL ─────────────────────────── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(13,27,62,.88); z-index: 100;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--cream); border-radius: 18px;
+    padding: clamp(18px,3vw,32px); max-width: 640px; width: 100%;
+    max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,.5);
+  }
+  .modal-box h2 { color: var(--navy); font-size: clamp(1rem,1.5vw+.3rem,1.4rem); margin-bottom: 14px; }
+  .modal-close { float: right; background: var(--terra); color: #fff; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 1rem; line-height: 30px; text-align: center; }
+  .index-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 8px; margin-top: 10px; }
+  .index-item {
+    background: var(--white); border-radius: 10px; padding: 10px 14px;
+    cursor: pointer; border: 2px solid transparent; transition: var(--trans);
+    font-size: clamp(.7rem,.8vw+.2rem,.9rem); font-family: inherit; text-align: left;
+    color: var(--text);
+  }
+  .index-item:hover { border-color: var(--amber); background: #fffaee; }
+  .index-item .idx { color: var(--terra); font-weight: 700; margin-right: 6px; }
+
+  /* ── SECTION HEADER ──────────────────────── */
+  .sec-header {
+    display: flex; align-items: flex-start; gap: clamp(10px,1.5vw,18px);
+    margin-bottom: clamp(14px,2vw,24px);
+  }
+  .sec-icon {
+    flex-shrink: 0; width: clamp(42px,5vw,58px); height: clamp(42px,5vw,58px);
+    border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    font-size: clamp(1.2rem,2vw,1.7rem);
+    background: var(--navy); color: var(--white);
+  }
+  .sec-titles h1 {
+    font-size: clamp(1.2rem,2vw+.4rem,2rem); color: var(--navy); line-height: 1.2;
+  }
+  .sec-titles p {
+    font-size: clamp(.78rem,.8vw+.25rem,.95rem); color: var(--muted);
+    margin-top: 4px; font-style: italic;
+  }
+
+  /* ── CARDS ───────────────────────────────── */
+  .card-grid { display: grid; gap: clamp(10px,1.5vw,16px); }
+  .card-grid.cols2 { grid-template-columns: repeat(auto-fit, minmax(min(100%,240px),1fr)); }
+  .card-grid.cols3 { grid-template-columns: repeat(auto-fit, minmax(min(100%,190px),1fr)); }
+  .card-grid.cols4 { grid-template-columns: repeat(auto-fit, minmax(min(100%,170px),1fr)); }
+  .card {
+    background: var(--white); border-radius: var(--radius);
+    padding: clamp(14px,2vw,22px); box-shadow: var(--shadow);
+    border-top: 4px solid var(--amber); transition: var(--trans);
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(13,27,62,.18); }
+  .card.navy { background: var(--navy); border-color: var(--amber); }
+  .card.navy h3, .card.navy p, .card.navy li { color: var(--white); }
+  .card.terra { background: var(--terra); border-color: #e8805e; }
+  .card.terra h3, .card.terra p { color: var(--white); }
+  .card h3 { font-size: clamp(.85rem,1vw+.25rem,1.1rem); margin-bottom: 8px; color: var(--navy); }
+  .card p, .card li { font-size: clamp(.75rem,.75vw+.25rem,.9rem); line-height: 1.6; color: var(--muted); }
+  .card ul { padding-left: 18px; }
+  .card .card-icon { font-size: clamp(1.4rem,2.5vw,2rem); margin-bottom: 8px; }
+
+  /* ── HIGHLIGHT BOX ───────────────────────── */
+  .highlight {
+    background: var(--navy); color: var(--white);
+    border-radius: var(--radius); padding: clamp(14px,2vw,22px);
+    margin: clamp(10px,1.5vw,16px) 0;
+    border-left: 5px solid var(--amber);
+  }
+  .highlight p { font-size: clamp(.8rem,.9vw+.25rem,1.05rem); line-height: 1.7; color: rgba(255,255,255,.9); }
+  .highlight strong { color: var(--amber); }
+
+  /* ── STEPS / TIMELINE ────────────────────── */
+  .steps { display: flex; flex-direction: column; gap: clamp(10px,1.5vw,14px); }
+  .step {
+    display: flex; gap: clamp(10px,1.5vw,16px); align-items: flex-start;
+    background: var(--white); border-radius: var(--radius);
+    padding: clamp(12px,1.5vw,18px); box-shadow: var(--shadow);
+  }
+  .step-num {
+    flex-shrink: 0; width: clamp(32px,4vw,44px); height: clamp(32px,4vw,44px);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    background: var(--navy); color: var(--amber);
+    font-size: clamp(.85rem,1vw+.2rem,1.1rem); font-weight: 900;
+  }
+  .step-body h4 { font-size: clamp(.85rem,.9vw+.25rem,1.05rem); color: var(--navy); margin-bottom: 4px; }
+  .step-body p  { font-size: clamp(.72rem,.75vw+.22rem,.88rem); color: var(--muted); line-height: 1.6; }
+
+  /* ── TABS ────────────────────────────────── */
+  .tabs-wrap { display: flex; flex-direction: column; gap: 0; }
+  .tabs-btns {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 14px;
+  }
+  .tab-btn {
+    background: var(--cream2); color: var(--navy); border: 2px solid transparent;
+    border-radius: 8px; padding: clamp(6px,1vw,10px) clamp(10px,1.5vw,18px);
+    font-size: clamp(.7rem,.75vw+.22rem,.88rem); cursor: pointer;
+    font-family: inherit; font-weight: 700; transition: var(--trans);
+  }
+  .tab-btn.active { background: var(--navy); color: var(--amber); }
+  .tab-btn:hover:not(.active) { border-color: var(--amber); }
+  .tab-panel { display: none; animation: fadeIn .3s ease; }
+  .tab-panel.active { display: block; }
+
+  /* ── ACCORDION ───────────────────────────── */
+  .accordion { display: flex; flex-direction: column; gap: 8px; }
+  .acc-item { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .acc-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: clamp(12px,1.5vw,18px) clamp(14px,2vw,22px);
+    cursor: pointer; background: var(--white); border: none;
+    width: 100%; text-align: left; font-family: inherit;
+    transition: var(--trans);
+  }
+  .acc-head:hover { background: #f8f4eb; }
+  .acc-head.open { background: var(--navy); }
+  .acc-head.open .acc-title { color: var(--amber); }
+  .acc-head.open .acc-arrow { color: var(--amber); transform: rotate(180deg); }
+  .acc-title { font-size: clamp(.82rem,.9vw+.22rem,1rem); font-weight: 700; color: var(--navy); }
+  .acc-arrow { color: var(--terra); transition: transform .3s; font-size: 1.2rem; }
+  .acc-body { display: none; padding: clamp(12px,1.5vw,18px) clamp(14px,2vw,22px); border-top: 2px solid var(--cream2); }
+  .acc-body.open { display: block; }
+  .acc-body p, .acc-body li { font-size: clamp(.75rem,.78vw+.22rem,.9rem); line-height: 1.7; color: var(--muted); }
+  .acc-body ul { padding-left: 18px; }
+
+  /* ── QUIZ ────────────────────────────────── */
+  .quiz-wrap { display: flex; flex-direction: column; gap: clamp(14px,2vw,20px); }
+  .quiz-q { background: var(--white); border-radius: var(--radius); padding: clamp(14px,2vw,22px); box-shadow: var(--shadow); }
+  .quiz-q h4 { font-size: clamp(.82rem,.9vw+.22rem,1rem); color: var(--navy); margin-bottom: 12px; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    background: var(--cream2); border: 2px solid transparent;
+    border-radius: 10px; padding: clamp(8px,1vw,12px) clamp(12px,1.5vw,18px);
+    cursor: pointer; font-size: clamp(.74rem,.78vw+.22rem,.9rem);
+    font-family: inherit; text-align: left; transition: var(--trans); color: var(--text);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--amber); background: #fffaee; }
+  .quiz-opt.correct { background: #d4f5e2; border-color: var(--green); color: #1a6b3c; font-weight: 700; }
+  .quiz-opt.wrong   { background: #fde0de; border-color: var(--red);   color: #8b1a1a; }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-feedback {
+    display: none; margin-top: 10px; padding: 10px 14px;
+    border-radius: 10px; font-size: clamp(.74rem,.78vw+.22rem,.9rem); font-weight: 700;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #d4f5e2; color: #1a6b3c; }
+  .quiz-feedback.fail { background: #fde0de; color: #8b1a1a; }
+  .quiz-score-box {
+    display: none; background: var(--navy); border-radius: var(--radius);
+    padding: clamp(16px,2.5vw,28px); text-align: center; color: var(--white);
+  }
+  .quiz-score-box.show { display: block; }
+  .quiz-score-box .score-num { font-size: clamp(2rem,5vw,4rem); color: var(--amber); font-weight: 900; }
+  .quiz-score-box p { font-size: clamp(.8rem,.9vw+.2rem,1rem); opacity: .85; margin-top: 8px; }
+
+  /* ── DIAGRAM / VISUAL ────────────────────── */
+  .visual-row {
+    display: flex; flex-wrap: wrap; gap: clamp(8px,1.5vw,14px);
+    align-items: stretch;
+  }
+  .vbox {
+    flex: 1; min-width: min(100%,160px);
+    background: var(--white); border-radius: var(--radius);
+    padding: clamp(12px,1.5vw,18px); box-shadow: var(--shadow);
+    text-align: center; transition: var(--trans);
+    border-bottom: 4px solid var(--amber);
+  }
+  .vbox:hover { transform: translateY(-3px); }
+  .vbox .vbox-icon { font-size: clamp(1.5rem,3vw,2.2rem); margin-bottom: 8px; }
+  .vbox h4 { font-size: clamp(.8rem,.9vw+.2rem,1rem); color: var(--navy); margin-bottom: 6px; }
+  .vbox p  { font-size: clamp(.7rem,.72vw+.2rem,.84rem); color: var(--muted); line-height: 1.5; }
+  .vbox.navy-v { background: var(--navy); border-color: var(--amber); }
+  .vbox.navy-v h4, .vbox.navy-v p { color: var(--white); }
+  .vbox.terra-v { background: var(--terra); border-color: #f0956e; }
+  .vbox.terra-v h4, .vbox.terra-v p { color: var(--white); }
+  .vbox.amber-v { background: var(--amber); border-color: #c89520; }
+  .vbox.amber-v h4 { color: var(--navy); }
+  .vbox.amber-v p  { color: var(--navy); opacity: .8; }
+
+  /* ── ZDP DIAGRAM ─────────────────────────── */
+  .zdp-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: clamp(10px,2vw,20px) 0;
+  }
+  .zdp-ring {
+    border-radius: 50px; text-align: center;
+    padding: clamp(8px,1.5vw,14px) clamp(16px,3vw,32px);
+    font-size: clamp(.75rem,.85vw+.2rem,.95rem); font-weight: 700;
+    transition: var(--trans);
+  }
+  .zdp-ring:hover { transform: scaleX(1.03); }
+  .zdp-ring.z1 { background: var(--navy);  color: var(--white); width: min(100%,280px); }
+  .zdp-ring.z2 { background: var(--terra); color: var(--white); width: min(100%,380px); }
+  .zdp-ring.z3 { background: var(--cream2); color: var(--muted); width: min(100%,460px); border: 2px dashed var(--muted); }
+  .zdp-label { font-size: clamp(.65rem,.7vw+.2rem,.8rem); color: var(--muted); margin-top: 2px; text-align: center; }
+
+  /* ── PHASE ROW ───────────────────────────── */
+  .phase-row { display: flex; flex-wrap: wrap; gap: clamp(8px,1.5vw,14px); }
+  .phase-box {
+    flex: 1; min-width: min(100%,160px);
+    border-radius: var(--radius); padding: clamp(12px,1.5vw,18px);
+    box-shadow: var(--shadow); position: relative; overflow: hidden;
+  }
+  .phase-box::before {
+    content: attr(data-num);
+    position: absolute; right: 10px; bottom: 6px;
+    font-size: 4rem; font-weight: 900; opacity: .08; line-height: 1;
+  }
+  .phase-box h4 { font-size: clamp(.82rem,.9vw+.2rem,1rem); margin-bottom: 6px; }
+  .phase-box p  { font-size: clamp(.72rem,.75vw+.2rem,.86rem); line-height: 1.6; }
+  .phase-box.p1 { background: var(--navy); }
+  .phase-box.p1 h4 { color: var(--amber); }
+  .phase-box.p1 p  { color: rgba(255,255,255,.8); }
+  .phase-box.p2 { background: var(--terra); }
+  .phase-box.p2 h4 { color: var(--white); }
+  .phase-box.p2 p  { color: rgba(255,255,255,.85); }
+  .phase-box.p3 { background: var(--amber); }
+  .phase-box.p3 h4 { color: var(--navy); }
+  .phase-box.p3 p  { color: var(--navy); opacity: .8; }
+
+  /* ── TWO COL LAYOUT ──────────────────────── */
+  .two-col { display: flex; flex-wrap: wrap; gap: clamp(10px,1.5vw,18px); }
+  .two-col > * { flex: 1; min-width: min(100%,260px); }
+
+  /* ── SUMMARY TABLE ───────────────────────── */
+  .sumtable { width: 100%; border-collapse: collapse; font-size: clamp(.7rem,.75vw+.2rem,.88rem); }
+  .sumtable th { background: var(--navy); color: var(--amber); padding: 10px 14px; text-align: left; font-size: clamp(.72rem,.78vw+.2rem,.9rem); }
+  .sumtable td { padding: 9px 14px; border-bottom: 1px solid var(--cream2); color: var(--text); }
+  .sumtable tr:nth-child(even) td { background: var(--cream2); }
+  .sumtable tr:hover td { background: #f5edcf; }
+
+  /* ── FOOTER ──────────────────────────────── */
+  .footer {
+    flex-shrink: 0;
+    background: var(--navy); color: rgba(255,255,255,.55);
+    font-size: clamp(.6rem,.65vw+.2rem,.75rem); text-align: center;
+    padding: 6px 16px; letter-spacing: .03em;
+  }
+
+  /* ── SCROLLBAR for content ───────────────── */
+  @media (max-width: 480px) {
+    .topbar-title { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- INDEX MODAL -->
+<div class="modal-overlay" id="indexModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeIndex()">✕</button>
+    <h2>📚 Índice de Secciones</h2>
+    <div class="index-grid" id="indexGrid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 0 — PORTADA
+═══════════════════════════════════════════════ -->
+<div class="screen active" id="s0">
+  <div class="cover-body">
+    <div class="cover-deco d1"></div>
+    <div class="cover-deco d2"></div>
+    <span class="cover-tag">📖 Guía de Estudio Interactiva</span>
+    <h1 class="cover-title">La <span>Arquitectura</span><br>del Aprendizaje</h1>
+    <p class="cover-sub">Implicaciones Educativas de la Teoría Sociocultural de Lev Vygotsky</p>
+    <p class="cover-author">Prof. Francisco De Jesús Luna Benitez</p>
+    <button class="cover-btn" onclick="goTo(1)">Comenzar Guía →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 1 — PARADIGMA SOCIOCULTURAL
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s1">
+  <div class="topbar">
+    <span class="topbar-title">El Paradigma Sociocultural</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">1 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--navy);">🌍</div>
+      <div class="sec-titles">
+        <h1>No Aprendemos en el Vacío</h1>
+        <p>El paradigma sociocultural y la construcción de la mente</p>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>El desarrollo humano está <strong>íntimamente ligado</strong> a la interacción en su contexto sociohistórico y cultural. La educación no es solo instrucción; es el instrumento esencial de <strong>enculturación y humanización</strong>.</p>
+    </div>
+    <div class="card-grid cols2" style="margin-top:14px;">
+      <div class="card navy">
+        <div class="card-icon">👤</div>
+        <h3>El Individuo</h3>
+        <p>Biología y funciones naturales innatas que forman la base del desarrollo.</p>
+      </div>
+      <div class="card" style="border-color:var(--amber);">
+        <div class="card-icon">🏛️</div>
+        <h3>La Cultura e Historia</h3>
+        <p>Relaciones sociales, herramientas y contexto que moldean la mente.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px; border-color:var(--terra); text-align:center;">
+      <div class="card-icon">🧠</div>
+      <h3>Desarrollo Cognitivo — La Conciencia</h3>
+      <p>Surge del <strong>cruce</strong> entre el individuo y su contexto cultural. La conciencia es un reflejo subjetivo de la realidad objetiva. El <strong>principio social domina sobre lo biológico</strong>.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 2 — EVOLUCIÓN DE LA MENTE
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s2">
+  <div class="topbar">
+    <span class="topbar-title">Evolución de la Mente</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">2 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon">🏗️</div>
+      <div class="sec-titles">
+        <h1>La Evolución de la Mente</h1>
+        <p>¿Cómo pasamos de lo básico a lo complejo?</p>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" style="background:var(--navy);">1</div>
+        <div class="step-body">
+          <h4>🔵 Funciones Naturales</h4>
+          <p>Capacidades <strong>biológicas innatas y reactivas</strong>. Son la base sobre la que se construye todo aprendizaje posterior. Ejemplo: percepción básica, reflejos, emociones primarias.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--amber); color:var(--navy);">2</div>
+        <div class="step-body">
+          <h4>🟡 Interacción Cultural</h4>
+          <p>El contacto con la <strong>red de influencias culturales y generaciones pasadas</strong>. Aquí comienza la transformación de lo natural en función superior.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--terra);">3</div>
+        <div class="step-body">
+          <h4>🔴 Funciones Psíquicas Superiores</h4>
+          <p>Producto de la <strong>apropiación social</strong>. Incluyen: memoria consciente, atención voluntaria, razonamiento abstracto y solución de problemas. Son exclusivamente humanas.</p>
+        </div>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:14px;">
+      <p>🔑 Idea central: Las funciones superiores <strong>no son innatas</strong> — son construidas a través de la interacción social y cultural. Sin cultura, no hay desarrollo superior.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 3 — EL SUJETO MEDIADO
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s3">
+  <div class="topbar">
+    <span class="topbar-title">El Sujeto Mediado</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">3 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--terra);">🤖</div>
+      <div class="sec-titles">
+        <h1>El Sujeto Mediado</h1>
+        <p>Interactuamos con la realidad a través de instrumentos socioculturales</p>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>No interactuamos directamente con el mundo: usamos <strong>herramientas y signos</strong> como mediadores entre nosotros y la realidad.</p>
+    </div>
+    <div class="two-col" style="margin-top:14px;">
+      <div class="card navy">
+        <div class="card-icon">🔨</div>
+        <h3>HERRAMIENTAS</h3>
+        <p style="color:var(--amber); font-size:.75rem; margin-bottom:8px;">Orientación Externa</p>
+        <ul>
+          <li>Producen cambios directos en los objetos</li>
+          <li>Transforman la naturaleza y el entorno físico material</li>
+          <li>Ejemplos: martillo, computadora, calculadora</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--terra);">
+        <div class="card-icon">💬</div>
+        <h3>SIGNOS</h3>
+        <p style="color:var(--terra); font-size:.75rem; margin-bottom:8px;">Orientación Interna</p>
+        <ul>
+          <li>Producen cambios en el sujeto</li>
+          <li>Son instrumentos psicológicos (lenguaje, escritura)</li>
+          <li>Transforman internamente la mente y la estructura de pensamiento</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px; text-align:center; border-color:var(--amber);">
+      <p>⚡ La diferencia clave: las herramientas transforman el <strong>mundo exterior</strong>; los signos transforman el <strong>mundo interior</strong> del sujeto.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 4 — EL LENGUAJE
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s4">
+  <div class="topbar">
+    <span class="topbar-title">El Lenguaje: El Signo de Signos</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">4 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--amber); color:var(--navy);">💬</div>
+      <div class="sec-titles">
+        <h1>El Lenguaje: El Signo de Signos</h1>
+        <p>El momento clave: cuando el lenguaje y la actividad práctica convergen</p>
+      </div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-box p1" data-num="1">
+        <h4>Fase 1: Lenguaje Social</h4>
+        <p>Medio inicial de vinculación. Funciona para <strong>actuar sobre los otros</strong> en el entorno exterior. Es comunicación pura entre personas.</p>
+      </div>
+      <div class="phase-box p2" data-num="2">
+        <h4>Fase 2: Lenguaje Egocéntrico</h4>
+        <p>Acompaña la acción. El niño <strong>comienza a dirigir su propia actividad</strong> hablando en voz alta. Puente entre lo social y lo interno.</p>
+      </div>
+      <div class="phase-box p3" data-num="3">
+        <h4>Fase 3: Lenguaje Interiorizado</h4>
+        <p>Guía, planifica y domina el curso de la acción. <strong>Se convierte en pensamiento verbal racional</strong> — la voz interna que nos guía.</p>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:14px;">
+      <p>🌟 El lenguaje comienza siendo <strong>social → egocéntrico → interno</strong>. Este proceso es la base del pensamiento consciente y autorregulado.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 5 — LA INTERNALIZACIÓN
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s5">
+  <div class="topbar">
+    <span class="topbar-title">La Internalización</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">5 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--navy);">🔄</div>
+      <div class="sec-titles">
+        <h1>La Internalización</h1>
+        <p>Ley Genética del Desarrollo: de afuera hacia adentro</p>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>⚖️ <strong>Todo aprendizaje ocurre dos veces</strong>: primero en el plano social, luego en el plano psicológico individual.</p>
+    </div>
+    <div class="two-col" style="margin-top:14px;">
+      <div class="card navy">
+        <div class="card-icon">👥</div>
+        <h3>1. Plano Social (Interpsíquico)</h3>
+        <p>Ocurre <strong>entre las personas</strong>. El individuo interactúa con la cultura y los signos en la actividad colectiva. Es externo y compartido.</p>
+      </div>
+      <div class="card" style="border-color:var(--terra);">
+        <div class="card-icon">🧠</div>
+        <h3>2. Plano Psicológico (Intrapsíquico)</h3>
+        <p>Ocurre en el <strong>interior del individuo</strong>. En esta transición, el proceso cambia su estructura y se vuelve autónomo e independiente.</p>
+      </div>
+    </div>
+    <div class="steps" style="margin-top:14px;">
+      <div class="step">
+        <div class="step-num" style="background:var(--amber); color:var(--navy);">→</div>
+        <div class="step-body">
+          <h4>El camino de la internalización</h4>
+          <p>Social → Interpsíquico → Intrapsíquico. Lo que hoy el estudiante hace con ayuda, mañana lo hará de forma autónoma. Esta es la <strong>Ley Genética del Desarrollo Cultural</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 6 — LA ZDP
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s6">
+  <div class="topbar">
+    <span class="topbar-title">La Zona de Desarrollo Próximo</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">6 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--amber); color:var(--navy);">🎯</div>
+      <div class="sec-titles">
+        <h1>El Núcleo Educativo: La ZDP</h1>
+        <p>Un diálogo entre el niño y su futuro</p>
+      </div>
+    </div>
+    <div class="zdp-wrap">
+      <div class="zdp-ring z3">🚫 Nivel Fuera de Alcance — genera frustración</div>
+      <div class="zdp-label">↕ Lo que aún no puede hacer, ni siquiera con ayuda</div>
+      <div class="zdp-ring z2">⭐ ZONA DE DESARROLLO PRÓXIMO (ZDP)<br><small style="font-weight:400;">Lo que puede hacer CON ayuda de otros</small></div>
+      <div class="zdp-label">↕ Aquí ocurre el aprendizaje real y se forma el potencial</div>
+      <div class="zdp-ring z1">✅ Nivel de Desarrollo Real<br><small style="font-weight:400;">Lo que ya puede hacer solo</small></div>
+    </div>
+    <div class="highlight" style="margin-top:8px;">
+      <p>📌 La ZDP es la distancia entre lo que el alumno <strong>ya domina</strong> y lo que puede lograr con <strong>guía experta</strong>. Es exactamente ahí donde debe apuntar la enseñanza.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 7 — CÓMO CREAR ZDPs
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s7">
+  <div class="topbar">
+    <span class="topbar-title">Cómo Crear Zonas de Desarrollo Próximo</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">7 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--terra);">⚙️</div>
+      <div class="sec-titles">
+        <h1>¿Cómo Crear ZDPs?</h1>
+        <p>La enseñanza debe apuntar a lo que el estudiante aún no domina suficientemente</p>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" style="background:var(--navy);">1</div>
+        <div class="step-body">
+          <h4>🎯 Establecer el Reto</h4>
+          <p>Diseñar un nivel de dificultad <strong>desafiante pero alcanzable</strong>. Cuestionar los significados previos del alumno. El reto activa la motivación y el esfuerzo cognitivo.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--terra);">2</div>
+        <div class="step-body">
+          <h4>🤝 Desempeño con Ayuda</h4>
+          <p>Proporcionar <strong>práctica guiada e instrumentos</strong> (intelectuales y emocionales) con objetivos claros. El docente actúa como mediador estratégico.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--amber); color:var(--navy);">3</div>
+        <div class="step-body">
+          <h4>🏆 Evaluar Independencia</h4>
+          <p>El resultado lógico de la ZDP: la <strong>ejecución autónoma y voluntaria</strong> del estudiante. La independencia es la prueba del aprendizaje real.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 8 — EL ANDAMIAJE
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s8">
+  <div class="topbar">
+    <span class="topbar-title">El Arte del Andamiaje</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">8 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--navy);">🏚️</div>
+      <div class="sec-titles">
+        <h1>El Arte del Andamiaje</h1>
+        <p>Soporte estratégico, temporal y ajustado a la actividad constructiva</p>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>El andamiaje es el <strong>apoyo temporal y graduado</strong> que el docente ofrece al alumno dentro de su ZDP. Se construye para ser retirado.</p>
+    </div>
+    <div class="phase-row" style="margin-top:14px;">
+      <div class="phase-box p1" data-num="1">
+        <h4>🏗️ Fase Inicial (Directiva)</h4>
+        <p>Mayor soporte instruccional frente a un contenido completamente nuevo. El docente dirige y modela activamente.</p>
+      </div>
+      <div class="phase-box p2" data-num="2">
+        <h4>🔧 Fase de Transición (Guiada)</h4>
+        <p>El soporte se reduce paulatinamente mediante <strong>preguntas clave</strong> y promoción del autocuestionamiento.</p>
+      </div>
+      <div class="phase-box p3" data-num="3">
+        <h4>🎓 Fase Final (Espectador Empático)</h4>
+        <p>El docente retira el andamio. El estudiante <strong>asume el control total y autónomo</strong> de su aprendizaje.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px; text-align:center; border-color:var(--navy);">
+      <p>🏠 Metáfora: Como un andamio de construcción — esencial durante la obra, innecesario una vez que el edificio se sostiene solo.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 9 — APRENDIZAJE PRECEDE AL DESARROLLO
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s9">
+  <div class="topbar">
+    <span class="topbar-title">El Aprendizaje Precede al Desarrollo</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">9 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--amber); color:var(--navy);">⚡</div>
+      <div class="sec-titles">
+        <h1>El Aprendizaje Precede al Desarrollo</h1>
+        <p>No debemos esperar pasivamente a que el niño esté listo biológicamente</p>
+      </div>
+    </div>
+    <div class="card-grid cols2">
+      <div class="card navy">
+        <div class="card-icon">🧲</div>
+        <h3>La Enseñanza Escolar</h3>
+        <p>Interacción en la ZDP. Es el <strong>motor activo</strong> del desarrollo. Una buena enseñanza es prospectiva: mira hacia el futuro del alumno.</p>
+      </div>
+      <div class="card" style="border-color:var(--amber);">
+        <div class="card-icon">⚙️</div>
+        <h3>El Desarrollo Psíquico</h3>
+        <p>Maduración cognitiva. Es el <strong>resultado directo</strong> de la actividad del estudiante en su relación guiada con el mundo circundante.</p>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:14px;">
+      <p>🧲 <strong>Una enseñanza adecuada sirve de imán</strong> para hacer que el nivel potencial de desarrollo del educando se integre con el actual.</p>
+    </div>
+    <div class="card" style="margin-top:12px; border-color:var(--terra);">
+      <p>⚠️ <strong>Implicación pedagógica:</strong> No hay que esperar que el alumno "madure" para enseñarle. La enseñanza bien diseñada <em>genera</em> el desarrollo, no lo espera.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 10 — EL DOCENTE
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s10">
+  <div class="topbar">
+    <span class="topbar-title">El Docente: Mediador Sociocultural</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">10 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--navy);">🏫</div>
+      <div class="sec-titles">
+        <h1>El Docente: Mediador Sociocultural</h1>
+        <p>Ayuda al proceso, pero nunca sustituye la actividad mental del estudiante</p>
+      </div>
+    </div>
+    <div class="card-grid cols2">
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h3>Diseñador de Retos</h3>
+        <p>Provoca desafíos que <strong>obligan al alumno a implicarse</strong> en un esfuerzo de comprensión y actuación.</p>
+      </div>
+      <div class="card navy">
+        <div class="card-icon">🏗️</div>
+        <h3>Proveedor de Soportes</h3>
+        <p>Brinda el andamiaje necesario (herramientas intelectuales y emocionales) para <strong>superar la frustración</strong>.</p>
+      </div>
+      <div class="card" style="border-color:var(--terra);">
+        <div class="card-icon">💬</div>
+        <h3>Estratega del Lenguaje</h3>
+        <p>Usa el <strong>diálogo como vehículo principal</strong> para que los participantes contrasten y modifiquen esquemas.</p>
+      </div>
+      <div class="card" style="border-color:var(--amber);">
+        <div class="card-icon">👁️</div>
+        <h3>Espectador Empático</h3>
+        <p>Sabe exactamente <strong>cuándo retirar la ayuda</strong> para permitir la consolidación de la autonomía del estudiante.</p>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 11 — EL ALUMNO
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s11">
+  <div class="topbar">
+    <span class="topbar-title">El Alumno: Protagonista Activo</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">11 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--terra);">🧩</div>
+      <div class="sec-titles">
+        <h1>El Alumno: Protagonista Activo</h1>
+        <p>Un ente social que reconstruye el conocimiento, no un receptor pasivo</p>
+      </div>
+    </div>
+    <div class="card-grid cols2">
+      <div class="card navy">
+        <div class="card-icon">📚</div>
+        <h3>Ente Social Historizado</h3>
+        <p>Producto de <strong>múltiples interrelaciones sociales y culturales</strong> a lo largo de su vida personal. Llega al aula con historia propia.</p>
+      </div>
+      <div class="card" style="border-color:var(--terra);">
+        <div class="card-icon">🔄</div>
+        <h3>Reconstructor</h3>
+        <p>No absorbe pasivamente; <strong>reorganiza y reconceptualiza</strong> los significados que la cultura le presenta.</p>
+      </div>
+      <div class="card" style="border-color:var(--amber);">
+        <div class="card-icon">🤲</div>
+        <h3>Apropiador</h3>
+        <p>Hace suyo el contenido social (plano interpsíquico) para utilizarlo de forma autónoma (<strong>plano intrapsíquico</strong>).</p>
+      </div>
+      <div class="card navy">
+        <div class="card-icon">🛠️</div>
+        <h3>Usuario de Herramientas</h3>
+        <p>Utiliza la elección de tareas, el <strong>lenguaje y diversos materiales</strong> para crear sentido propio.</p>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:12px;">
+      <p>💡 El aprendizaje vygotskiano rechaza la concepción del alumno como "recipiente vacío". El alumno es <strong>constructor activo</strong> de su conocimiento dentro de un contexto social.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 12 — LA ESCUELA
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s12">
+  <div class="topbar">
+    <span class="topbar-title">La Escuela como Laboratorio Cultural</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">12 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--amber); color:var(--navy);">🏫</div>
+      <div class="sec-titles">
+        <h1>La Escuela como Laboratorio Cultural</h1>
+        <p>El contexto sociocultural no es un telón de fondo; es la materia prima del aprendizaje</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-head" onclick="toggleAcc(this)">
+          <span class="acc-title">🌐 Cultura Plural</span>
+          <span class="acc-arrow">▼</span>
+        </button>
+        <div class="acc-body">
+          <p>Las aulas son mezclas <strong>heterogéneas de elementos objetivos y subjetivos</strong>. Cada alumno trae su propia historia cultural, y esa diversidad es un recurso pedagógico, no un obstáculo.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-head" onclick="toggleAcc(this)">
+          <span class="acc-title">📖 Contenidos con Sentido</span>
+          <span class="acc-arrow">▼</span>
+        </button>
+        <div class="acc-body">
+          <p>El aprendizaje debe <strong>partir de los significados y realidades que la cultura local ya posee</strong>. Los contenidos abstractos deben conectarse con la vida real del estudiante para adquirir sentido.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-head" onclick="toggleAcc(this)">
+          <span class="acc-title">🤝 Comunidad Integradora</span>
+          <span class="acc-arrow">▼</span>
+        </button>
+        <div class="acc-body">
+          <p>El proceso educativo requiere <strong>porosidad y conexión con padres, profesionales e instituciones</strong> de la comunidad. La escuela no puede ser una isla: el aprendizaje ocurre en un ecosistema social amplio.</p>
+        </div>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:14px;">
+      <p>🔬 La escuela es un <strong>laboratorio cultural vivo</strong> donde los estudiantes aprenden no solo contenidos académicos, sino cómo funcionar como miembros de una comunidad.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 13 — ECOSISTEMA VYGOTSKIANO
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s13">
+  <div class="topbar">
+    <span class="topbar-title">El Ecosistema Vygotskiano</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">13 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--navy);">♻️</div>
+      <div class="sec-titles">
+        <h1>Integración: El Ecosistema Vygotskiano</h1>
+        <p>Cómo todos los elementos interactúan para transformar la mente humana</p>
+      </div>
+    </div>
+    <div class="visual-row">
+      <div class="vbox amber-v">
+        <div class="vbox-icon">📖</div>
+        <h4>1. Contexto y Cultura</h4>
+        <p>Signos y herramientas que median el aprendizaje</p>
+      </div>
+      <div class="vbox navy-v">
+        <div class="vbox-icon">👨‍🏫</div>
+        <h4>2. El Docente</h4>
+        <p>Mediación y andamiaje estratégico</p>
+      </div>
+      <div class="vbox terra-v">
+        <div class="vbox-icon">🎯</div>
+        <h4>3. La ZDP</h4>
+        <p>Reto colaborativo y actividad social</p>
+      </div>
+    </div>
+    <div class="visual-row" style="margin-top:10px;">
+      <div class="vbox amber-v">
+        <div class="vbox-icon">🧑‍🎓</div>
+        <h4>4. El Alumno</h4>
+        <p>Apropiación e internalización del conocimiento</p>
+      </div>
+      <div class="vbox navy-v">
+        <div class="vbox-icon">🧠</div>
+        <h4>5. Desarrollo Psíquico</h4>
+        <p>Autonomía — el resultado final del proceso</p>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:12px;">
+      <p>♻️ El ciclo es continuo: el individuo que se desarrolla <strong>transforma y enriquece la cultura</strong>, que a su vez ofrece nuevas posibilidades de desarrollo. Es un sistema vivo y dinámico.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="next()">Siguiente →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 14 — AUTOEVALUACIÓN
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s14">
+  <div class="topbar">
+    <span class="topbar-title">Autoevaluación</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">14 / 14</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--terra);">✅</div>
+      <div class="sec-titles">
+        <h1>Autoevaluación</h1>
+        <p>Pon a prueba tu comprensión de la teoría de Vygotsky</p>
+      </div>
+    </div>
+    <div class="quiz-wrap" id="quizWrap">
+
+      <!-- Q1 -->
+      <div class="quiz-q" id="q1">
+        <h4>1. Según Vygotsky, ¿qué determina principalmente el desarrollo cognitivo?</h4>
+        <div class="quiz-opts">
+          <button class="quiz-opt" onclick="checkQ(this,'q1',false)">A) La maduración biológica exclusivamente</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q1',true)">B) La interacción social y el contexto cultural</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q1',false)">C) La inteligencia innata del individuo</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q1',false)">D) El entrenamiento repetitivo y memorístico</button>
+        </div>
+        <div class="quiz-feedback" id="fb-q1"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-q" id="q2">
+        <h4>2. La Zona de Desarrollo Próximo (ZDP) es:</h4>
+        <div class="quiz-opts">
+          <button class="quiz-opt" onclick="checkQ(this,'q2',false)">A) Lo que el alumno ya puede hacer completamente solo</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q2',false)">B) Lo que el alumno nunca podrá lograr aunque tenga ayuda</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q2',true)">C) La distancia entre lo que el alumno hace solo y lo que logra con ayuda</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q2',false)">D) Una zona geográfica de aprendizaje colaborativo</button>
+        </div>
+        <div class="quiz-feedback" id="fb-q2"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-q" id="q3">
+        <h4>3. ¿Cuál es la secuencia correcta del desarrollo del lenguaje según Vygotsky?</h4>
+        <div class="quiz-opts">
+          <button class="quiz-opt" onclick="checkQ(this,'q3',false)">A) Interiorizado → Egocéntrico → Social</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q3',false)">B) Egocéntrico → Social → Interiorizado</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q3',true)">C) Social → Egocéntrico → Interiorizado</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q3',false)">D) Interiorizado → Social → Egocéntrico</button>
+        </div>
+        <div class="quiz-feedback" id="fb-q3"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-q" id="q4">
+        <h4>4. El andamiaje pedagógico debe ser:</h4>
+        <div class="quiz-opts">
+          <button class="quiz-opt" onclick="checkQ(this,'q4',false)">A) Permanente para garantizar el aprendizaje continuo</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q4',true)">B) Temporal y ajustado para promover la autonomía del alumno</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q4',false)">C) Rígido y uniforme para todos los estudiantes</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q4',false)">D) Aplicado solo en estudiantes con dificultades graves</button>
+        </div>
+        <div class="quiz-feedback" id="fb-q4"></div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-q" id="q5">
+        <h4>5. En la teoría vygotskiana, ¿qué diferencia a las herramientas de los signos?</h4>
+        <div class="quiz-opts">
+          <button class="quiz-opt" onclick="checkQ(this,'q5',false)">A) Las herramientas son más importantes para el aprendizaje</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q5',false)">B) No hay diferencia real entre ambos conceptos</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q5',true)">C) Las herramientas transforman el exterior; los signos transforman el interior</button>
+          <button class="quiz-opt" onclick="checkQ(this,'q5',false)">D) Los signos solo sirven para la comunicación escrita</button>
+        </div>
+        <div class="quiz-feedback" id="fb-q5"></div>
+      </div>
+
+      <button class="btn btn-nav" id="checkAllBtn" onclick="showScore()" style="width:100%; font-size:1rem; padding:14px;">
+        Ver mi Resultado Final 🏆
+      </button>
+
+      <div class="quiz-score-box" id="scoreBox">
+        <div class="score-num" id="scoreNum">0/5</div>
+        <p id="scoreMsg"></p>
+        <button class="btn btn-secondary" onclick="resetQuiz()" style="margin-top:14px;">Intentar de nuevo 🔄</button>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-nav" onclick="goTo(15)">Resumen Final →</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 15 — RESUMEN FINAL
+═══════════════════════════════════════════════ -->
+<div class="screen" id="s15">
+  <div class="topbar">
+    <span class="topbar-title">Resumen Final</span>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb"></div></div>
+    <span class="topbar-counter" id="counter">Resumen</span>
+  </div>
+  <div class="content">
+    <div class="sec-header">
+      <div class="sec-icon" style="background:var(--amber); color:var(--navy);">📋</div>
+      <div class="sec-titles">
+        <h1>Resumen: La Arquitectura del Aprendizaje</h1>
+        <p>Síntesis de los conceptos clave de Vygotsky</p>
+      </div>
+    </div>
+    <div style="overflow-x:auto; border-radius:var(--radius); box-shadow:var(--shadow);">
+      <table class="sumtable">
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th>Idea Central</th>
+            <th>Implicación Educativa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>🌍 Paradigma Sociocultural</td><td>El desarrollo es social e histórico</td><td>Diseñar experiencias colectivas y contextualizadas</td></tr>
+          <tr><td>🏗️ Funciones Superiores</td><td>Surgen de la interacción cultural</td><td>No son innatas; requieren enseñanza activa</td></tr>
+          <tr><td>🔨 Herramientas y Signos</td><td>Mediadores de nuestra relación con el mundo</td><td>El lenguaje como herramienta pedagógica central</td></tr>
+          <tr><td>💬 Fases del Lenguaje</td><td>Social → Egocéntrico → Interiorizado</td><td>Promover el diálogo como base del pensamiento</td></tr>
+          <tr><td>🔄 Internalización</td><td>Todo ocurre dos veces: social → individual</td><td>La práctica guiada precede a la autonomía</td></tr>
+          <tr><td>🎯 ZDP</td><td>Zona entre lo actual y lo potencial</td><td>Enseñar en el límite superior del alumno</td></tr>
+          <tr><td>🏗️ Andamiaje</td><td>Soporte temporal y graduado</td><td>Reducir el apoyo conforme crece la competencia</td></tr>
+          <tr><td>⚡ Aprendizaje→Desarrollo</td><td>La enseñanza impulsa el desarrollo</td><td>No esperar madurez; crear condiciones de aprendizaje</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="highlight" style="margin-top:14px;">
+      <p>✨ <strong>Reflexión final:</strong> El desafío de la teoría sociocultural es ver el potencial en cada interacción. El andamiaje que construimos hoy es la <strong>mente independiente del mañana</strong>.</p>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-nav" onclick="prev()">← Anterior</button>
+    <button class="btn btn-menu" onclick="openIndex()">☰ Índice</button>
+    <button class="btn btn-secondary" onclick="goTo(0)">🏠 Inicio</button>
+  </div>
+  <div class="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
+<script>
+  const TOTAL = 15; // screens 1-14 + resumen (15) — cover is 0
+  let current = 0;
+
+  const SCREENS = [
+    { id:'s0',  title:'Portada' },
+    { id:'s1',  title:'El Paradigma Sociocultural' },
+    { id:'s2',  title:'Evolución de la Mente' },
+    { id:'s3',  title:'El Sujeto Mediado' },
+    { id:'s4',  title:'El Lenguaje: Signo de Signos' },
+    { id:'s5',  title:'La Internalización' },
+    { id:'s6',  title:'La Zona de Desarrollo Próximo' },
+    { id:'s7',  title:'Cómo Crear ZDPs' },
+    { id:'s8',  title:'El Arte del Andamiaje' },
+    { id:'s9',  title:'Aprendizaje Precede al Desarrollo' },
+    { id:'s10', title:'El Docente: Mediador Sociocultural' },
+    { id:'s11', title:'El Alumno: Protagonista Activo' },
+    { id:'s12', title:'La Escuela como Laboratorio Cultural' },
+    { id:'s13', title:'El Ecosistema Vygotskiano' },
+    { id:'s14', title:'Autoevaluación' },
+    { id:'s15', title:'Resumen Final' }
+  ];
+
+  // Build index
+  const grid = document.getElementById('indexGrid');
+  SCREENS.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'index-item';
+    btn.innerHTML = `<span class="idx">${i === 0 ? '🏠' : i === 15 ? '📋' : i}</span>${s.title}`;
+    btn.onclick = () => { goTo(i); closeIndex(); };
+    grid.appendChild(btn);
+  });
+
+  function goTo(idx) {
+    document.getElementById(SCREENS[current].id).classList.remove('active');
+    current = Math.max(0, Math.min(idx, SCREENS.length - 1));
+    const el = document.getElementById(SCREENS[current].id);
+    el.classList.add('active');
+    el.scrollTop = 0;
+    updateProgress();
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  function updateProgress() {
+    const pct = current === 0 ? 0 : Math.round((current / (SCREENS.length - 1)) * 100);
+    document.querySelectorAll('.progress-bar').forEach(b => b.style.width = pct + '%');
+  }
+
+  function openIndex()  { document.getElementById('indexModal').classList.add('open'); }
+  function closeIndex() { document.getElementById('indexModal').classList.remove('open'); }
+  document.getElementById('indexModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeIndex(); });
+
+  // Accordion
+  function toggleAcc(btn) {
+    const body = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    // close all in same parent
+    btn.closest('.accordion').querySelectorAll('.acc-head').forEach(h => {
+      h.classList.remove('open');
+      h.nextElementSibling.classList.remove('open');
+    });
+    if (!isOpen) {
+      btn.classList.add('open');
+      body.classList.add('open');
+    }
+  }
+
+  // Quiz
+  let answers = {};
+  const correct = { q1:1, q2:2, q3:2, q4:1, q5:2 }; // 0-indexed
+
+  function checkQ(btn, qid, isCorrect) {
+    if (answers[qid] !== undefined) return;
+    answers[qid] = isCorrect ? 1 : 0;
+    const opts = btn.closest('.quiz-opts').querySelectorAll('.quiz-opt');
+    opts.forEach(o => { o.disabled = true; });
+    if (isCorrect) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('wrong');
+      // highlight correct
+      const qs = [
+        { id:'q1', ci:1 }, { id:'q2', ci:2 }, { id:'q3', ci:2 },
+        { id:'q4', ci:1 }, { id:'q5', ci:2 }
+      ];
+      const q = qs.find(x => x.id === qid);
+      if (q) opts[q.ci].classList.add('correct');
+    }
+    const fb = document.getElementById('fb-' + qid);
+    fb.classList.add('show');
+    if (isCorrect) {
+      fb.className = 'quiz-feedback show ok';
+      fb.textContent = '✅ ¡Correcto! Excelente comprensión del concepto.';
+    } else {
+      fb.className = 'quiz-feedback show fail';
+      const msgs = {
+        q1: 'Para Vygotsky, el desarrollo es principalmente social y cultural, no solo biológico.',
+        q2: 'La ZDP es el espacio entre lo que el alumno ya puede y lo que logra con apoyo.',
+        q3: 'El lenguaje va de Social (comunicar con otros) → Egocéntrico (hablar en voz alta) → Interiorizado (pensamiento interno).',
+        q4: 'El andamiaje debe ser temporal; su objetivo es que el alumno logre autonomía.',
+        q5: 'Las herramientas actúan sobre el mundo exterior; los signos (lenguaje, escritura) transforman la mente interna.'
+      };
+      fb.textContent = '❌ ' + (msgs[qid] || 'Revisa este concepto en la guía.');
+    }
+  }
+
+  function showScore() {
+    const total = Object.keys(answers).length;
+    const score = Object.values(answers).reduce((a,b) => a+b, 0);
+    const box = document.getElementById('scoreBox');
+    box.classList.add('show');
+    document.getElementById('scoreNum').textContent = score + ' / 5';
+    const msgs = [
+      'Sigue repasando la guía 📚 — ¡cada lectura suma!',
+      'Buen intento — revisa los conceptos que fallaste.',
+      'Vas bien — un poco más de repaso y lo dominas.',
+      '¡Muy bien! Tienes sólido dominio del tema.',
+      '¡Perfecto! Dominas la teoría sociocultural de Vygotsky. 🎉'
+    ];
+    document.getElementById('scoreMsg').textContent = msgs[score] || '';
+    document.getElementById('checkAllBtn').style.display = 'none';
+  }
+
+  function resetQuiz() {
+    answers = {};
+    document.querySelectorAll('.quiz-opt').forEach(o => {
+      o.disabled = false;
+      o.classList.remove('correct','wrong');
+    });
+    document.querySelectorAll('.quiz-feedback').forEach(f => {
+      f.classList.remove('show','ok','fail');
+    });
+    document.getElementById('scoreBox').classList.remove('show');
+    document.getElementById('checkAllBtn').style.display = 'block';
+  }
+</script>
+</body>
+</html>

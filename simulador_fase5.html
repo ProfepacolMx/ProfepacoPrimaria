@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Simulador – Programa Sintético Fase 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --blue-dark:  #1a3a6e;
+    --blue-mid:   #2558b0;
+    --blue-light: #3b7dd8;
+    --accent:     #e84545;
+    --gold:       #f5a623;
+    --green:      #27ae60;
+    --red:        #e74c3c;
+    --bg:         #f0f4fb;
+    --white:      #ffffff;
+    --text:       #1e2d4f;
+    --text-light: #5a6a85;
+    --border:     #d0dae8;
+    --radius:     16px;
+    --shadow:     0 8px 32px rgba(26,58,110,.13);
+    --shadow-sm:  0 2px 12px rgba(26,58,110,.09);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── BACKGROUND DECORATION ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 10% 10%, rgba(53,120,216,.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 60% at 90% 90%, rgba(232,69,69,.08) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  /* ─── HEADER BAND ─── */
+  .header-band {
+    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 60%, var(--blue-light) 100%);
+    border-radius: var(--radius);
+    padding: 18px 28px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: var(--shadow);
+  }
+  .header-icon { font-size: 2rem; }
+  .header-text h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.2;
+  }
+  .header-text p {
+    font-size: .82rem;
+    color: rgba(255,255,255,.75);
+    margin-top: 2px;
+  }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: clamp(24px, 5vw, 40px);
+    animation: fadeSlide .4s ease both;
+  }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── WELCOME SCREEN ─── */
+  .welcome-logo {
+    text-align: center; margin-bottom: 28px;
+  }
+  .welcome-logo .emoji { font-size: 3.5rem; }
+  .welcome-logo h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.35rem, 4vw, 1.75rem);
+    font-weight: 800;
+    color: var(--blue-dark);
+    margin-top: 10px;
+  }
+  .welcome-logo p {
+    color: var(--text-light);
+    font-size: .95rem;
+    margin-top: 6px;
+  }
+
+  .info-pills {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center; margin: 20px 0 28px;
+  }
+  .pill {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 40px;
+    padding: 7px 16px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--blue-mid);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  label.field-label {
+    display: block;
+    font-weight: 700;
+    font-size: .9rem;
+    color: var(--blue-dark);
+    margin-bottom: 8px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    outline: none;
+    transition: border-color .25s, box-shadow .25s;
+  }
+  input[type="text"]:focus {
+    border-color: var(--blue-light);
+    box-shadow: 0 0 0 4px rgba(59,125,216,.15);
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: block; width: 100%;
+    padding: 16px;
+    border: none; border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.05rem; font-weight: 800;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s, filter .15s;
+    margin-top: 18px;
+    letter-spacing: .3px;
+  }
+  .btn:hover  { transform: translateY(-2px); filter: brightness(1.06); }
+  .btn:active { transform: translateY(0); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue-mid), var(--blue-light));
+    color: var(--white);
+    box-shadow: 0 6px 20px rgba(37,88,176,.35);
+  }
+  .btn-next {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+    color: var(--white);
+    box-shadow: 0 6px 20px rgba(26,58,110,.3);
+  }
+  .btn-retry {
+    background: linear-gradient(135deg, var(--gold), #f0801a);
+    color: var(--white);
+    box-shadow: 0 6px 20px rgba(245,166,35,.35);
+    margin-bottom: 10px;
+  }
+  .btn:disabled {
+    opacity: .45; cursor: not-allowed;
+    transform: none; filter: none;
+  }
+
+  /* ─── PROGRESS ─── */
+  .progress-wrap {
+    margin-bottom: 22px;
+  }
+  .progress-info {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .progress-label {
+    font-size: .82rem; font-weight: 700; color: var(--text-light);
+  }
+  .progress-count {
+    font-family: 'Montserrat', sans-serif;
+    font-size: .95rem; font-weight: 800; color: var(--blue-mid);
+  }
+  .progress-bar {
+    height: 8px; background: var(--bg);
+    border-radius: 40px; overflow: hidden;
+    border: 1.5px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue-mid), var(--blue-light));
+    border-radius: 40px;
+    transition: width .45s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ─── QUESTION ─── */
+  .q-meta {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .q-badge {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+    color: var(--white);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .78rem; font-weight: 800;
+    letter-spacing: .5px;
+    white-space: nowrap;
+  }
+  .q-type {
+    font-size: .78rem; font-weight: 700;
+    color: var(--text-light);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 10px;
+    white-space: nowrap;
+  }
+  .q-text {
+    font-size: clamp(.95rem, 2.5vw, 1.08rem);
+    font-weight: 700;
+    line-height: 1.55;
+    color: var(--blue-dark);
+    margin-bottom: 20px;
+  }
+
+  /* table inside question */
+  .q-table {
+    width: 100%; border-collapse: collapse;
+    margin: 12px 0 18px;
+    font-size: .88rem;
+    border-radius: 10px; overflow: hidden;
+  }
+  .q-table th {
+    background: var(--blue-dark); color: var(--white);
+    padding: 9px 14px; text-align: left; font-weight: 700;
+  }
+  .q-table td {
+    padding: 8px 14px; border-bottom: 1px solid var(--border);
+  }
+  .q-table tr:nth-child(even) td { background: var(--bg); }
+
+  /* ─── OPTIONS ─── */
+  .options { display: flex; flex-direction: column; gap: 11px; }
+
+  .option {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s, transform .15s, box-shadow .2s;
+    background: var(--white);
+    font-size: .95rem; font-weight: 600; line-height: 1.45;
+  }
+  .option:hover:not(.disabled) {
+    border-color: var(--blue-light);
+    background: #f0f6ff;
+    transform: translateX(3px);
+    box-shadow: var(--shadow-sm);
+  }
+  .option.selected {
+    border-color: var(--blue-light);
+    background: #eaf2ff;
+  }
+  .option.correct {
+    border-color: var(--green);
+    background: #edfbf3;
+  }
+  .option.incorrect {
+    border-color: var(--red);
+    background: #fdf0f0;
+  }
+  .option.disabled { cursor: default; }
+
+  .opt-letter {
+    min-width: 32px; height: 32px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .85rem; font-weight: 800;
+    color: var(--blue-dark);
+    transition: background .2s, border-color .2s, color .2s;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .option.selected   .opt-letter { background: var(--blue-light); border-color: var(--blue-light); color: #fff; }
+  .option.correct    .opt-letter { background: var(--green); border-color: var(--green); color: #fff; }
+  .option.incorrect  .opt-letter { background: var(--red); border-color: var(--red); color: #fff; }
+
+  /* ─── FEEDBACK ─── */
+  .feedback {
+    margin-top: 18px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: .9rem; font-weight: 700;
+    line-height: 1.5;
+    display: none;
+    animation: fadeSlide .3s ease both;
+  }
+  .feedback.show { display: flex; gap: 12px; align-items: flex-start; }
+  .feedback.correct-fb { background: #edfbf3; border: 2px solid var(--green); color: #1a6b3c; }
+  .feedback.incorrect-fb { background: #fdf0f0; border: 2px solid var(--red); color: #8b1a1a; }
+  .feedback-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+  /* ─── RESULTS ─── */
+  .results-header { text-align: center; margin-bottom: 28px; }
+  .results-trophy { font-size: 4rem; display: block; }
+  .results-header h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
+    font-weight: 800;
+    color: var(--blue-dark);
+    margin-top: 8px;
+  }
+  .results-header .student-name {
+    font-size: 1rem; color: var(--text-light); margin-top: 4px; font-weight: 600;
+  }
+
+  .score-circle-wrap { display: flex; justify-content: center; margin: 24px 0; }
+  .score-circle {
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    box-shadow: 0 8px 30px rgba(0,0,0,.15);
+  }
+  .score-circle .pct {
+    font-size: 2.4rem; font-weight: 900; line-height: 1;
+    color: var(--white);
+  }
+  .score-circle .pct-label {
+    font-size: .72rem; font-weight: 700;
+    color: rgba(255,255,255,.85);
+    margin-top: 2px;
+  }
+  .score-high   { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+  .score-mid    { background: linear-gradient(135deg, #f5a623, #f0801a); }
+  .score-low    { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+  .stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px; margin-bottom: 24px;
+  }
+  .stat-box {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+  }
+  .stat-box .stat-num {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem; font-weight: 900;
+    line-height: 1;
+  }
+  .stat-box .stat-desc {
+    font-size: .8rem; font-weight: 700;
+    color: var(--text-light); margin-top: 4px;
+  }
+  .stat-box.correct-stat .stat-num { color: var(--green); }
+  .stat-box.incorrect-stat .stat-num { color: var(--red); }
+
+  .motivational {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+    color: var(--white);
+    border-radius: 12px;
+    padding: 18px 22px;
+    text-align: center;
+    font-size: .95rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .motivational .mot-icon { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+
+  /* ─── HIDDEN ─── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ─── FOOTER ─── */
+  .footer-note {
+    text-align: center; margin-top: 20px;
+    font-size: .78rem; color: var(--text-light); font-weight: 600;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .info-pills  { gap: 7px; }
+    .opt-letter  { min-width: 28px; height: 28px; font-size: .78rem; }
+    .option      { padding: 12px 14px; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header-band">
+    <div class="header-icon">📚</div>
+    <div class="header-text">
+      <h1>Simulador de Examen · Programa Sintético Fase 5</h1>
+      <p>Educación Primaria SEP · 5.° y 6.° grado</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ PANTALLA BIENVENIDA ═══ -->
+  <div id="screen-welcome" class="screen active">
+    <div class="card">
+      <div class="welcome-logo">
+        <div class="emoji">🏫</div>
+        <h2>¡Bienvenido al Simulador!</h2>
+        <p>Evalúa tus conocimientos sobre el Programa Sintético de la Fase&nbsp;5</p>
+      </div>
+
+      <div class="info-pills">
+        <span class="pill">📝 30 preguntas</span>
+        <span class="pill">⏱ A tu ritmo</span>
+        <span class="pill">💡 Retroalimentación inmediata</span>
+        <span class="pill">📊 Resultado final</span>
+      </div>
+
+      <label class="field-label" for="student-name">✏️ Nombre del estudiante</label>
+      <input type="text" id="student-name" placeholder="Escribe tu nombre completo…" autocomplete="off"/>
+
+      <button class="btn btn-primary" id="btn-start" onclick="startExam()" disabled>
+        🚀 Iniciar simulador
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ PANTALLA EXAMEN ═══════ -->
+  <div id="screen-exam" class="screen">
+    <div class="card">
+
+      <!-- Progress -->
+      <div class="progress-wrap">
+        <div class="progress-info">
+          <span class="progress-label">Progreso del examen</span>
+          <span class="progress-count" id="q-counter">1 / 30</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:3.33%"></div>
+        </div>
+      </div>
+
+      <!-- Question meta -->
+      <div class="q-meta">
+        <span class="q-badge" id="q-num-badge">Pregunta 1</span>
+        <span class="q-type" id="q-type-badge">Cuestionamiento directo</span>
+      </div>
+
+      <!-- Question text -->
+      <div class="q-text" id="q-text"></div>
+
+      <!-- Options -->
+      <div class="options" id="options-container"></div>
+
+      <!-- Feedback -->
+      <div class="feedback" id="feedback-box">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <span id="fb-text"></span>
+      </div>
+
+      <!-- Next button -->
+      <button class="btn btn-next" id="btn-next" onclick="nextQuestion()" disabled>
+        Siguiente pregunta →
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ PANTALLA RESULTADOS ═══ -->
+  <div id="screen-results" class="screen">
+    <div class="card">
+      <div class="results-header">
+        <span class="results-trophy" id="results-trophy">🏆</span>
+        <h2 id="results-title">¡Examen completado!</h2>
+        <p class="student-name" id="results-name"></p>
+      </div>
+
+      <div class="score-circle-wrap">
+        <div class="score-circle" id="score-circle">
+          <span class="pct" id="score-pct">0%</span>
+          <span class="pct-label">de aciertos</span>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box correct-stat">
+          <div class="stat-num" id="stat-correct">0</div>
+          <div class="stat-desc">✅ Respuestas correctas</div>
+        </div>
+        <div class="stat-box incorrect-stat">
+          <div class="stat-num" id="stat-incorrect">0</div>
+          <div class="stat-desc">❌ Respuestas incorrectas</div>
+        </div>
+      </div>
+
+      <div class="motivational" id="motivational-box">
+        <span class="mot-icon" id="mot-icon">⭐</span>
+        <span id="mot-text"></span>
+      </div>
+
+      <button class="btn btn-retry" onclick="retryExam()">🔄 Volver a intentar</button>
+      <button class="btn btn-primary" onclick="goHome()">🏠 Pantalla de inicio</button>
+    </div>
+  </div>
+
+  <p class="footer-note">Programa Sintético de la Fase 5 · SEP México</p>
+</div>
+
+<script>
+/* ─────────────────────────── BANCO DE PREGUNTAS ─────────────────────────── */
+const questions = [
+  /* 1 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es el propósito principal de fomentar prácticas orales y escritas bilingües en el medio indígena durante la Fase 5?",
+    options: [
+      "Sustituir progresivamente la lengua indígena por el español en todos los contextos escolares.",
+      "Propiciar la escritura comunicativa en lengua indígena y el aprendizaje de sus usos y convenciones, pues aprender la lengua escrita solo tiene sentido si se usa.",
+      "Enseñar únicamente lenguas extranjeras para ampliar las oportunidades laborales de los estudiantes.",
+      "Reducir el uso de textos escritos en el aula para privilegiar las expresiones orales."
+    ],
+    correct: 1,
+    feedback: "El programa establece que es primordial propiciar la escritura comunicativa en lengua indígena, ya que la lengua escrita tiene sentido solo si se usa. También se busca contribuir al acopio, producción y conservación de textos en lengua indígena."
+  },
+  /* 2 */
+  {
+    type: "Completamiento",
+    text: "En la Fase 5, respecto al desarrollo lector, se busca que los estudiantes aprendan a cuestionar lo que leen, revisar lo que escriben y desarrollar la asertividad; para ello será necesario fomentar…",
+    options: [
+      "La memorización de textos completos para fortalecer la memoria de largo plazo.",
+      "La lectura exclusiva de textos literarios de autores reconocidos a nivel nacional.",
+      "La búsqueda autónoma de diversos materiales de lectura, comparar información y distinguir aquella que sea engañosa.",
+      "La copia de textos del pizarrón para desarrollar la caligrafía y la ortografía."
+    ],
+    correct: 2,
+    feedback: "El programa señala que en esta Fase se fomentará la búsqueda autónoma de materiales de lectura a partir de propósitos de estudio e interés personal, aprender a comparar información y distinguir la engañosa, lo que contribuye a leer más allá de las letras."
+  },
+  /* 3 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes actividades corresponde al proceso de desarrollo de aprendizaje de QUINTO grado para el contenido de lectura y análisis de mitos y leyendas?",
+    options: [
+      "Elabora un compendio de mitos y leyendas que incluye título, portada, portadilla, introducción e índice.",
+      "Analiza mitos y leyendas de México y del mundo, y discute sobre su significado.",
+      "Lee mitos y leyendas de México e identifica las características y funciones de cada tipo de texto.",
+      "Distingue las diferencias y similitudes entre los mitos y las leyendas a nivel global."
+    ],
+    correct: 2,
+    feedback: "En quinto grado el alumno lee mitos y leyendas de México e identifica las características y funciones de cada tipo de texto. Las actividades de elaborar un compendio, analizar a nivel mundial y distinguir diferencias corresponden a sexto grado."
+  },
+  /* 4 */
+  {
+    type: "Relación de elementos",
+    text: "Seleccione la opción que relaciona correctamente el grado escolar con el proceso de desarrollo de aprendizaje correspondiente al contenido de mitos y leyendas.\n\nGrado:\n1. Quinto grado\n2. Sexto grado\n\nActividad:\na) Escenifica un mito o leyenda de su interés frente a público.\nb) Elabora un compendio de mitos y leyendas con portada, portadilla, introducción e índice.\nc) Lee mitos y leyendas solo de México e investiga su origen.",
+    options: [
+      "1b, 2a",
+      "1a, 2b",
+      "1c, 2a",
+      "1b, 2c"
+    ],
+    correct: 1,
+    feedback: "En quinto grado el alumno escenifica un mito o leyenda frente a público, mientras que en sexto grado elabora un compendio que incluye portada, portadilla, introducción e índice. Esto refleja la progresión en complejidad entre ambos grados."
+  },
+  /* 5 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes afirmaciones describe correctamente el enfoque de los lenguajes artísticos en la Fase 5?",
+    options: [
+      "Se limita al aprendizaje técnico de instrumentos musicales y técnicas de dibujo académico.",
+      "Se continúa con la exploración creativa y lúdica de sus elementos en distintas secuencias para expresar sensaciones, emociones, ideas e intereses mediante producciones propias.",
+      "Se orienta exclusivamente a la apreciación de obras artísticas de autores reconocidos internacionalmente.",
+      "Se enfoca en la reproducción fiel de obras clásicas para desarrollar habilidades de imitación."
+    ],
+    correct: 1,
+    feedback: "El programa establece que en cuanto a los usos de los lenguajes artísticos, en esta Fase se continúa con la exploración creativa y lúdica de sus elementos para expresar sensaciones, emociones, ideas e intereses a través de recreaciones y producciones propias."
+  },
+  /* 6 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué proceso de desarrollo de aprendizaje sobre el Sistema Solar corresponde específicamente al alumno de QUINTO grado?",
+    options: [
+      "Describe características de forma, ubicación, tamaño, distancia y temperatura de galaxias y estrellas.",
+      "Describe las características principales de la Vía Láctea y la reconoce como la galaxia en que se ubica el Sistema Solar.",
+      "Indaga, describe y representa con modelos las características de los componentes del Sistema Solar: Sol, planetas, satélites y asteroides.",
+      "Valora la importancia de telescopios, satélites artificiales y sondas espaciales en la investigación del Universo."
+    ],
+    correct: 2,
+    feedback: "En quinto grado el alumno indaga, describe y representa con modelos las características de los componentes del Sistema Solar, incluyendo forma, ubicación, color, tamaño, distancia al Sol, temperatura, masa, número de satélites naturales y anillos."
+  },
+  /* 7 */
+  {
+    type: "Cuestionamiento directo",
+    text: "Según el Programa Sintético de la Fase 5, ¿cuál es la galaxia en la que se ubica el Sistema Solar, que los alumnos de sexto grado deben identificar y describir?",
+    options: [
+      "La galaxia de Andrómeda",
+      "La Gran Nube de Magallanes",
+      "La Vía Láctea",
+      "La galaxia Triangulum"
+    ],
+    correct: 2,
+    feedback: "El programa de sexto grado indica que el alumno describe las características principales de la Vía Láctea y la reconoce como la galaxia en la que se ubica el Sistema Solar."
+  },
+  /* 8 */
+  {
+    type: "Completamiento",
+    text: "En quinto grado, el alumno identifica y explica las características del movimiento de rotación y de traslación de los planetas y otros componentes del Sistema Solar, considerando…",
+    options: [
+      "Solo la velocidad de los planetas gaseosos en su órbita alrededor del Sol.",
+      "La velocidad, dirección y trayectoria de dichos movimientos.",
+      "Únicamente la distancia de cada planeta al Sol como factor principal.",
+      "El número de satélites naturales y anillos de cada planeta del Sistema Solar."
+    ],
+    correct: 1,
+    feedback: "El programa establece que en quinto grado el alumno identifica y explica las características del movimiento de rotación y traslación de los planetas, considerando velocidad, dirección y trayectoria de dichos movimientos."
+  },
+  /* 9 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué aportación tecnológica menciona explícitamente el programa de QUINTO grado como relevante para el conocimiento del Sistema Solar?",
+    options: [
+      "El microscopio electrónico",
+      "La brújula magnética",
+      "El telescopio",
+      "El radar meteorológico"
+    ],
+    correct: 2,
+    feedback: "El programa de quinto grado indica que el alumno describe y valora diversas aportaciones culturales, científicas y tecnológicas, entre ellas la invención del telescopio, para el conocimiento del Sistema Solar."
+  },
+  /* 10 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Hasta qué magnitud numérica debe expresar oralmente la sucesión numérica un alumno de QUINTO grado en el área de matemáticas?",
+    options: [
+      "Hasta millones (siete cifras)",
+      "Hasta billones",
+      "Hasta seis cifras",
+      "Hasta nueve cifras"
+    ],
+    correct: 2,
+    feedback: "En quinto grado el programa indica que el alumno expresa oralmente la sucesión numérica hasta seis cifras en español y, hasta donde sea posible, en su lengua materna, de manera ascendente y descendente a partir de un número natural dado."
+  },
+  /* 11 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es la diferencia principal entre los procesos de desarrollo de aprendizaje de quinto y sexto grado en el tema 'Estudio de los números'?",
+    options: [
+      "En quinto se trabajan fracciones y en sexto solo números enteros positivos.",
+      "En quinto se trabaja con sucesiones hasta seis cifras y en sexto hasta billones.",
+      "En ambos grados se trabajan exactamente los mismos contenidos y actividades.",
+      "En sexto se trabaja exclusivamente con números decimales y porcentajes."
+    ],
+    correct: 1,
+    feedback: "El programa establece que en quinto grado la sucesión numérica llega hasta seis cifras, mientras que en sexto grado se amplía hasta billones. Ambos grados también abordan la comparación y ordenación, pero con mayor complejidad en sexto."
+  },
+  /* 12 */
+  {
+    type: "Completamiento",
+    text: "En quinto grado, dentro del tema de estudio de los números, el alumno reconoce, interpreta y utiliza las fracciones 1/2, 1/4, 3/4, 1/5 y 1/8…",
+    options: [
+      "Solo en operaciones de multiplicación y división de fracciones con el mismo denominador.",
+      "Expresados en notación decimal y viceversa, en diferentes contextos.",
+      "Únicamente en problemas de geometría para calcular áreas y fracciones de figuras.",
+      "Como números enteros representados en la recta numérica del 0 al 10."
+    ],
+    correct: 1,
+    feedback: "El programa indica que en quinto grado el alumno reconoce, interpreta y utiliza las fracciones 1/2, 1/4, 3/4, 1/5 y 1/8 expresados en notación decimal y viceversa en diferentes contextos, lo que conecta el conocimiento fraccionario con el decimal."
+  },
+  /* 13 */
+  {
+    type: "Cuestionamiento directo",
+    text: "En el programa de matemáticas de sexto grado de la Fase 5, ¿con qué sistemas de numeración se compara el sistema decimal para identificar semejanzas y diferencias?",
+    options: [
+      "El sistema romano y el sistema binario",
+      "El sistema maya y el sistema romano",
+      "El sistema egipcio y el sistema griego",
+      "El sistema binario y el sistema hexadecimal"
+    ],
+    correct: 1,
+    feedback: "El programa de sexto grado establece que el alumno identifica semejanzas y diferencias entre el sistema de numeración decimal y otros sistemas como el maya y el romano, ampliando así la comprensión de los sistemas de representación numérica."
+  },
+  /* 14 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es el enfoque del contenido 'Suma y resta, su relación como operaciones inversas' en quinto grado de la Fase 5?",
+    options: [
+      "Resolver únicamente sumas de números naturales de hasta tres cifras.",
+      "Proponer y resolver situaciones problemáticas que implican sumas y restas con números decimales utilizando el algoritmo convencional y fracciones con diferentes denominadores.",
+      "Memorizar las tablas de multiplicar como base para la suma repetida.",
+      "Calcular áreas y perímetros de figuras geométricas mediante sumas y restas."
+    ],
+    correct: 1,
+    feedback: "El programa de quinto grado señala que el alumno propone y resuelve situaciones problemáticas con sumas y restas de números decimales utilizando el algoritmo convencional, y también con fracciones con diferentes denominadores."
+  },
+  /* 15 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cómo reconoce el Programa Sintético de la Fase 5 a la democracia en el contexto mexicano?",
+    options: [
+      "Únicamente como un sistema de votación electoral para elegir representantes políticos.",
+      "Como una forma de vida sustentada en principios éticos basados en el respeto a la dignidad y los derechos humanos, para la construcción de acuerdos, normas y leyes.",
+      "Como una forma de gobierno exclusiva de los países con alto desarrollo económico.",
+      "Como un proceso administrativo y burocrático de toma de decisiones institucionales."
+    ],
+    correct: 1,
+    feedback: "El programa establece que en México se reconoce la democracia como forma de vida que se sustenta en principios éticos basados en el respeto a la dignidad y los derechos humanos, para la construcción de acuerdos, normas y leyes que propicien el bienestar de toda la población."
+  },
+  /* 16 */
+  {
+    type: "Cuestionamiento directo",
+    text: "Según el programa de Fase 5, ¿cómo se describe a México como forma de gobierno, resultado de su proceso histórico?",
+    options: [
+      "Una república centralista, democrática y monolingüe",
+      "Una república representativa, democrática, laica, federal, pluricultural y plurilingüe",
+      "Una república presidencial, unitaria y secular con un solo idioma oficial",
+      "Una república federal, monárquica y multiétnica con múltiples lenguas"
+    ],
+    correct: 1,
+    feedback: "El programa establece que México, como forma de gobierno, tiene un proceso histórico que ha contribuido a la definición de una república representativa, democrática, laica, federal, pluricultural y plurilingüe."
+  },
+  /* 17 */
+  {
+    type: "Completamiento",
+    text: "Según el programa de Ética, Naturaleza y Sociedades de la Fase 5, la convivencia democrática es posible si se reconoce que los conflictos son inherentes a las relaciones humanas, pero que estos se pueden resolver…",
+    options: [
+      "Aplicando sanciones y castigos inmediatos a quienes generen conflictos en la comunidad.",
+      "Eliminando completamente las diferencias culturales entre los distintos pueblos.",
+      "Promoviendo una cultura de paz con justicia.",
+      "Ignorando los conflictos menores para mantener la armonía social en todo momento."
+    ],
+    correct: 2,
+    feedback: "El programa señala que la convivencia democrática es posible si se reconoce que los conflictos son inherentes a las relaciones humanas, pero que estos se pueden resolver promoviendo una cultura de paz con justicia, a través del diálogo, la negociación y la mediación."
+  },
+  /* 18 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes acciones corresponde al reconocimiento de niñas y niños como sujetos titulares de derecho en el programa de Fase 5?",
+    options: [
+      "Obedecer todas las instrucciones de los adultos sin cuestionarlas para mantener el orden.",
+      "Reflexionar acerca de las diferentes formas de ejercer los derechos e identificar situaciones en las que se vulneran.",
+      "Participar únicamente en actividades escolares supervisadas por docentes o tutores.",
+      "Evitar todo contacto con instituciones gubernamentales para proteger la privacidad."
+    ],
+    correct: 1,
+    feedback: "El programa establece que niñas y niños se reconocen como sujetos titulares de derecho, lo que implica reflexionar acerca de las diferentes formas de ejercer sus derechos e identificar situaciones en las que se vulneran, promoviendo la cultura de la denuncia y la búsqueda de soluciones."
+  },
+  /* 19 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es el propósito de analizar movimientos sociales como La Independencia, La Reforma, La Revolución Mexicana y El Cardenismo en la Fase 5?",
+    options: [
+      "Memorizar fechas, nombres de personajes y datos específicos de cada movimiento histórico.",
+      "Fortalecer el pensamiento y las conciencias histórica y geográfica con una perspectiva ética que destaca el carácter inclusivo hacia la valoración de la diversidad y los derechos humanos.",
+      "Comparar a México con otros países más desarrollados para identificar sus deficiencias.",
+      "Justificar las decisiones políticas del presente con base en los hechos del pasado histórico."
+    ],
+    correct: 1,
+    feedback: "El programa busca continuar con el análisis crítico del pasado para interpretar el presente y visualizar un mejor futuro, fortaleciendo el pensamiento y las conciencias histórica y geográfica con perspectiva ética e inclusiva hacia la valoración de la diversidad y los derechos humanos."
+  },
+  /* 20 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué aspectos del fenómeno migratorio aborda el programa de Ética, Naturaleza y Sociedades de la Fase 5?",
+    options: [
+      "Solo las causas económicas de la migración interna entre estados del país.",
+      "Exclusivamente los aspectos legales de la migración internacional hacia países desarrollados.",
+      "Los impactos en la identidad y pertenencia de las personas, así como los prejuicios que generan aspectos como la discriminación y las dificultades para ejercer los derechos humanos.",
+      "Las rutas geográficas y los flujos migratorios estadísticos a nivel continental."
+    ],
+    correct: 2,
+    feedback: "El programa aborda los impactos de las migraciones en la identidad y pertenencia de las personas, los prejuicios que generan discriminación, las dificultades para ejercer derechos humanos, tratados internacionales de protección y acciones para proteger los derechos de las personas migrantes."
+  },
+  /* 21 */
+  {
+    type: "Relación de elementos",
+    text: "Seleccione la opción que relaciona correctamente el grado con el proceso de aprendizaje sobre migraciones.\n\nGrado:\n1. Quinto grado\n2. Sexto grado\n\nActividad:\na) Dialoga acerca de cómo cada país establece sus reglas para reconocer y otorgar la ciudadanía y las acciones para proteger a personas migrantes.\nb) Identifica algunos tratados internacionales que protegen los derechos de todas las personas, sin distinción de su condición migratoria.\nc) Solo estudia los flujos migratorios internos de México.",
+    options: [
+      "1c, 2a",
+      "1b, 2a",
+      "1a, 2b",
+      "1c, 2b"
+    ],
+    correct: 1,
+    feedback: "En quinto grado el alumno identifica tratados internacionales que protegen los derechos de todas las personas sin distinción migratoria. En sexto grado dialoga acerca de cómo cada país establece reglas para reconocer la ciudadanía y las acciones de protección para migrantes."
+  },
+  /* 22 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es la finalidad de desarrollar la empatía en los estudiantes de la Fase 5 según el campo 'De lo Humano y lo Comunitario'?",
+    options: [
+      "Lograr que los estudiantes sean más competitivos en sus resultados académicos y deportivos.",
+      "Construir un autoconcepto positivo y promover relaciones armónicas basadas en el aprecio por la diversidad.",
+      "Fomentar la competencia sana entre compañeros del mismo grupo escolar.",
+      "Desarrollar exclusivamente habilidades cognitivas para resolver problemas matemáticos."
+    ],
+    correct: 1,
+    feedback: "El programa establece que se favorece el conocimiento de sí y de los demás para desarrollar permanentemente la empatía, con la finalidad de construir un autoconcepto positivo y promover relaciones armónicas basadas en el aprecio por la diversidad."
+  },
+  /* 23 */
+  {
+    type: "Completamiento",
+    text: "Respecto a la comprensión y gestión de las emociones en la Fase 5, se busca que los estudiantes identifiquen el vínculo que éstas tienen con la diversidad de estados de ánimo y los factores que los determinan, para que puedan…",
+    options: [
+      "Suprimir completamente las emociones negativas que interfieren con el aprendizaje.",
+      "Promover estrategias o acciones que contribuyan a su regulación y fomenten el entendimiento mutuo.",
+      "Evitar expresar emociones en el aula para mantener un ambiente de trabajo formal.",
+      "Calificar las emociones como buenas o malas según su impacto en el comportamiento."
+    ],
+    correct: 1,
+    feedback: "El programa plantea que se pretende que los estudiantes identifiquen el vínculo entre las emociones y la diversidad de estados de ánimo, así como los factores que los determinan, para que puedan promover estrategias o acciones que contribuyan a su regulación y fomenten el entendimiento mutuo."
+  },
+  /* 24 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cómo concibe el programa de 'De lo Humano y lo Comunitario' de la Fase 5 a la personalidad?",
+    options: [
+      "Como algo fijo e inamovible determinado desde el nacimiento por factores biológicos.",
+      "Como un conjunto de rasgos que distinguen a cada persona, que se deben modular, mantener o modificar de acuerdo con las situaciones que se presentan.",
+      "Como resultado exclusivo del entorno familiar y las condiciones socioeconómicas del hogar.",
+      "Como un proceso determinado únicamente por factores genéticos y hereditarios."
+    ],
+    correct: 1,
+    feedback: "El programa establece que se pretende que los estudiantes conciban la personalidad como un conjunto de rasgos que distinguen a cada persona, y que es necesario modular, mantener o modificar los comportamientos de acuerdo con las situaciones que se presentan, para favorecer la autoestima y la interacción con los demás."
+  },
+  /* 25 */
+  {
+    type: "Cuestionamiento directo",
+    text: "En el campo 'De lo Humano y lo Comunitario', ¿qué se busca cuando el programa indica que los estudiantes analicen prácticas sociales que pueden implicar un riesgo?",
+    options: [
+      "Que memoricen estadísticas nacionales sobre accidentes, adicciones y violencia escolar.",
+      "Que analicen experiencias de riesgo asociadas con accidentes, adicciones y formas de violencia, y desarrollen actitudes que contribuyan a afrontarlas.",
+      "Que eviten por completo cualquier situación que implique toma de decisiones autónomas.",
+      "Que reporten de inmediato a las autoridades escolares toda situación de riesgo observada."
+    ],
+    correct: 1,
+    feedback: "El programa busca que los estudiantes analicen prácticas sociales que pueden implicar un riesgo, asociadas con accidentes, adicciones y formas de violencia, así como actitudes que contribuyan a afrontarlas, promoviendo su autonomía y responsabilidad."
+  },
+  /* 26 */
+  {
+    type: "Ordenamiento",
+    text: "Ordene el proceso que describe el programa de 'De lo Humano y lo Comunitario' para abordar la creatividad en la solución de situaciones y problemas:\n\n1. Analizar las experiencias de diseño de estrategias en situaciones de juego y cotidianas.\n2. Identificar las condiciones en las que se dieron las experiencias y los resultados obtenidos.\n3. Determinar posibles mejoras para impulsar formas de actuación y convivencia asertivas.\n4. Imaginar distintas etapas de su vida y prever las oportunidades y dificultades que podrían afrontar.",
+    options: [
+      "1, 2, 3, 4",
+      "3, 1, 4, 2",
+      "2, 4, 1, 3",
+      "4, 2, 3, 1"
+    ],
+    correct: 0,
+    feedback: "El programa indica que para abordar la creatividad en la solución de problemas, primero se analizan las experiencias de diseño (1), luego se identifican las condiciones y resultados (2), después se determinan mejoras para la convivencia asertiva (3) y finalmente se proyectan etapas futuras de vida (4)."
+  },
+  /* 27 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué se prioriza en la 'valoración y construcción de saberes e intervenciones' dentro del campo 'De lo Humano y lo Comunitario'?",
+    options: [
+      "El aprendizaje memorístico de conceptos teóricos de psicología y sociología.",
+      "La reflexión acerca de las ideas y prácticas culturales y el contexto en que se desarrollaron para comprenderlas o resignificarlas, logrando consensos orientados a la participación equitativa.",
+      "La evaluación cuantitativa del desempeño estudiantil mediante pruebas estandarizadas.",
+      "La comparación entre culturas para identificar cuál es más avanzada en su desarrollo social."
+    ],
+    correct: 1,
+    feedback: "El programa establece que en la valoración y construcción de saberes e intervenciones se prioriza que los estudiantes reflexionen acerca de las ideas y prácticas culturales y el contexto en el que se han desarrollado, para comprenderlas o resignificarlas, logrando consensos orientados a la participación equitativa."
+  },
+  /* 28 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuáles son los cuatro Campos Formativos que integran el Programa Sintético de la Fase 5 para la Educación Primaria?",
+    options: [
+      "Ciencias, Matemáticas, Historia y Educación Física",
+      "Lenguajes; Saberes y Pensamiento Científico; Ética, Naturaleza y Sociedades; y De lo Humano y lo Comunitario",
+      "Español, Matemáticas, Ciencias Naturales y Ciencias Sociales",
+      "Comunicación, Pensamiento Lógico, Formación en Valores y Educación Socioemocional"
+    ],
+    correct: 1,
+    feedback: "El Programa Sintético de la Fase 5 se organiza en cuatro Campos Formativos: Lenguajes; Saberes y Pensamiento Científico; Ética, Naturaleza y Sociedades; y De lo Humano y lo Comunitario. Este nuevo enfoque curricular sustituye la organización por asignaturas separadas."
+  },
+  /* 29 */
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué condiciones particulares de aprendizaje menciona el programa de la Fase 5 que deben atenderse para garantizar la inclusión y evitar la discriminación?",
+    options: [
+      "Solo las relacionadas con el bajo rendimiento académico y la reprobación de materias.",
+      "Las de niñas y niños con discapacidad, aptitudes sobresalientes o una lengua materna diferente a la de la comunidad escolar, como puede ser una lengua indígena, extranjera o de señas.",
+      "Únicamente las relacionadas con las diferencias económicas y sociales entre los estudiantes.",
+      "Las condiciones físicas y de infraestructura del espacio escolar y su equipamiento."
+    ],
+    correct: 1,
+    feedback: "El programa señala que existen condiciones distintas para el aprendizaje y la participación generadas por el contexto, como las que enfrentan niñas y niños con discapacidad, aptitudes sobresalientes, o una lengua materna diferente, como puede ser una lengua indígena, extranjera o de señas, por lo que se deben generar estrategias que favorezcan la inclusión."
+  },
+  /* 30 */
+  {
+    type: "Completamiento",
+    text: "En el área de Ética, Naturaleza y Sociedades de la Fase 5, cuando se trabaja la erradicación de toda forma de violencia, incluyendo la violencia de género, el objetivo es…",
+    options: [
+      "Castigar ejemplarmente y de forma pública a quienes la ejercen en la comunidad escolar.",
+      "La construcción de nuevas formas de relación e identitarias que garanticen la igualdad de derechos y oportunidades de todas y todos, para la construcción de una sociedad justa, inclusiva e igualitaria.",
+      "Separar a los estudiantes por género en las actividades escolares para evitar posibles conflictos.",
+      "Reportar únicamente los casos de violencia física documentados con evidencia verificable."
+    ],
+    correct: 1,
+    feedback: "El programa establece que se enfatiza la erradicación de toda forma de violencia, incluida la de género, para la construcción de nuevas formas de relación e identitarias que garanticen la igualdad de derechos y oportunidades de todas y todos, para la construcción de una sociedad justa, inclusiva e igualitaria."
+  }
+];
+
+/* ─────────────────────────── ESTADO ─────────────────────────── */
+let studentName = "";
+let current = 0;
+let score = 0;
+let answered = false;
+
+/* ─────────────────────────── ENABLE START BUTTON ─────────────── */
+document.getElementById('student-name').addEventListener('input', function(){
+  document.getElementById('btn-start').disabled = this.value.trim().length < 2;
+});
+document.getElementById('student-name').addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && this.value.trim().length >= 2) startExam();
+});
+
+/* ─────────────────────────── FUNCIONES PRINCIPALES ─────────────── */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startExam(){
+  studentName = document.getElementById('student-name').value.trim();
+  if(!studentName) return;
+  current = 0; score = 0;
+  showScreen('screen-exam');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered = false;
+  const q = questions[current];
+  const total = questions.length;
+
+  // Progress
+  document.getElementById('q-counter').textContent = `${current+1} / ${total}`;
+  document.getElementById('progress-fill').style.width = `${((current+1)/total)*100}%`;
+  document.getElementById('q-num-badge').textContent = `Pregunta ${current+1}`;
+  document.getElementById('q-type-badge').textContent = q.type;
+
+  // Question text (preserve line breaks)
+  const qText = document.getElementById('q-text');
+  qText.innerHTML = q.text.replace(/\n/g, '<br>');
+
+  // Options
+  const letters = ['A','B','C','D'];
+  const optCont = document.getElementById('options-container');
+  optCont.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.dataset.index = i;
+    div.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    div.addEventListener('click', () => selectOption(i));
+    optCont.appendChild(div);
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback';
+  fb.querySelector('#fb-text').textContent = '';
+
+  // Next button
+  const btn = document.getElementById('btn-next');
+  btn.disabled = true;
+  btn.textContent = current < questions.length - 1 ? 'Siguiente pregunta →' : 'Ver resultados 🏆';
+}
+
+function selectOption(idx){
+  if(answered) return;
+  answered = true;
+  const q = questions[current];
+  const options = document.querySelectorAll('.option');
+
+  options.forEach(o => o.classList.add('disabled'));
+  options[idx].classList.add(idx === q.correct ? 'correct' : 'incorrect');
+  if(idx !== q.correct) options[q.correct].classList.add('correct');
+
+  const fb = document.getElementById('feedback-box');
+  const fbIcon = document.getElementById('fb-icon');
+  const fbText = document.getElementById('fb-text');
+
+  if(idx === q.correct){
+    score++;
+    fb.className = 'feedback show correct-fb';
+    fbIcon.textContent = '✅';
+    fbText.textContent = '¡Correcto! ' + q.feedback;
+  } else {
+    fb.className = 'feedback show incorrect-fb';
+    fbIcon.textContent = '❌';
+    fbText.textContent = 'Respuesta incorrecta. ' + q.feedback;
+  }
+
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQuestion(){
+  current++;
+  if(current >= questions.length){
+    showResults();
+  } else {
+    // Animate out/in
+    const card = document.querySelector('#screen-exam .card');
+    card.style.animation = 'none';
+    card.offsetHeight; // reflow
+    card.style.animation = 'fadeSlide .4s ease both';
+    renderQuestion();
+  }
+}
+
+function showResults(){
+  showScreen('screen-results');
+  const total = questions.length;
+  const wrong = total - score;
+  const pct = Math.round((score/total)*100);
+
+  document.getElementById('results-name').textContent = `Estudiante: ${studentName}`;
+  document.getElementById('stat-correct').textContent = score;
+  document.getElementById('stat-incorrect').textContent = wrong;
+  document.getElementById('score-pct').textContent = `${pct}%`;
+
+  const circle = document.getElementById('score-circle');
+  circle.className = 'score-circle';
+  if(pct >= 70) circle.classList.add('score-high');
+  else if(pct >= 50) circle.classList.add('score-mid');
+  else circle.classList.add('score-low');
+
+  // Trophy & message
+  let trophy, title, icon, msg;
+  if(pct >= 90){
+    trophy = '🏆'; title = '¡Excelente desempeño!';
+    icon = '🌟'; msg = `¡Felicidades, ${studentName}! Dominas muy bien los contenidos del Programa Sintético de la Fase 5. ¡Sigue así, eres un ejemplo a seguir!`;
+  } else if(pct >= 70){
+    trophy = '🥇'; title = '¡Buen trabajo!';
+    icon = '💪'; msg = `¡Buen trabajo, ${studentName}! Tienes un sólido conocimiento del programa. Repasa los temas donde tuviste dudas y llegarás a la excelencia.`;
+  } else if(pct >= 50){
+    trophy = '📖'; title = 'Sigue practicando';
+    icon = '🚀'; msg = `¡Ánimo, ${studentName}! Estás en el camino correcto. Revisa con más detalle los Campos Formativos y vuelve a intentarlo. ¡Tú puedes mejorar!`;
+  } else {
+    trophy = '💡'; title = 'Oportunidad de mejorar';
+    icon = '🔥'; msg = `No te desanimes, ${studentName}. Cada intento es una oportunidad de aprendizaje. Estudia el Programa Sintético de la Fase 5 y vuelve a presentar el simulador. ¡Créelo, lo lograrás!`;
+  }
+
+  document.getElementById('results-trophy').textContent = trophy;
+  document.getElementById('results-title').textContent = title;
+  document.getElementById('mot-icon').textContent = icon;
+  document.getElementById('mot-text').textContent = msg;
+}
+
+function retryExam(){
+  current = 0; score = 0;
+  showScreen('screen-exam');
+  renderQuestion();
+}
+
+function goHome(){
+  document.getElementById('student-name').value = '';
+  document.getElementById('btn-start').disabled = true;
+  showScreen('screen-welcome');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ley General de Educación – Guía Interactiva</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Lora:ital,wght@0,600;1,500&display=swap');
+
+:root {
+  --navy:   #1b2a4a;
+  --navy2:  #243660;
+  --orange: #e8820c;
+  --orange2:#f5a535;
+  --pink:   #d63f7a;
+  --pink2:  #f0679a;
+  --teal:   #0f8a7c;
+  --teal2:  #15b3a2;
+  --cream:  #fdf6ec;
+  --cream2: #f5ede0;
+  --white:  #ffffff;
+  --gray1:  #f4f5f8;
+  --gray2:  #e3e7ef;
+  --gray3:  #8c97b0;
+  --dark:   #1a2336;
+  --radius: 14px;
+  --shadow: 0 3px 18px rgba(0,0,0,.10);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  font-family: 'Outfit', sans-serif;
+  background: var(--gray1); color: var(--dark);
+}
+
+/* ─── APP SHELL ─── */
+#app { width:100%; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ─── TOPBAR ─── */
+#topbar {
+  flex-shrink:0; height:50px;
+  background: var(--navy);
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0 1rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,.3);
+  z-index:200;
+}
+.tb-left { display:flex; align-items:center; gap:.5rem; }
+.tb-logo { font-size:.85rem; font-weight:800; color:#fff; letter-spacing:.3px; }
+.tb-pill {
+  background:rgba(232,130,12,.25); border:1px solid var(--orange);
+  border-radius:20px; padding:.15rem .6rem;
+  font-size:.62rem; font-weight:700; color:var(--orange2); letter-spacing:.5px;
+}
+.tb-right { display:flex; align-items:center; gap:.5rem; font-size:.72rem; color:rgba(255,255,255,.6); }
+.prog-bar { width:90px; height:5px; background:rgba(255,255,255,.2); border-radius:3px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--orange2); border-radius:3px; transition:width .4s ease; }
+
+/* ─── SCREEN CONTAINER ─── */
+#stage { flex:1; overflow:hidden; position:relative; }
+
+.screen {
+  position:absolute; inset:0; display:none;
+  flex-direction:column; overflow:hidden;
+  opacity:0; transform:translateY(20px);
+  transition:opacity .35s ease, transform .35s ease;
+}
+.screen.active { display:flex; opacity:1; transform:translateY(0); }
+.screen.exit   { display:flex; opacity:0; transform:translateY(-20px); }
+
+/* ─── SCREEN HEADER ─── */
+.sh {
+  flex-shrink:0;
+  background:var(--white); border-bottom:2px solid var(--gray2);
+  padding:.6rem 1rem .5rem;
+}
+.sh-title {
+  font-size:1rem; font-weight:800; color:var(--navy);
+  display:flex; align-items:center; gap:.4rem; line-height:1.2;
+}
+.sh-sub { font-size:.68rem; color:var(--gray3); margin-top:2px; }
+
+/* ─── SCROLLABLE BODY ─── */
+.sb {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  padding:.75rem .9rem .9rem;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin; scrollbar-color:var(--gray2) transparent;
+}
+.sb::-webkit-scrollbar { width:3px; }
+.sb::-webkit-scrollbar-thumb { background:var(--gray2); border-radius:2px; }
+
+/* ─── BOTTOM NAV ─── */
+#botnav {
+  flex-shrink:0; height:54px;
+  background:var(--white); border-top:1px solid var(--gray2);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 .9rem;
+  box-shadow:0 -2px 12px rgba(0,0,0,.07);
+  z-index:200;
+}
+.nb { padding:.42rem 1rem; border:none; border-radius:30px; cursor:pointer;
+      font-family:'Outfit',sans-serif; font-weight:700; font-size:.78rem;
+      transition:all .2s; }
+.nb:active { transform:scale(.96); }
+.nb.prev { background:var(--gray2); color:var(--dark); }
+.nb.next { background:var(--navy); color:#fff; }
+.nb:disabled { opacity:.3; cursor:not-allowed; }
+.dots { display:flex; gap:5px; align-items:center; }
+.dot { width:7px; height:7px; border-radius:50%; background:var(--gray2); cursor:pointer; transition:all .2s; }
+.dot.active { background:var(--orange); transform:scale(1.35); }
+
+/* ─── FOOTER ─── */
+#foot {
+  flex-shrink:0; background:var(--navy); color:rgba(255,255,255,.5);
+  font-size:.6rem; text-align:center; padding:.28rem .5rem; letter-spacing:.3px;
+}
+
+/* ══════════════════════════════════════
+   PORTADA
+══════════════════════════════════════ */
+#s0 {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 55%, #1a3a50 100%);
+}
+.cover {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:1.5rem 1.2rem; text-align:center; gap:.65rem;
+}
+.c-tag {
+  background:rgba(232,130,12,.2); border:1.5px solid var(--orange);
+  border-radius:30px; padding:.25rem .9rem;
+  font-size:.65rem; font-weight:800; letter-spacing:1.5px;
+  color:var(--orange2); text-transform:uppercase;
+}
+.c-icon { font-size:3.8rem; filter:drop-shadow(0 4px 16px rgba(0,0,0,.4)); }
+.c-title {
+  font-family:'Outfit',sans-serif; font-weight:900;
+  font-size:clamp(1.5rem,5vw,2.3rem); color:#fff; line-height:1.15;
+}
+.c-title span { color:var(--orange2); }
+.c-subtitle { font-size:.8rem; color:rgba(255,255,255,.65); max-width:340px; line-height:1.5; }
+.c-pillars {
+  display:flex; flex-wrap:wrap; justify-content:center; gap:.4rem; margin:.2rem 0;
+}
+.cp {
+  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
+  border-radius:20px; padding:.22rem .7rem;
+  font-size:.67rem; font-weight:700; color:#fff;
+}
+.c-author {
+  background:rgba(214,63,122,.2); border:1.5px solid var(--pink);
+  border-radius:12px; padding:.45rem 1rem;
+  font-size:.74rem; color:var(--pink2); font-weight:700;
+}
+.c-btn {
+  background:var(--orange); color:var(--navy);
+  border:none; border-radius:30px; padding:.65rem 2rem;
+  font-family:'Outfit',sans-serif; font-weight:800; font-size:.88rem;
+  cursor:pointer; box-shadow:0 4px 20px rgba(232,130,12,.4);
+  transition:transform .15s, box-shadow .15s;
+}
+.c-btn:hover { transform:translateY(-2px); box-shadow:0 6px 28px rgba(232,130,12,.5); }
+
+/* ══════════════════════════════════════
+   GENERIC COMPONENTS
+══════════════════════════════════════ */
+.lbl {
+  display:block; font-size:.62rem; font-weight:800; letter-spacing:1.4px;
+  text-transform:uppercase; margin-bottom:.45rem;
+}
+.lbl.navy { color:var(--navy); }
+.lbl.orange { color:var(--orange); }
+.lbl.pink { color:var(--pink); }
+.lbl.teal { color:var(--teal); }
+
+/* card */
+.card {
+  background:var(--white); border-radius:var(--radius);
+  padding:.85rem .95rem; margin-bottom:.6rem;
+  box-shadow:var(--shadow); border-left:4px solid var(--navy);
+}
+.card.orange { border-left-color:var(--orange); }
+.card.pink   { border-left-color:var(--pink); }
+.card.teal   { border-left-color:var(--teal); }
+.card.gold   { border-left-color:#c8971a; }
+.card h3 { font-size:.84rem; font-weight:800; color:var(--dark); margin-bottom:.35rem; }
+.card p  { font-size:.76rem; color:#555; line-height:1.55; }
+.card ul { padding-left:1.1rem; }
+.card li { font-size:.74rem; color:#555; margin-bottom:.28rem; line-height:1.45; }
+
+/* highlight */
+.hl {
+  border-radius:12px; padding:.75rem .9rem; margin-bottom:.6rem;
+  border:1.5px solid;
+}
+.hl.navy-hl  { background:linear-gradient(135deg,#e8edf7,#d6dff0); border-color:#9aaad4; }
+.hl.orange-hl{ background:linear-gradient(135deg,#fef3e2,#fde8be); border-color:var(--orange2); }
+.hl.pink-hl  { background:linear-gradient(135deg,#fce8f0,#f9cfe0); border-color:var(--pink2); }
+.hl.teal-hl  { background:linear-gradient(135deg,#e2f6f4,#c8ede9); border-color:var(--teal2); }
+.hl h4 { font-size:.8rem; font-weight:800; display:flex; align-items:center; gap:.35rem; margin-bottom:.35rem; }
+.hl.navy-hl h4  { color:var(--navy); }
+.hl.orange-hl h4{ color:#8a5800; }
+.hl.pink-hl h4  { color:var(--pink); }
+.hl.teal-hl h4  { color:var(--teal); }
+.hl p, .hl li { font-size:.74rem; color:#444; line-height:1.5; }
+.hl ul { padding-left:1rem; }
+.hl li { margin-bottom:.23rem; }
+
+/* grid */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:.55rem; margin-bottom:.6rem; }
+.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.5rem; margin-bottom:.6rem; }
+.mc {
+  background:var(--white); border-radius:12px; padding:.65rem .7rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.07); text-align:center;
+}
+.mc .ico  { font-size:1.45rem; margin-bottom:.2rem; }
+.mc .name { font-size:.71rem; font-weight:800; color:var(--dark); }
+.mc .desc { font-size:.63rem; color:var(--gray3); margin-top:2px; line-height:1.3; }
+
+/* pillar badge */
+.pb-wrap { display:flex; gap:.5rem; margin-bottom:.6rem; }
+.pb {
+  flex:1; border-radius:12px; padding:.6rem .75rem;
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:.2rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+.pb .pico { font-size:1.4rem; }
+.pb .ptitle { font-size:.71rem; font-weight:800; }
+.pb .psub  { font-size:.61rem; line-height:1.3; }
+.pb.n1 { background:linear-gradient(135deg,#e8edf7,#d6dff0); }
+.pb.n2 { background:linear-gradient(135deg,#fef3e2,#fde8be); }
+.pb.n3 { background:linear-gradient(135deg,#fce8f0,#f9cfe0); }
+.pb.n4 { background:linear-gradient(135deg,#e2f6f4,#c8ede9); }
+.pb.n1 .ptitle { color:var(--navy); }
+.pb.n2 .ptitle { color:#7a4900; }
+.pb.n3 .ptitle { color:var(--pink); }
+.pb.n4 .ptitle { color:var(--teal); }
+.pb.n1 .psub, .pb.n2 .psub, .pb.n3 .psub, .pb.n4 .psub { color:#555; }
+
+/* tabs */
+.tabs-wrap { margin-bottom:.6rem; }
+.tab-btns { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:.55rem; }
+.tb-btn {
+  padding:.28rem .65rem; border-radius:20px;
+  border:1.5px solid var(--gray2); background:var(--white);
+  font-family:'Outfit',sans-serif; font-size:.68rem; font-weight:700;
+  color:var(--gray3); cursor:pointer; transition:all .2s;
+}
+.tb-btn.on { background:var(--navy); color:#fff; border-color:var(--navy); }
+.tp { display:none; }
+.tp.on { display:block; }
+
+/* accordion */
+.acc { margin-bottom:.45rem; }
+.ah {
+  background:var(--white); border:1px solid var(--gray2);
+  border-radius:10px; padding:.6rem .85rem;
+  display:flex; justify-content:space-between; align-items:center;
+  cursor:pointer; font-size:.78rem; font-weight:700; color:var(--dark);
+  transition:background .2s; margin-bottom:2px;
+}
+.ah:hover { background:#f0f3f9; }
+.ah.open  { background:#e8edf7; color:var(--navy); border-color:#9aaad4; border-radius:10px 10px 0 0; }
+.aa-arrow { transition:transform .25s; }
+.ah.open .aa-arrow { transform:rotate(180deg); }
+.ab {
+  max-height:0; overflow:hidden;
+  border:1px solid #9aaad4; border-top:none;
+  border-radius:0 0 10px 10px; background:#f6f8fd;
+  transition:max-height .3s ease; margin-bottom:3px;
+}
+.ab.open { max-height:500px; }
+.ab-inner { padding:.65rem .85rem; font-size:.75rem; color:#444; line-height:1.55; }
+.ab-inner ul { padding-left:1.1rem; }
+.ab-inner li { margin-bottom:.28rem; }
+
+/* criteria wheel visual */
+.cr-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:.6rem; }
+.cr-item {
+  background:var(--white); border-radius:12px; padding:.6rem .75rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+  border-top:3px solid var(--navy);
+}
+.cr-item:nth-child(2) { border-top-color:var(--orange); }
+.cr-item:nth-child(3) { border-top-color:var(--pink); }
+.cr-item:nth-child(4) { border-top-color:var(--teal); }
+.cr-item:nth-child(5) { border-top-color:#9b59b6; }
+.cr-item:nth-child(6) { border-top-color:#27ae60; }
+.cr-item:nth-child(7) { border-top-color:#e67e22; }
+.cr-item:nth-child(8) { border-top-color:#2980b9; }
+.cr-item h4 { font-size:.75rem; font-weight:800; color:var(--dark); display:flex; gap:.3rem; align-items:center; }
+.cr-item p  { font-size:.67rem; color:#666; margin-top:.2rem; line-height:1.4; }
+
+/* dominio cards */
+.dom-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:.6rem; }
+.dom {
+  border-radius:12px; padding:.75rem .8rem; color:#fff;
+  box-shadow:0 3px 12px rgba(0,0,0,.15);
+}
+.dom.d1 { background:linear-gradient(135deg,var(--navy),#243660); }
+.dom.d2 { background:linear-gradient(135deg,var(--pink),#a0285c); }
+.dom.d3 { background:linear-gradient(135deg,#b85a00,#d47a1a); }
+.dom.d4 { background:linear-gradient(135deg,var(--teal),#0a6b5f); }
+.dom .dico  { font-size:1.4rem; margin-bottom:.25rem; }
+.dom .dname { font-size:.76rem; font-weight:800; margin-bottom:.25rem; }
+.dom p      { font-size:.67rem; opacity:.88; line-height:1.45; }
+
+/* padres table */
+.p-table { background:var(--white); border-radius:var(--radius); overflow:hidden; margin-bottom:.6rem; box-shadow:var(--shadow); }
+.p-table-head { display:grid; grid-template-columns:1fr 1fr; }
+.pt-h { padding:.55rem .8rem; font-size:.76rem; font-weight:800; color:#fff; }
+.pt-h.left  { background:var(--navy); }
+.pt-h.right { background:var(--pink); }
+.pt-rows { display:grid; grid-template-columns:1fr 1fr; }
+.pt-col { }
+.pt-row {
+  padding:.45rem .8rem; font-size:.71rem; color:#444; line-height:1.4;
+  border-bottom:1px solid var(--gray2); display:flex; gap:.35rem; align-items:flex-start;
+}
+.pt-row:last-child { border-bottom:none; }
+.pt-row .ri { font-size:.8rem; flex-shrink:0; margin-top:1px; }
+.pt-divider { width:1px; background:var(--gray2); }
+
+/* quiz */
+.qprog { font-size:.7rem; color:var(--gray3); text-align:right; margin-bottom:.5rem; }
+.qcard {
+  background:var(--white); border-radius:var(--radius);
+  padding:.9rem 1rem; box-shadow:var(--shadow); margin-bottom:.65rem;
+}
+.qtext { font-size:.83rem; font-weight:700; color:var(--dark); margin-bottom:.75rem; line-height:1.4; }
+.opts { display:flex; flex-direction:column; gap:.4rem; }
+.opt {
+  padding:.5rem .8rem; border:1.5px solid var(--gray2);
+  border-radius:10px; background:var(--white);
+  font-family:'Outfit',sans-serif; font-size:.75rem; font-weight:600; color:var(--dark);
+  cursor:pointer; text-align:left; transition:all .18s;
+}
+.opt:hover:not(:disabled) { border-color:#9aaad4; background:#f0f3f9; }
+.opt.ok   { background:#d4f7e5; border-color:#15b3a2; color:var(--teal); }
+.opt.fail { background:#fde8f0; border-color:var(--pink2); color:var(--pink); }
+.opt:disabled { cursor:default; }
+.qfb {
+  font-size:.74rem; font-weight:700; border-radius:8px;
+  padding:.45rem .75rem; margin-top:.4rem; display:none;
+}
+.qfb.show { display:block; }
+.qfb.ok   { background:#d4f7e5; color:var(--teal); }
+.qfb.fail { background:#fde8f0; color:var(--pink); }
+.qnext {
+  margin-top:.55rem; padding:.45rem 1.3rem; background:var(--navy); color:#fff;
+  border:none; border-radius:30px; font-family:'Outfit',sans-serif;
+  font-size:.76rem; font-weight:700; cursor:pointer; display:none;
+}
+.qnext.show { display:inline-block; }
+.score-wrap {
+  background:linear-gradient(135deg,var(--navy),#1a3560);
+  border-radius:var(--radius); padding:1.3rem 1rem; text-align:center; color:#fff;
+}
+.score-num { font-size:2.8rem; font-weight:900; color:var(--orange2); line-height:1; }
+.score-lbl { font-size:.82rem; margin-top:.2rem; }
+.score-msg { font-size:.74rem; opacity:.8; margin-top:.35rem; }
+.retry {
+  margin-top:.75rem; padding:.48rem 1.5rem;
+  background:var(--orange); color:var(--navy);
+  border:none; border-radius:30px; font-family:'Outfit',sans-serif;
+  font-weight:800; font-size:.8rem; cursor:pointer;
+}
+
+/* summary */
+.sum-wrap { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:.6rem; }
+.sum-item {
+  background:var(--white); border-radius:12px; padding:.7rem .8rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+.sum-item .si-head {
+  font-size:.72rem; font-weight:800; color:#fff;
+  border-radius:8px; padding:.22rem .55rem; margin-bottom:.4rem; display:inline-block;
+}
+.si-h1 { background:var(--navy); }
+.si-h2 { background:var(--orange); }
+.si-h3 { background:var(--pink); }
+.si-h4 { background:var(--teal); }
+.sum-item ul { padding-left:.95rem; }
+.sum-item li { font-size:.68rem; color:#555; margin-bottom:.22rem; line-height:1.4; }
+
+.exam-list { background:var(--white); border-radius:var(--radius); padding:.8rem .95rem; box-shadow:var(--shadow); }
+.exam-row {
+  display:flex; gap:.5rem; align-items:flex-start;
+  padding:.45rem 0; border-bottom:1px solid var(--gray2); font-size:.75rem; color:#444;
+}
+.exam-row:last-child { border-bottom:none; }
+.exam-art { font-weight:800; color:var(--navy); white-space:nowrap; font-size:.74rem; flex-shrink:0; width:90px; }
+
+.final-quote {
+  background:linear-gradient(135deg,var(--navy),#1a3560);
+  border-radius:var(--radius); padding:1rem 1.1rem;
+  font-family:'Lora',serif; font-size:.85rem; font-style:italic;
+  color:#fff; text-align:center; line-height:1.55; margin-bottom:.6rem;
+}
+.final-quote span { color:var(--orange2); font-style:normal; font-weight:700; }
+
+/* responsive */
+@media (max-width:400px) {
+  .g2,.g3,.cr-grid,.dom-grid,.sum-wrap { grid-template-columns:1fr; }
+  .pb-wrap { flex-wrap:wrap; }
+  .pb { min-width:calc(50% - .25rem); }
+  .pt-row { font-size:.67rem; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-left">
+    <span class="tb-logo">📘 LGE</span>
+    <span class="tb-pill">LEY GENERAL DE EDUCACIÓN</span>
+  </div>
+  <div class="tb-right">
+    <span id="plabel">1/11</span>
+    <div class="prog-bar"><div class="prog-fill" id="pfill" style="width:9.1%"></div></div>
+  </div>
+</div>
+
+<!-- STAGE -->
+<div id="stage">
+
+  <!-- ═══ S0: PORTADA ═══ -->
+  <div class="screen active" id="s0">
+    <div class="cover">
+      <div class="c-tag">📋 Guía de Estudio Visual y Síntesis Conceptual</div>
+      <div class="c-icon">🏫</div>
+      <div class="c-title">Ley General de <span>Educación</span></div>
+      <div class="c-subtitle">Domina los conceptos clave del sistema educativo mexicano a través de sus 4 pilares fundamentales.</div>
+      <div class="c-pillars">
+        <span class="cp">🛡️ Derecho a la Educación</span>
+        <span class="cp">🧭 Nueva Escuela Mexicana</span>
+        <span class="cp">🌿 Orientación Integral</span>
+        <span class="cp">🤝 Participación Social</span>
+      </div>
+      <div class="c-author">✏️ Prof. Francisco De Jesús Luna Benitez</div>
+      <button class="c-btn" onclick="goTo(1)">Comenzar Estudio →</button>
+    </div>
+  </div>
+
+  <!-- ═══ S1: LOS 4 PILARES ═══ -->
+  <div class="screen" id="s1">
+    <div class="sh">
+      <div class="sh-title">🏛️ Los 4 Pilares Fundamentales de la Ley</div>
+      <div class="sh-sub">Una visión estructurada para dominar los conceptos clave del sistema educativo.</div>
+    </div>
+    <div class="sb">
+      <div class="hl navy-hl">
+        <h4>💡 Idea Central</h4>
+        <p>La Ley General de Educación se estructura como un <strong>árbol vivo</strong>: con raíces (derechos), un tronco (filosofía), ramas (enfoque integral) y un entorno (comunidad). La falla en cualquier componente debilita el desarrollo humano integral.</p>
+      </div>
+
+      <span class="lbl navy">Los 4 Pilares — Vista General</span>
+      <div class="pb-wrap">
+        <div class="pb n1"><div class="pico">🛡️</div><div class="ptitle">Pilar 1</div><div class="psub">Derecho a la Educación (Las Raíces)</div></div>
+        <div class="pb n2"><div class="pico">🧭</div><div class="ptitle">Pilar 2</div><div class="psub">Nueva Escuela Mexicana (El Tronco)</div></div>
+        <div class="pb n3"><div class="pico">🌿</div><div class="ptitle">Pilar 3</div><div class="psub">Orientación Integral (Las Ramas)</div></div>
+        <div class="pb n4"><div class="pico">🤝</div><div class="ptitle">Pilar 4</div><div class="psub">Participación Social (El Entorno)</div></div>
+      </div>
+
+      <div class="card orange">
+        <h3>⚖️ ¿Por qué son pilares?</h3>
+        <p>Cada pilar representa un componente esencial e insustituible del sistema educativo. Su interacción y equilibrio garantizan que la educación en México sea un <strong>ecosistema funcional y humano</strong>.</p>
+      </div>
+      <div class="card teal">
+        <h3>📌 Artículos clave que debes conocer</h3>
+        <ul>
+          <li>Art. 7 – Características del derecho a la educación</li>
+          <li>Arts. 8 y 9 – Equidad y excelencia educativa</li>
+          <li>Arts. 11-14 – Nueva Escuela Mexicana</li>
+          <li>Arts. 15-18 – Fines y criterios de la educación</li>
+          <li>Arts. 126-132 – Participación social</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ S2: PILAR 1 – DERECHO A LA EDUCACIÓN ═══ -->
+  <div class="screen" id="s2">
+    <div class="sh">
+      <div class="sh-title">🛡️ Pilar 1 – El Derecho a la Educación</div>
+      <div class="sh-sub">Art. 7 – Las 5 características irrenunciables (Las Raíces)</div>
+    </div>
+    <div class="sb">
+      <div class="hl orange-hl">
+        <h4>📜 Definición</h4>
+        <p>El Art. 7 define a la educación como un <strong>derecho humano fundamental</strong> con cinco características que el Estado no puede ignorar ni condicionar. Son el cimiento innegociable y constitucional.</p>
+      </div>
+
+      <span class="lbl orange">Las 5 Características Irrenunciables</span>
+      <div class="g2" style="margin-bottom:.55rem">
+        <div class="mc">
+          <div class="ico">🌍</div>
+          <div class="name">Universal</div>
+          <div class="desc">Corresponde a todas las personas por igual, sin discriminación.</div>
+        </div>
+        <div class="mc">
+          <div class="ico">♿</div>
+          <div class="name">Inclusiva</div>
+          <div class="desc">Elimina barreras al aprendizaje y la participación (ajustes razonables).</div>
+        </div>
+        <div class="mc">
+          <div class="ico">🏛️</div>
+          <div class="name">Pública</div>
+          <div class="desc">Impartida y administrada por el Estado con fines de orden público.</div>
+        </div>
+        <div class="mc">
+          <div class="ico">💰</div>
+          <div class="name">Gratuita</div>
+          <div class="desc">Prohibido condicionar el servicio a cualquier contraprestación o pago.</div>
+        </div>
+      </div>
+      <div class="mc" style="margin-bottom:.6rem; display:flex; align-items:center; gap:.7rem; text-align:left; padding:.65rem .8rem; background:var(--white); border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.07);">
+        <div style="font-size:1.5rem; flex-shrink:0;">⛪</div>
+        <div>
+          <div class="name" style="font-size:.76rem; font-weight:800; color:var(--dark);">Laica</div>
+          <div class="desc" style="font-size:.69rem; color:var(--gray3); line-height:1.35; margin-top:2px;">Se mantiene completamente ajena a cualquier doctrina religiosa.</div>
+        </div>
+      </div>
+
+      <div class="hl teal-hl">
+        <h4>⚖️ Arts. 8 y 9 – Equidad y Excelencia</h4>
+        <ul>
+          <li><strong>Enfoque en vulnerabilidad:</strong> Prioridad a grupos con rezago educativo o en condiciones socioeconómicas adversas.</li>
+          <li><strong>Apoyos económicos:</strong> Becas y políticas incluyentes con perspectiva de género.</li>
+          <li><strong>Alimentación y vida:</strong> Convenios para mejorar condiciones en zonas de marginación.</li>
+          <li><strong>Tiempo extendido:</strong> Escuelas con horario completo (6 a 8 horas) para mayor aprovechamiento.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ S3: PILAR 2 – NUEVA ESCUELA MEXICANA ═══ -->
+  <div class="screen" id="s3">
+    <div class="sh">
+      <div class="sh-title">🧭 Pilar 2 – La Nueva Escuela Mexicana</div>
+      <div class="sh-sub">Arts. 11-14 – La filosofía y el vehículo del Estado</div>
+    </div>
+    <div class="sb">
+      <div class="hl orange-hl">
+        <h4>🎯 ¿Qué es la NEM?</h4>
+        <p>La Nueva Escuela Mexicana es el <strong>vehículo operativo del Estado</strong> para el desarrollo humano integral. Busca la equidad, la excelencia y la mejora continua, colocando al centro el <strong>máximo logro de aprendizaje</strong> de niñas, niños, adolescentes y jóvenes.</p>
+      </div>
+
+      <span class="lbl orange">Componentes Clave de la NEM</span>
+      <div class="card orange">
+        <h3>🏫 El Centro de Aprendizaje</h3>
+        <p>Concebir a la escuela como un <strong>centro de aprendizaje comunitario</strong>, seguro y libre de violencias. La escuela deja de ser solo un espacio académico para convertirse en un nodo de desarrollo social.</p>
+      </div>
+      <div class="card pink">
+        <h3>👩‍🏫 Revalorización Docente</h3>
+        <p>Reconocer a maestras y maestros como <strong>agentes fundamentales del proceso educativo</strong> y profesionales de la formación. Son el corazón de la NEM.</p>
+      </div>
+
+      <div class="acc">
+        <div class="ah" onclick="ta(this)">📋 Art. 11 – Centro de la NEM <span class="aa-arrow">▼</span></div>
+        <div class="ab"><div class="ab-inner"><p>El máximo logro de aprendizaje de niñas, niños, adolescentes y jóvenes. La NEM pone a la persona en el centro, no a los contenidos.</p></div></div>
+      </div>
+      <div class="acc">
+        <div class="ah" onclick="ta(this)">📋 Art. 12 – Orientación de la NEM <span class="aa-arrow">▼</span></div>
+        <div class="ab"><div class="ab-inner"><p>Busca la equidad, la excelencia y la mejora continua del proceso educativo. Define el rumbo filosófico y pedagógico del sistema educativo nacional.</p></div></div>
+      </div>
+      <div class="acc">
+        <div class="ah" onclick="ta(this)">📋 Art. 13 – Escuela Comunitaria y Segura <span class="aa-arrow">▼</span></div>
+        <div class="ab"><div class="ab-inner"><p>La escuela debe ser un espacio comunitario, libre de violencias, que vincule a los estudiantes con su entorno social, cultural y natural.</p></div></div>
+      </div>
+      <div class="acc">
+        <div class="ah" onclick="ta(this)">📋 Art. 14 – Formación Docente <span class="aa-arrow">▼</span></div>
+        <div class="ab"><div class="ab-inner"><p>Las maestras y maestros son profesionales de la formación. El Estado debe garantizar su desarrollo profesional continuo, adecuado y pertinente.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ S4: FINES Y CRITERIOS ═══ -->
+  <div class="screen" id="s4">
+    <div class="sh">
+      <div class="sh-title">🧭 Fines y Criterios de la Educación</div>
+      <div class="sh-sub">Art. 15 (Fines) y Art. 16 (Los 8 Criterios)</div>
+    </div>
+    <div class="sb">
+      <span class="lbl navy">Art. 15 – Los Fines de la Educación</span>
+
+      <div class="tabs-wrap">
+        <div class="tab-btns">
+          <button class="tb-btn on" onclick="st('fins','des')">🌱 Integral</button>
+          <button class="tb-btn" onclick="st('fins','dig')">❤️ Dignidad</button>
+          <button class="tb-btn" onclick="st('fins','nat')">🌿 Naturaleza</button>
+          <button class="tb-btn" onclick="st('fins','pat')">🇲🇽 Patria</button>
+          <button class="tb-btn" onclick="st('fins','paz')">🕊️ Paz</button>
+          <button class="tb-btn" onclick="st('fins','plu')">🌐 Plural</button>
+        </div>
+        <div id="fins-des" class="tp on">
+          <div class="card"><h3>🌱 Desarrollo Integral</h3><p>Ejercer plenamente las capacidades humanas. La educación debe desarrollar todas las dimensiones de la persona para alcanzar su potencial máximo.</p></div>
+        </div>
+        <div id="fins-dig" class="tp">
+          <div class="card pink"><h3>❤️ Dignidad Humana</h3><p>Formación humanista y respeto irrestricto a los derechos de todos. La educación forma ciudadanos que reconocen y respetan la dignidad de toda persona.</p></div>
+        </div>
+        <div id="fins-nat" class="tp">
+          <div class="card teal"><h3>🌿 Respeto a la Naturaleza</h3><p>Desarrollo sostenible y mitigación del cambio climático. Los educandos deben comprender la relación entre la actividad humana y el equilibrio ambiental.</p></div>
+        </div>
+        <div id="fins-pat" class="tp">
+          <div class="card orange"><h3>🇲🇽 Amor a la Patria</h3><p>Aprecio por la cultura, historia y símbolos patrios. Fomentar la identidad nacional con orgullo y sentido crítico.</p></div>
+        </div>
+        <div id="fins-paz" class="tp">
+          <div class="card gold"><h3>🕊️ Cultura de la Paz</h3><p>Tolerancia, diálogo constructivo y no violencia. La educación forma personas capaces de resolver conflictos de manera pacífica y democrática.</p></div>
+        </div>
+        <div id="fins-plu" class="tp">
+          <div class="card"><h3>🌐 Pluralidad Intercultural</h3><p>Comprensión, respeto e intercambio lingüístico y cultural. México es una nación pluricultural y la educación debe reflejarlo.</p></div>
+        </div>
+      </div>
+
+      <span class="lbl pink">Art. 16 – Los 8 Criterios de la Educación</span>
+      <div class="cr-grid">
+        <div class="cr-item"><h4>🗳️ Democrática</h4><p>Sistema de vida fundado en el mejoramiento constante.</p></div>
+        <div class="cr-item"><h4>🇲🇽 Nacional</h4><p>Defensa de nuestra soberanía y continuidad de nuestra cultura.</p></div>
+        <div class="cr-item"><h4>🤲 Humanista</h4><p>Aprecio por la dignidad humana; evita privilegios.</p></div>
+        <div class="cr-item"><h4>⚖️ Equitativa</h4><p>Combate desigualdades y ofrece educación pertinente.</p></div>
+        <div class="cr-item"><h4>♿ Inclusiva</h4><p>Toma en cuenta ritmos de aprendizaje y elimina barreras.</p></div>
+        <div class="cr-item"><h4>🌐 Intercultural</h4><p>Promueve convivencia armónica entre personas y comunidades.</p></div>
+        <div class="cr-item"><h4>🧠 Integral</h4><p>Enfocada a capacidades cognitivas, socioemocionales y físicas.</p></div>
+        <div class="cr-item"><h4>⭐ De Excelencia</h4><p>Mejoramiento permanente para el pensamiento crítico.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ S5: PILAR 3 – ORIENTACIÓN INTEGRAL ═══ -->
+  <div class="screen" id="s5">
+    <div class="sh">
+      <div class="sh-title">🌿 Pilar 3 – La Orientación Integral</div>
+      <div class="sh-sub">Arts. 17 y 18 – Formación para la vida (Las Ramas)</div>
+    </div>
+    <div class="sb">
+      <div class="hl pink-hl">
+        <h4>💡 Principio Central</h4>
+        <p>La orientación integral en la Nueva Escuela Mexicana <strong>no se limita a la memorización académica</strong>. Comprende la formación para la vida, vinculando estrechamente a la escuela con la comunidad. Exige la adecuada formación docente con una <strong>visión holística del estudiante</strong>.</p>
+      </div>
+
+      <span class="lbl pink">Art. 18 – El Espectro del Aprendizaje Integral</span>
+      <div class="dom-grid">
+        <div class="dom d1">
+          <div class="dico">🧠</div>
+          <div class="dname">Dominio Cognitivo</div>
+          <p>Pensamiento lógico-matemático, literacidad, conocimiento tecnológico y apropiación científica.</p>
+        </div>
+        <div class="dom d2">
+          <div class="dico">⚖️</div>
+          <div class="dname">Dom. Humanístico y Cívico</div>
+          <p>Pensamiento filosófico e histórico, valores cívicos, solidaridad, justicia e igualdad.</p>
+        </div>
+        <div class="dom d3">
+          <div class="dico">🤝</div>
+          <div class="dname">Dom. Socioemocional</div>
+          <p>Imaginación, creatividad, empatía, resiliencia, trabajo en red y gestión emocional.</p>
+        </div>
+        <div class="dom d4">
+          <div class="dico">🎨</div>
+          <div class="dname">Dom. Físico y Artístico</div>
+          <p>Habilidades motrices, deporte enfocado a la salud, apreciación y creación artística.</p>
+        </div>
+      </div>
+
+      <div class="card navy">
+        <h3 style="color:var(--navy)">🔗 Conexión con el Art. 17</h3>
+        <p>La orientación integral (Art. 17) exige que los planes y programas de estudio incorporen los <strong>4 dominios del aprendizaje</strong> del Art. 18. Un currículo que descuida cualquier dominio incumple la Ley.</p>
+      </div>
+
+      <div class="hl orange-hl">
+        <h4>📌 Impacto en la Práctica Docente</h4>
+        <ul>
+          <li>El docente debe diseñar actividades que atiendan todos los dominios.</li>
+          <li>La escuela debe articularse con la comunidad para enriquecer el aprendizaje.</li>
+          <li>Los planes de estudio deben tener perspectiva de género e integralidad.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ S6: PILAR 4 – PARTICIPACIÓN SOCIAL ═══ -->
+  <div class="screen" id="s6">
+    <div class="sh">
+      <div class="sh-title">🤝 Pilar 4 – La Participación Social</div>
+      <div class="sh-sub">Arts. 126-132 – El ecosistema comunitario</div>
+    </div>
+    <div class="sb">
+      <div class="hl teal-hl">
+        <h4>🌳 El Ecosistema Educativo</h4>
+        <p>La participación social (Art. 126) es el <strong>entorno que nutre el aprendizaje</strong>. Las autoridades fomentarán la participación activa de los actores sociales involucrados en el proceso educativo para propiciar el máximo logro de aprendizaje y el fortalecimiento de los lazos entre <strong>escuela y comunidad</strong>.</p>
+      </div>
+
+      <span class="lbl teal">Los 5 Actores del Ecosistema Educativo</span>
+      <div class="g3" style="margin-bottom:.55rem;">
+        <div class="mc"><div class="ico">🏛️</div><div class="name">Autoridades</div></div>
+        <div class="mc"><div class="ico">👩‍🏫</div><div class="name">Maestros</div></div>
+        <div class="mc"><div class="ico">🎒</div><div class="name">Estudiantes</div></div>
+        <div class="mc"><div class="ico">👨‍👩‍👧</div><div class="name">Padres de Familia</div></div>
+        <div class="mc"><div class="ico">🏘️</div><div class="name">Comunidad</div></div>
+      </div>
+      <div class="mc" style="width:100%; text-align:center; padding:.5rem; margin-bottom:.6rem; background:var(--navy); border-radius:10px; color:#fff;">
+        <div style="font-size:1.2rem;">🏫</div>
+        <div style="font-size:.76rem; font-weight:800;">La Escuela — Centro del Ecosistema</div>
+      </div>
+
+      <span class="lbl teal">Consejos de Participación Escolar (Arts. 131-132)</span>
+      <div class="card teal">
+        <h3>🏛️ Estructura del Consejo</h3>
+        <p>Cada escuela instalará y operará un consejo integrado por asociaciones de <strong>padres, maestros y autoridades</strong>. En comunidades indígenas, se procurará representación de hablantes de lengua indígena.</p>
+      </div>
+      <div class="g2">
+        <div class="card teal">
+          <h3>🔍 Función Primaria</h3>
+          <p>Coadyuvar para que los resultados de las evaluaciones contribuyan a la mejora continua de la educación.</p>
+        </div>
+        <div class="card teal">
+          <h3>🏆 Reconocimiento</h3>
+          <p>Proponer estímulos y reconocimientos de carácter social a alumnos, docentes y directivos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ S7: PADRES Y TUTORES ═══ -->
+  <div class="screen" id="s7">
+    <div class="sh">
+      <div class="sh-title">👨‍👩‍👧 Padres y Tutores – Corresponsabilidad</div>
+      <div class="sh-sub">Art. 128 (Derechos) y Art. 129 (Obligaciones)</div>
+    </div>
+    <div class="sb">
+      <div class="hl navy-hl">
+        <h4>⚡ Concepto Clave</h4>
+        <p>Los padres y tutores son actores <strong>corresponsables</strong> de la educación. Tienen derechos que el Estado debe garantizar, pero también obligaciones irrenunciables. El punto clave para el examen: tienen el <strong>derecho de participar y opinar</strong>, pero la <strong>obligación de revisar el progreso y colaborar</strong>.</p>
+      </div>
+
+      <span class="lbl navy">Matriz de Corresponsabilidad</span>
+      <div class="p-table">
+        <div class="p-table-head">
+          <div class="pt-h left">✅ Derechos (Art. 128)</div>
+          <div class="pt-h right">🔴 Obligaciones (Art. 129)</div>
+        </div>
+        <div class="pt-rows">
+          <div class="pt-col">
+            <div class="pt-row"><span class="ri">✅</span> Obtener inscripción en escuelas públicas.</div>
+            <div class="pt-row"><span class="ri">✅</span> Participar activamente con autoridades escolares.</div>
+            <div class="pt-row"><span class="ri">✅</span> Conocer al personal docente y directivo.</div>
+            <div class="pt-row"><span class="ri">✅</span> Conocer planes, programas y resultados de evaluaciones.</div>
+            <div class="pt-row"><span class="ri">✅</span> Opinar y manifestar inconformidades sobre el plantel.</div>
+          </div>
+          <div class="pt-divider"></div>
+          <div class="pt-col">
+            <div class="pt-row"><span class="ri">🔴</span> Hacer que sus hijos reciban la educación obligatoria.</div>
+            <div class="pt-row"><span class="ri">🔴</span> Revisar constantemente su progreso, desempeño y conducta.</div>
+            <div class="pt-row"><span class="ri">🔴</span> Colaborar con las instituciones educativas en sus actividades.</div>
+            <div class="pt-row"><span class="ri">🔴</span> Informar a las autoridades sobre cambios en la conducta del educando.</div>
+            <div class="pt-row"><span class="ri">🔴</span> Acudir a los llamados para la revisión del desempeño.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hl orange-hl" style="margin-top:.1rem">
+        <h4>⚠️ Punto para el Examen</h4>
+        <p>Los derechos son <em>facultades</em> que los padres pueden ejercer. Las obligaciones son <em>responsabilidades irrenunciables</em>. Ambos conjuntos buscan el mismo objetivo: el máximo logro de aprendizaje del estudiante.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ S8: SÍNTESIS – ECOSISTEMA NEM ═══ -->
+  <div class="screen" id="s8">
+    <div class="sh">
+      <div class="sh-title">🌳 Síntesis – El Ecosistema de la NEM</div>
+      <div class="sh-sub">La visión integrada de los 4 pilares en acción</div>
+    </div>
+    <div class="sb">
+      <div class="final-quote">
+        "Un sistema vivo y conectado.<br>La falla en cualquier componente<br><span>debilita el desarrollo humano integral.</span>"
+      </div>
+
+      <span class="lbl navy">Los 4 Pilares en Perspectiva</span>
+      <div class="sum-wrap">
+        <div class="sum-item">
+          <div class="si-head si-h1">🛡️ Pilar 1</div>
+          <ul>
+            <li><strong>El acceso garantizado</strong></li>
+            <li>5 características: Universal, Inclusiva, Pública, Gratuita, Laica</li>
+            <li>Arts. 7, 8, 9</li>
+            <li>Equidad y excelencia</li>
+          </ul>
+        </div>
+        <div class="sum-item">
+          <div class="si-head si-h2">🧭 Pilar 2</div>
+          <ul>
+            <li><strong>La estructura rectora</strong></li>
+            <li>Equidad, excelencia y mejora continua</li>
+            <li>Arts. 11–14</li>
+            <li>Revalorización docente</li>
+          </ul>
+        </div>
+        <div class="sum-item">
+          <div class="si-head si-h3">🌿 Pilar 3</div>
+          <ul>
+            <li><strong>El currículo diverso</strong></li>
+            <li>4 dominios: Cognitivo, Cívico, Socioemocional, Físico</li>
+            <li>Arts. 17–18</li>
+            <li>Visión holística</li>
+          </ul>
+        </div>
+        <div class="sum-item">
+          <div class="si-head si-h4">🤝 Pilar 4</div>
+          <ul>
+            <li><strong>La comunidad que sostiene</strong></li>
+            <li>5 actores: Autoridades, Maestros, Estudiantes, Padres, Comunidad</li>
+            <li>Arts. 126–132</li>
+            <li>Consejos de participación</li>
+          </ul>
+        </div>
+      </div>
+
+      <span class="lbl pink">📋 Puntos Clave para el Examen</span>
+      <div class="exam-list">
+        <div class="exam-row"><div class="exam-art">Art. 7</div><div>Universal, Inclusiva, Pública, Gratuita y Laica (5 características del derecho).</div></div>
+        <div class="exam-row"><div class="exam-art">Art. 11</div><div>Centro de la NEM: máximo logro de aprendizaje de niñas, niños, adolescentes y jóvenes.</div></div>
+        <div class="exam-row"><div class="exam-art">Art. 16</div><div>8 criterios: Democrática, Nacional, Humanista, Equitativa, Inclusiva, Intercultural, Integral, Excelencia.</div></div>
+        <div class="exam-row"><div class="exam-art">Art. 18</div><div>4 dominios del aprendizaje integral: Cognitivo, Humanístico/Cívico, Socioemocional, Físico/Artístico.</div></div>
+        <div class="exam-row"><div class="exam-art">Arts. 128/129</div><div>Padres: derecho de participar y opinar; obligación irrenunciable de revisar progreso y colaborar.</div></div>
+        <div class="exam-row"><div class="exam-art">Arts. 131-132</div><div>Consejos de Participación Escolar integrados por padres, maestros y autoridades.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ S9: AUTOEVALUACIÓN ═══ -->
+  <div class="screen" id="s9">
+    <div class="sh">
+      <div class="sh-title">✏️ Autoevaluación</div>
+      <div class="sh-sub">Pon a prueba lo que aprendiste sobre la LGE</div>
+    </div>
+    <div class="sb">
+      <div id="quiz-wrap"></div>
+    </div>
+  </div>
+
+  <!-- ═══ S10: CONCLUSIÓN ═══ -->
+  <div class="screen" id="s10">
+    <div class="sh">
+      <div class="sh-title">🎓 Conclusión y Reflexión Final</div>
+      <div class="sh-sub">Transformar la ley en práctica pedagógica</div>
+    </div>
+    <div class="sb">
+      <div class="final-quote" style="font-size:.9rem; padding:1.1rem;">
+        "La educación no es preparación para la vida;<br>la educación <span>es la vida misma.</span>"
+      </div>
+
+      <div class="hl navy-hl">
+        <h4>🔑 La Ley como Brújula Pedagógica</h4>
+        <p>La Ley General de Educación no es solo un documento legal: es la <strong>brújula pedagógica</strong> del docente mexicano. Conocerla a fondo permite al maestro alinear su práctica diaria con los principios constitucionales y garantizar el derecho a la educación de cada estudiante.</p>
+      </div>
+
+      <span class="lbl orange">Ideas que Todo Docente Debe Integrar</span>
+      <div class="card orange">
+        <h3>💡 La educación como derecho, no privilegio</h3>
+        <p>Ser universal, inclusivo y gratuito no es opcional. Cada estudiante tiene derecho a recibir una educación de calidad sin importar su origen, condición económica o capacidad.</p>
+      </div>
+      <div class="card pink">
+        <h3>🌱 El docente como agente de cambio</h3>
+        <p>La NEM coloca al docente en el centro. <em>Transformar la ley en práctica pedagógica es el verdadero arte de enseñar.</em> Cada decisión en el aula tiene un marco legal y ético que la respalda.</p>
+      </div>
+      <div class="card teal">
+        <h3>🤝 La comunidad como aliada</h3>
+        <p>La participación social no es una formalidad burocrática: es el ecosistema que nutre el aprendizaje. Fortalecer los lazos escuela-comunidad es un mandato de la ley y una necesidad pedagógica real.</p>
+      </div>
+
+      <div class="hl teal-hl">
+        <h4>🎯 Domina estos 3 números para el examen</h4>
+        <ul>
+          <li><strong>5</strong> características del derecho a la educación (Art. 7)</li>
+          <li><strong>8</strong> criterios de la educación (Art. 16)</li>
+          <li><strong>4</strong> dominios del aprendizaje integral (Art. 18)</li>
+        </ul>
+      </div>
+
+      <div class="card gold" style="text-align:center; background:linear-gradient(135deg,#fef3e2,#fde8be); border:none;">
+        <h3 style="color:#7a4900;">🎉 ¡Felicidades!</h3>
+        <p style="color:#555;">Has completado la guía de estudio de la Ley General de Educación. Repasa las secciones que necesites y realiza la autoevaluación para medir tu aprendizaje.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<!-- BOTTOM NAV -->
+<div id="botnav">
+  <button class="nb prev" id="btnP" onclick="nav(-1)" disabled>← Anterior</button>
+  <div class="dots" id="dots"></div>
+  <button class="nb next" id="btnN" onclick="nav(1)">Siguiente →</button>
+</div>
+
+<!-- FOOTER -->
+<div id="foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez &nbsp;|&nbsp; Ley General de Educación – Guía de Estudio Interactiva</div>
+
+</div><!-- /app -->
+
+<script>
+/* ─── STATE ─── */
+const TOTAL = 11;
+let cur = 0;
+
+/* ─── QUIZ ─── */
+const QS = [
+  {
+    q:"Según el Art. 7 de la LGE, ¿cuáles son las 5 características del derecho a la educación?",
+    opts:["Obligatoria, nacional, gratuita, laica, excelente","Universal, inclusiva, pública, gratuita, laica","Democrática, nacional, humanista, equitativa, laica","Universal, equitativa, integral, pública, gratuita"],
+    ans:1,
+    fb:"✅ ¡Correcto! Las 5 características son: Universal, Inclusiva, Pública, Gratuita y Laica."
+  },
+  {
+    q:"¿Cuál es el centro de la Nueva Escuela Mexicana según el Art. 11 de la LGE?",
+    opts:["La formación docente continua","Los planes y programas nacionales","El máximo logro de aprendizaje de niñas, niños, adolescentes y jóvenes","La autonomía de gestión de las escuelas"],
+    ans:2,
+    fb:"✅ ¡Correcto! El Art. 11 establece que el centro de la NEM es el máximo logro de aprendizaje de niñas, niños, adolescentes y jóvenes."
+  },
+  {
+    q:"¿Cuántos criterios de la educación establece el Art. 16 de la LGE?",
+    opts:["5","6","7","8"],
+    ans:3,
+    fb:"✅ ¡Correcto! Son 8 criterios: Democrática, Nacional, Humanista, Equitativa, Inclusiva, Intercultural, Integral y de Excelencia."
+  },
+  {
+    q:"¿Cuál de las siguientes es una OBLIGACIÓN de los padres según el Art. 129?",
+    opts:["Conocer los planes y programas de estudio","Opinar sobre el plantel","Revisar constantemente el progreso y desempeño de sus hijos","Obtener inscripción en escuelas públicas"],
+    ans:2,
+    fb:"✅ ¡Correcto! Revisar el progreso y desempeño es una obligación (Art. 129). Los otros incisos corresponden a derechos del Art. 128."
+  },
+  {
+    q:"¿Qué dominio del aprendizaje integral (Art. 18) incluye la empatía, la resiliencia y la gestión emocional?",
+    opts:["Dominio Cognitivo","Dominio Humanístico y Cívico","Dominio Socioemocional","Dominio Físico y Artístico"],
+    ans:2,
+    fb:"✅ ¡Correcto! El Dominio Socioemocional comprende imaginación, creatividad, empatía, resiliencia, trabajo en red y gestión emocional."
+  },
+  {
+    q:"Los Consejos de Participación Escolar (Arts. 131-132) están integrados por:",
+    opts:["Solo padres de familia","Directivos, supervisores e inspectores","Asociaciones de padres, maestros y autoridades","Estudiantes, padres y representantes sindicales"],
+    ans:2,
+    fb:"✅ ¡Correcto! Los Consejos se integran por asociaciones de padres, maestros y autoridades. En comunidades indígenas se procura representación de hablantes de lengua indígena."
+  }
+];
+
+let qstate = { idx:0, score:0, done:false };
+
+function initQuiz() {
+  qstate = { idx:0, score:0, done:false };
+  renderQ();
+}
+
+function renderQ() {
+  const w = document.getElementById('quiz-wrap');
+  const q = QS[qstate.idx];
+  if (!q) { renderScore(); return; }
+  w.innerHTML = `
+    <div class="qprog">Pregunta ${qstate.idx+1} de ${QS.length} &nbsp;|&nbsp; Puntaje: ${qstate.score}</div>
+    <div class="qcard">
+      <div class="qtext">${qstate.idx+1}. ${q.q}</div>
+      <div class="opts">${q.opts.map((o,i)=>`<button class="opt" onclick="ans(${i})">${o}</button>`).join('')}</div>
+      <div class="qfb" id="qfb"></div>
+      <button class="qnext" id="qnext" onclick="nextQ()">Siguiente →</button>
+    </div>`;
+}
+
+function ans(i) {
+  const q = QS[qstate.idx];
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  const btns = document.querySelectorAll('.opt');
+  if (i===q.ans) {
+    btns[i].classList.add('ok'); qstate.score++;
+    const fb=document.getElementById('qfb');
+    fb.textContent=q.fb; fb.className='qfb ok show';
+  } else {
+    btns[i].classList.add('fail'); btns[q.ans].classList.add('ok');
+    const fb=document.getElementById('qfb');
+    fb.textContent='❌ Incorrecto. '+q.fb; fb.className='qfb fail show';
+  }
+  document.getElementById('qnext').classList.add('show');
+}
+
+function nextQ() { qstate.idx++; renderQ(); }
+
+function renderScore() {
+  const pct = Math.round(qstate.score/QS.length*100);
+  const msg = pct===100?'🏆 ¡Dominas la LGE! Excelente trabajo.':
+              pct>=80?'👏 ¡Muy bien! Repasa los artículos con más cuidado.':
+              pct>=60?'📖 Buen intento. Revisa el material y vuelve a intentarlo.':
+                      '💪 Necesitas repasar toda la guía con más detenimiento.';
+  document.getElementById('quiz-wrap').innerHTML = `
+    <div class="score-wrap">
+      <div class="score-num">${qstate.score}/${QS.length}</div>
+      <div class="score-lbl">Respuestas correctas</div>
+      <div class="score-msg">${pct}% de acierto<br>${msg}</div>
+      <button class="retry" onclick="initQuiz()">🔄 Intentar de nuevo</button>
+    </div>`;
+}
+
+/* ─── NAVIGATION ─── */
+function goTo(n) {
+  if (n<0||n>=TOTAL) return;
+  const prev = document.getElementById('s'+cur);
+  prev.classList.add('exit');
+  setTimeout(()=>{ prev.classList.remove('active','exit'); },350);
+  cur=n;
+  const next = document.getElementById('s'+cur);
+  next.classList.add('active');
+  updateUI();
+  if(cur===9) initQuiz();
+}
+function nav(d) { goTo(cur+d); }
+
+function updateUI() {
+  document.getElementById('btnP').disabled = cur===0;
+  document.getElementById('btnN').disabled = cur===TOTAL-1;
+  document.getElementById('plabel').textContent=(cur+1)+'/'+TOTAL;
+  document.getElementById('pfill').style.width=((cur+1)/TOTAL*100)+'%';
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+}
+
+/* ─── INIT DOTS ─── */
+(function(){
+  const c=document.getElementById('dots');
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===0?' active':'');
+    d.onclick=()=>goTo(i); c.appendChild(d);
+  }
+})();
+
+/* ─── TABS ─── */
+function st(group, id) {
+  const wrap = document.querySelector(`#fins-${id}`)?.closest('.tabs-wrap');
+  if(!wrap) return;
+  wrap.querySelectorAll('.tb-btn').forEach(b=>{
+    b.classList.toggle('on', b.getAttribute('onclick').includes("'"+id+"'"));
+  });
+  wrap.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+  document.getElementById(group+'-'+id).classList.add('on');
+}
+
+/* ─── ACCORDION ─── */
+function ta(h) {
+  const b = h.nextElementSibling;
+  const open = h.classList.contains('open');
+  const parent = h.closest('.sb');
+  if(parent){ parent.querySelectorAll('.ah.open').forEach(x=>{ x.classList.remove('open'); x.nextElementSibling.classList.remove('open'); }); }
+  if(!open){ h.classList.add('open'); b.classList.add('open'); }
+}
+</script>
+</body>
+</html>

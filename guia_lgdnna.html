@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pilares de la LGDNNA – Guía Interactiva</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap');
+
+:root {
+  --teal:    #2EC4B6;
+  --coral:   #FF6B6B;
+  --amber:   #FFB347;
+  --indigo:  #4A5568;
+  --mint:    #E8F8F5;
+  --peach:   #FFF0ED;
+  --cream:   #FFFDF7;
+  --violet:  #7C6BC9;
+  --green:   #56C27B;
+  --navy:    #1A2D4F;
+  --white:   #FFFFFF;
+  --shadow:  0 4px 24px rgba(0,0,0,0.10);
+  --radius:  16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  color: var(--navy);
+}
+
+/* ── SCREEN SYSTEM ─────────────────────────────────────── */
+.screen {
+  position: absolute; inset: 0;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.screen.active { display: flex; }
+
+/* ── TOP NAV ───────────────────────────────────────────── */
+.topnav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 20px;
+  background: var(--white);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  z-index: 10; flex-shrink: 0;
+}
+.topnav .logo { font-size: 1rem; font-weight: 800; color: var(--teal); letter-spacing:-0.5px; }
+.topnav .logo span { color: var(--coral); }
+.topnav .pills { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.pill {
+  font-size: 0.65rem; font-weight: 700; padding: 4px 10px;
+  border-radius: 50px; border: none; cursor: pointer;
+  background: var(--mint); color: var(--teal);
+  transition: all .2s;
+}
+.pill.active, .pill:hover { background: var(--teal); color: #fff; }
+
+/* ── CONTENT AREA ──────────────────────────────────────── */
+.content {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 14px 18px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--teal) transparent;
+}
+.content::-webkit-scrollbar { width: 5px; }
+.content::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 4px; }
+
+/* ── BOTTOM BAR ────────────────────────────────────────── */
+.bottombar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 18px;
+  background: var(--white);
+  border-top: 2px solid #f0f0f0;
+  flex-shrink: 0;
+}
+.nav-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem; font-weight: 800;
+  padding: 8px 18px; border-radius: 50px; border: none;
+  cursor: pointer; transition: all .2s;
+  background: var(--navy); color: #fff;
+}
+.nav-btn:hover { opacity: .85; transform: scale(1.03); }
+.nav-btn.secondary { background: var(--mint); color: var(--navy); }
+.progress-dots { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #ddd; transition: background .3s;
+}
+.dot.done { background: var(--teal); }
+.dot.current { background: var(--coral); transform: scale(1.3); }
+
+/* ── TYPOGRAPHY ────────────────────────────────────────── */
+h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem,4vw,2.2rem); line-height: 1.2; }
+h2 { font-size: clamp(1.1rem,3vw,1.5rem); font-weight: 800; margin-bottom: 8px; }
+h3 { font-size: clamp(.9rem,2.5vw,1.1rem); font-weight: 700; margin-bottom: 4px; }
+p, li { font-size: clamp(.78rem,2vw,.92rem); line-height: 1.55; }
+
+/* ── CARDS ─────────────────────────────────────────────── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+}
+.card-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+  gap: 12px; margin-bottom: 12px;
+}
+.card-sm {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--teal);
+}
+.card-sm.coral { border-color: var(--coral); }
+.card-sm.amber { border-color: var(--amber); }
+.card-sm.violet { border-color: var(--violet); }
+.card-sm.green  { border-color: var(--green); }
+
+.badge {
+  display: inline-block; font-size: .65rem; font-weight: 800;
+  padding: 3px 10px; border-radius: 50px;
+  background: var(--teal); color: #fff; margin-bottom: 6px;
+}
+.badge.coral  { background: var(--coral); }
+.badge.amber  { background: var(--amber); color: var(--navy); }
+.badge.violet { background: var(--violet); }
+.badge.green  { background: var(--green); }
+
+/* ── ACCORDION ─────────────────────────────────────────── */
+.accordion { margin-bottom: 8px; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.acc-header {
+  width: 100%; text-align: left; padding: 13px 16px;
+  background: var(--white); border: none; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: .88rem; font-weight: 800;
+  display: flex; justify-content: space-between; align-items: center;
+  color: var(--navy); transition: background .2s;
+}
+.acc-header:hover { background: var(--mint); }
+.acc-header .arrow { transition: transform .3s; font-size: 1rem; }
+.acc-header.open .arrow { transform: rotate(180deg); }
+.acc-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height .4s ease;
+  background: #FAFEFF;
+  padding: 0 16px;
+}
+.acc-body.open { max-height: 400px; padding: 12px 16px; }
+.acc-body ul { padding-left: 18px; }
+.acc-body ul li { margin-bottom: 4px; }
+
+/* ── TABS ──────────────────────────────────────────────── */
+.tab-bar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.tab-btn {
+  font-family: 'Nunito', sans-serif; font-size: .75rem; font-weight: 800;
+  padding: 7px 14px; border-radius: 50px; border: 2px solid #eee;
+  cursor: pointer; background: var(--white); color: var(--indigo);
+  transition: all .2s;
+}
+.tab-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── HIGHLIGHT BOX ─────────────────────────────────────── */
+.highlight {
+  background: linear-gradient(135deg, #E8F8F5, #D1F0EA);
+  border-left: 5px solid var(--teal);
+  padding: 12px 16px; border-radius: 0 var(--radius) var(--radius) 0;
+  margin-bottom: 12px;
+}
+.highlight.coral { background: linear-gradient(135deg,#FFF0ED,#FFD9D0); border-color: var(--coral); }
+.highlight.amber { background: linear-gradient(135deg,#FFFBF0,#FFE9C0); border-color: var(--amber); }
+.highlight.violet{ background: linear-gradient(135deg,#F3F0FF,#E5DCFF); border-color: var(--violet); }
+
+/* ── COMPARISON TABLE ──────────────────────────────────── */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.compare-col {
+  padding: 12px; border-radius: var(--radius);
+}
+.compare-col.red  { background: #FFF0ED; border: 2px solid var(--coral); }
+.compare-col.green{ background: #E8F8F5; border: 2px solid var(--green); }
+.compare-col h3 { font-size: .82rem; margin-bottom: 8px; }
+.compare-col ul { padding-left: 16px; font-size: .75rem; }
+.compare-col ul li { margin-bottom: 4px; }
+
+/* ── QUIZ ──────────────────────────────────────────────── */
+.quiz-q { font-size: .9rem; font-weight: 700; margin-bottom: 10px; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  padding: 10px 14px; border-radius: var(--radius);
+  background: var(--white); border: 2px solid #eee;
+  cursor: pointer; font-family: 'Nunito',sans-serif;
+  font-size: .82rem; font-weight: 600;
+  transition: all .2s; text-align: left;
+}
+.quiz-opt:hover:not(:disabled) { border-color: var(--teal); background: var(--mint); }
+.quiz-opt.correct { background: #D4EDDA; border-color: var(--green); color: #155724; }
+.quiz-opt.wrong   { background: #F8D7DA; border-color: var(--coral); color: #721C24; }
+.quiz-opt:disabled { cursor: default; }
+.quiz-fb {
+  margin-top: 10px; padding: 10px 14px; border-radius: var(--radius);
+  font-size: .82rem; font-weight: 700; display: none;
+}
+.quiz-fb.show { display: block; }
+.quiz-fb.ok   { background: #D4EDDA; color: #155724; }
+.quiz-fb.fail { background: #F8D7DA; color: #721C24; }
+.quiz-nav { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.quiz-nav button {
+  font-family: 'Nunito',sans-serif; font-size: .78rem; font-weight: 800;
+  padding: 7px 16px; border-radius: 50px; border: none;
+  cursor: pointer; background: var(--navy); color: #fff;
+}
+.quiz-counter { font-size: .78rem; color: #888; font-weight: 700; }
+#quiz-score { text-align: center; display: none; padding: 20px; }
+#quiz-score .score-num { font-family:'Playfair Display',serif; font-size:2.5rem; color: var(--teal); }
+
+/* ── PILLAR CIRCLES ────────────────────────────────────── */
+.pillar-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(140px,1fr)); gap: 10px; margin-bottom: 12px; }
+.pillar-card {
+  border-radius: var(--radius); padding: 14px 10px;
+  text-align: center; cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  box-shadow: var(--shadow);
+}
+.pillar-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.14); }
+.pillar-card .icon { font-size: 1.8rem; margin-bottom: 6px; }
+.pillar-card h3 { font-size: .78rem; line-height: 1.3; }
+.pc1 { background: linear-gradient(135deg,#E8F8F5,#B2EBE3); }
+.pc2 { background: linear-gradient(135deg,#FFF0ED,#FFD4CB); }
+.pc3 { background: linear-gradient(135deg,#FFFBF0,#FFE4A0); }
+.pc4 { background: linear-gradient(135deg,#F3F0FF,#DDD4FF); }
+.pc5 { background: linear-gradient(135deg,#EEFAF3,#C5EFDA); }
+
+/* ── COVER ─────────────────────────────────────────────── */
+#s0 {
+  background: linear-gradient(155deg, #1A2D4F 0%, #2EC4B6 60%, #56C27B 100%);
+  color: white; align-items: center; justify-content: center; text-align: center;
+}
+#s0 h1 { color: white; font-size: clamp(1.6rem,6vw,3rem); margin-bottom: 8px; text-shadow: 0 2px 12px rgba(0,0,0,.3); }
+#s0 .subtitle { font-size: clamp(.82rem,2.5vw,1.1rem); opacity: .9; margin-bottom: 6px; max-width: 500px; }
+#s0 .author { font-size: clamp(.75rem,2vw,.95rem); font-weight: 800; opacity: .85; margin-bottom: 20px; }
+#s0 .law-tag {
+  background: rgba(255,255,255,.2); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 50px; padding: 6px 20px; font-size: .78rem; font-weight: 700;
+  margin-bottom: 24px; display: inline-block;
+}
+#s0 .start-btn {
+  background: white; color: var(--navy);
+  font-family: 'Nunito',sans-serif; font-size: 1rem; font-weight: 900;
+  padding: 12px 36px; border-radius: 50px; border: none; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+  transition: transform .2s, box-shadow .2s;
+}
+#s0 .start-btn:hover { transform: scale(1.05); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
+#s0 .deco { position: absolute; opacity: .07; font-size: 18rem; font-family: 'Playfair Display',serif; bottom: -40px; right: -20px; pointer-events: none; color: white; }
+
+/* ── SHIELD SUMMARY ────────────────────────────────────── */
+.shield-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 12px; }
+.shield-layers { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.shield-layer {
+  border-radius: var(--radius); padding: 12px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.sl1 { background: linear-gradient(135deg,#E8F8F5,#B2EBE3); }
+.sl2 { background: linear-gradient(135deg,#FFFBF0,#FFE4A0); }
+.sl3 { background: linear-gradient(135deg,#FFF0ED,#FFD4CB); }
+.shield-layer .sl-icon { font-size: 1.6rem; flex-shrink: 0; }
+.shield-layer h3 { font-size: .85rem; }
+.shield-layer p  { font-size: .75rem; opacity: .85; }
+
+/* ── RESPONSIVE ────────────────────────────────────────── */
+@media(max-width:480px){
+  .topnav .pills { display: none; }
+  .compare { grid-template-columns: 1fr; }
+  .pillar-grid { grid-template-columns: repeat(2,1fr); }
+  .card-grid { grid-template-columns: 1fr; }
+}
+@media(min-height:700px){
+  .content { padding: 18px 22px 14px; }
+  h2 { margin-bottom: 12px; }
+  .card { padding: 16px 18px; margin-bottom: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ PROGRESS DOTS (shared) ═══════════════ -->
+<!-- Injected per screen in JS -->
+
+<!-- ═══════════════════ SCREEN 0: PORTADA ═══════════════════ -->
+<div class="screen active" id="s0">
+  <div class="deco">⚖</div>
+  <div style="padding:30px 24px;z-index:2;max-width:580px;margin:auto;">
+    <div class="law-tag">📘 Guía de Estudio Visual e Interactiva</div>
+    <h1>Los Pilares de la LGDNNA</h1>
+    <p class="subtitle">Ley General de los Derechos de Niñas, Niños y Adolescentes</p>
+    <p class="subtitle" style="font-size:.85rem;opacity:.75;">Artículos fundamentales y conceptos clave para su aplicación</p>
+    <p class="author">✍️ Prof. Francisco De Jesús Luna Benitez</p>
+    <button class="start-btn" onclick="goTo(1)">Comenzar la Guía →</button>
+    <p style="margin-top:14px;font-size:.72rem;opacity:.6;">12 secciones · Repaso interactivo incluido</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 1: INTRO ═══════════════════════ -->
+<div class="screen" id="s1">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills1"></div>
+  </nav>
+  <div class="content">
+    <span class="badge">📖 Introducción</span>
+    <h2>El Nuevo Paradigma: Sujetos de Derechos</h2>
+    <div class="highlight">
+      <p>La <strong>LGDNNA transforma</strong> la visión jurídica: las niñas, niños y adolescentes <strong>dejan de ser objetos de protección</strong> para convertirse en <strong>titulares plenos de derechos</strong>.</p>
+    </div>
+    <div class="card">
+      <h3>¿Qué es la LGDNNA?</h3>
+      <p style="margin-top:6px;">La <strong>Ley General de los Derechos de Niñas, Niños y Adolescentes</strong> es el marco jurídico federal de México que garantiza el pleno ejercicio, respeto, protección y promoción de los derechos de toda persona menor de 18 años. Se fundamenta en la Convención sobre los Derechos del Niño de la ONU.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card-sm">
+        <span class="badge">Art. 13</span>
+        <h3>20 Derechos</h3>
+        <p>El artículo 13 enuncia veinte derechos fundamentales reconocidos a niñas, niños y adolescentes.</p>
+      </div>
+      <div class="card-sm coral">
+        <span class="badge coral">Estructura</span>
+        <h3>5 Pilares</h3>
+        <p>Para facilitar el estudio, los 20 derechos se agrupan en 5 pilares estratégicos.</p>
+      </div>
+      <div class="card-sm amber">
+        <span class="badge amber">Enfoque</span>
+        <h3>3 Capas</h3>
+        <p>La ley opera como un escudo de 3 capas: sujeto, entorno familiar y obligación estatal.</p>
+      </div>
+    </div>
+    <div class="pillar-grid">
+      <div class="pillar-card pc1" onclick="goTo(2)"><div class="icon">🏛️</div><h3>1. Los Cimientos<br><small>Principios y Equidad</small></h3></div>
+      <div class="pillar-card pc2" onclick="goTo(4)"><div class="icon">❤️</div><h3>2. Supervivencia<br><small>Vida, Identidad, Crianza</small></h3></div>
+      <div class="pillar-card pc3" onclick="goTo(6)"><div class="icon">📚</div><h3>3. Desarrollo Integral<br><small>Salud, Educación, Juego</small></h3></div>
+      <div class="pillar-card pc4" onclick="goTo(8)"><div class="icon">🎙️</div><h3>4. Voz y Privacidad<br><small>Participación, Intimidad</small></h3></div>
+      <div class="pillar-card pc5" onclick="goTo(9)"><div class="icon">⚖️</div><h3>5. Fronteras y Justicia<br><small>Digital, Proceso</small></h3></div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(0)">← Portada</button>
+    <div class="progress-dots" id="pd1"></div>
+    <button class="nav-btn" onclick="goTo(2)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 2: PILAR 1 CIMIENTOS ══════════════ -->
+<div class="screen" id="s2">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills2"></div>
+  </nav>
+  <div class="content">
+    <span class="badge">🏛️ Pilar 1</span>
+    <h2>Los Cimientos: Principios y Equidad</h2>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('t2',0,this)">Interés Superior</button>
+      <button class="tab-btn" onclick="switchTab('t2',1,this)">Igualdad Sustantiva</button>
+      <button class="tab-btn" onclick="switchTab('t2',2,this)">No Discriminación</button>
+    </div>
+
+    <div id="t2">
+      <!-- Tab 0 -->
+      <div class="tab-panel active">
+        <span class="badge" style="font-size:.6rem;">Arts. 2 y 3</span>
+        <div class="highlight">
+          <h3>🧭 La Brújula Legal</h3>
+          <p style="margin-top:6px;">El <strong>Interés Superior de la Niñez</strong> es la consideración primordial en toda toma de decisiones. Cuando existan diferentes interpretaciones legales, siempre se elegirá la que mayor beneficio otorgue a la niñez.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card-sm">
+            <h3>🏛️ Perspectiva Transversal (Art. 2)</h3>
+            <p>Diseño e instrumentación de políticas con enfoque integral, de género y derechos humanos.</p>
+          </div>
+          <div class="card-sm amber">
+            <h3>🌱 Autonomía Progresiva (Art. 2)</h3>
+            <p>Considerar la opinión del niño según su edad, desarrollo evolutivo, cognoscitivo y madurez.</p>
+          </div>
+          <div class="card-sm coral">
+            <h3>💰 Garantía Presupuestal (Arts. 2 y 3)</h3>
+            <p>Obligación ineludible de incorporar en presupuestos los recursos para cumplir la ley. <strong>No hay derechos sin presupuesto.</strong></p>
+          </div>
+        </div>
+      </div>
+      <!-- Tab 1 -->
+      <div class="tab-panel">
+        <span class="badge" style="font-size:.6rem;">Arts. 36, 37 y 39</span>
+        <div class="compare">
+          <div class="compare-col red">
+            <h3>❌ Igualdad Formal</h3>
+            <p style="font-size:.75rem;margin-bottom:8px;">Tratar a todos exactamente igual, ignorando sus diferencias y contextos.</p>
+            <ul>
+              <li>No elimina barreras estructurales</li>
+              <li>Puede perpetuar desigualdades</li>
+              <li>Visión estática</li>
+            </ul>
+          </div>
+          <div class="compare-col green">
+            <h3>✅ Igualdad Sustantiva</h3>
+            <p style="font-size:.75rem;margin-bottom:8px;">Arts. 36 y 37: El Estado <strong>debe adoptar Acciones Afirmativas</strong> (medidas especiales de carácter temporal) para nivelar el terreno.</p>
+            <ul>
+              <li>Elimina barreras estructurales</li>
+              <li>Medidas de apoyo diferenciadas</li>
+              <li>Resultado equitativo real</li>
+            </ul>
+          </div>
+        </div>
+        <div class="highlight amber">
+          <h3>⚠️ Punto Clave</h3>
+          <p style="margin-top:4px;">No basta con tratar a todos igual. Lo que se exige es garantizar que todos puedan <strong>gozar efectivamente</strong> de sus derechos.</p>
+        </div>
+      </div>
+      <!-- Tab 2 -->
+      <div class="tab-panel">
+        <span class="badge coral" style="font-size:.6rem;">Art. 39</span>
+        <div class="highlight coral">
+          <h3>🚫 Derecho a la No Discriminación</h3>
+          <p style="margin-top:6px;">Prohibición de restringir derechos por <strong>origen étnico, género, edad, discapacidad, estado de salud o condición socioeconómica</strong>.</p>
+        </div>
+        <div class="card">
+          <h3>Categorías protegidas incluyen:</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+            <span style="background:#FFF0ED;border-radius:50px;padding:4px 10px;font-size:.72rem;font-weight:700;color:#c0392b;">Origen étnico</span>
+            <span style="background:#E8F8F5;border-radius:50px;padding:4px 10px;font-size:.72rem;font-weight:700;color:#1a8a7a;">Género</span>
+            <span style="background:#FFFBF0;border-radius:50px;padding:4px 10px;font-size:.72rem;font-weight:700;color:#a07800;">Edad</span>
+            <span style="background:#F3F0FF;border-radius:50px;padding:4px 10px;font-size:.72rem;font-weight:700;color:#5b4aaa;">Discapacidad</span>
+            <span style="background:#EEFAF3;border-radius:50px;padding:4px 10px;font-size:.72rem;font-weight:700;color:#27834f;">Estado de salud</span>
+            <span style="background:#FFF5E6;border-radius:50px;padding:4px 10px;font-size:.72rem;font-weight:700;color:#a05000;">Condición socioeconómica</span>
+            <span style="background:#E8F0FF;border-radius:50px;padding:4px 10px;font-size:.72rem;font-weight:700;color:#2040a0;">Religión / Ideología</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(1)">← Anterior</button>
+    <div class="progress-dots" id="pd2"></div>
+    <button class="nav-btn" onclick="goTo(3)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 3: PILAR 1 cont. INCLUSION ═══════ -->
+<div class="screen" id="s3">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills3"></div>
+  </nav>
+  <div class="content">
+    <span class="badge violet">♿ Art. 53</span>
+    <h2>Inclusión como Norma, No como Excepción</h2>
+    <div class="highlight violet">
+      <p>Niñas, niños y adolescentes con discapacidad tienen derecho a vivir incluidos en la comunidad, en <strong>igualdad de condiciones y sin discriminación</strong>.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card-sm violet">
+        <span class="badge violet">Ajustes Razonables</span>
+        <h3>Modificaciones necesarias</h3>
+        <p style="margin-top:4px;">Adaptaciones en casos particulares para garantizar el goce de libertades sin imponer cargas desproporcionadas.</p>
+      </div>
+      <div class="card-sm green">
+        <span class="badge green">Diseño Universal</span>
+        <h3>Para todas las personas</h3>
+        <p style="margin-top:4px;">Crear entornos, programas y servicios que puedan utilizar todos en la mayor medida posible, sin adaptación especializada.</p>
+      </div>
+    </div>
+    <div class="highlight coral">
+      <h3>⚖️ Consecuencia Jurídica</h3>
+      <p style="margin-top:4px;"><strong>Negar</strong> ajustes razonables o diseño universal constituye, legalmente, un <strong>acto de discriminación</strong> sancionable.</p>
+    </div>
+    <div class="card">
+      <h3>🏫 Aplicación en el Aula</h3>
+      <p style="margin-top:6px;">Las escuelas están obligadas a garantizar acceso físico, materiales adaptados, y apoyos pedagógicos para que ningún alumno sea excluido del proceso educativo por razón de discapacidad.</p>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(2)">← Anterior</button>
+    <div class="progress-dots" id="pd3"></div>
+    <button class="nav-btn" onclick="goTo(4)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 4: PILAR 2 SUPERVIVENCIA ══════════ -->
+<div class="screen" id="s4">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills4"></div>
+  </nav>
+  <div class="content">
+    <span class="badge coral">❤️ Pilar 2</span>
+    <h2>Supervivencia y Familia</h2>
+
+    <div class="accordion">
+      <button class="acc-header open" onclick="toggleAcc(this)">
+        🛡️ Derecho a la Vida y Prioridad (Arts. 14–17) <span class="arrow">▼</span>
+      </button>
+      <div class="acc-body open">
+        <p style="margin-bottom:8px;">Derecho a la vida, la paz, supervivencia y desarrollo óptimo. El <strong>Derecho de Prioridad (Art. 17)</strong> obliga a la sociedad y al Estado a:</p>
+        <ul>
+          <li><strong>Protección y Socorro:</strong> Brindar auxilio prioritario en cualquier emergencia.</li>
+          <li><strong>Atención en Servicios:</strong> Ser atendidos antes que adultos en todos los servicios, en igualdad de condiciones.</li>
+          <li><strong>Diseño de Políticas:</strong> Ser considerados como eje central en la creación y ejecución de políticas públicas.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        🌳 Identidad y Familia (Arts. 19–23) <span class="arrow">▼</span>
+      </button>
+      <div class="acc-body">
+        <p style="margin-bottom:8px;"><strong>Derecho a la Identidad (Art. 19):</strong> Incluye nombre, apellidos, nacionalidad y conocer su filiación. La <em>falta de documentación</em> no será obstáculo para garantizar sus derechos.</p>
+        <p style="margin-bottom:8px;"><strong>Derecho a Vivir en Familia (Arts. 21–22):</strong> El entorno ideal para el desarrollo armónico del niño.</p>
+        <div class="highlight coral" style="margin-top:8px;">
+          <h3>⚠️ Principio de No Separación (Art. 23)</h3>
+          <p style="margin-top:4px;">Niñas, niños y adolescentes <strong>NO podrán</strong> ser separados de quienes ejercen la patria potestad o tutela, salvo que medie orden de autoridad competente, mediante debido proceso y como <em>último recurso</em> para preservar su Interés Superior.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        🌱 Crianza Positiva (Arts. 44 y 46) <span class="arrow">▼</span>
+      </button>
+      <div class="acc-body">
+        <div class="compare">
+          <div class="compare-col red">
+            <h3>❌ Crianza Tradicional / Autoritaria (Prohibida)</h3>
+            <ul style="margin-top:6px;">
+              <li>Castigos corporales y físicos</li>
+              <li>Tratos humillantes y crueles</li>
+              <li>Imposición basada en miedo o fuerza</li>
+              <li>Ignorar el desarrollo evolutivo del menor</li>
+            </ul>
+          </div>
+          <div class="compare-col green">
+            <h3>✅ Crianza Positiva (Mandato Legal)</h3>
+            <ul style="margin-top:6px;">
+              <li>Formación y guía basada en el respeto</li>
+              <li>Enfoque de Derechos Humanos y cultura de paz</li>
+              <li>Límites acordes a su edad y facultades</li>
+              <li>Entorno afectivo que fomenta su bienestar</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(3)">← Anterior</button>
+    <div class="progress-dots" id="pd4"></div>
+    <button class="nav-btn" onclick="goTo(5)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 5: PILAR 3 SALUD ══════════════════ -->
+<div class="screen" id="s5">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills5"></div>
+  </nav>
+  <div class="content">
+    <span class="badge amber">🏥 Pilar 3 – Parte A</span>
+    <h2>Ecosistema de Salud y Bienestar</h2>
+    <span style="font-size:.72rem;color:#888;font-weight:700;">Arts. 43 y 50</span>
+    <div class="highlight amber" style="margin-top:8px;">
+      <p>Derecho al <strong>más alto nivel posible</strong> de salud física, mental y un medio ambiente sustentable.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card-sm">
+        <span class="badge">➕ Atención Integral</span>
+        <h3>Gratuita y Universal</h3>
+        <p style="margin-top:4px;">Prevención, protección y restauración de la salud. Reducción de morbilidad y mortalidad.</p>
+      </div>
+      <div class="card-sm amber">
+        <span class="badge amber">🍼 Nutrición</span>
+        <h3>Lactancia Materna</h3>
+        <p style="margin-top:4px;">Fomento de lactancia exclusiva (6 meses) y complementaria (2 años).</p>
+      </div>
+      <div class="card-sm violet">
+        <span class="badge violet">🧠 Salud Mental</span>
+        <h3>Atención Psicológica</h3>
+        <p style="margin-top:4px;">Protección contra prácticas culturales perjudiciales.</p>
+      </div>
+      <div class="card-sm green">
+        <span class="badge green">🎗️ Salud Reproductiva</span>
+        <h3>Educación Integral</h3>
+        <p style="margin-top:4px;">Educación sexual, acceso a anticonceptivos y medidas para prevenir el embarazo adolescente.</p>
+      </div>
+    </div>
+    <div class="highlight">
+      <h3>📌 Dato Clave para el Examen</h3>
+      <p style="margin-top:4px;">El derecho a la salud contempla explícitamente la <strong>salud mental y la salud reproductiva</strong>. No se limita a la atención médica de enfermedades físicas.</p>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(4)">← Anterior</button>
+    <div class="progress-dots" id="pd5"></div>
+    <button class="nav-btn" onclick="goTo(6)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 6: PILAR 3 EDUCACION ══════════════ -->
+<div class="screen" id="s6">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills6"></div>
+  </nav>
+  <div class="content">
+    <span class="badge amber">📚 Pilar 3 – Parte B</span>
+    <h2>El Motor del Futuro: Educación y Juego</h2>
+    <div class="compare" style="margin-top:8px;">
+      <div style="background:linear-gradient(135deg,#E8F8F5,#C5EFDA);border-radius:var(--radius);padding:14px;">
+        <span class="badge green" style="font-size:.6rem;">Arts. 57 y 58</span>
+        <h3 style="margin:6px 0;">📖 Derecho a la Educación</h3>
+        <p style="font-size:.75rem;">Debe ser de <strong>calidad, gratuita, inclusiva</strong> y basada en un enfoque de derechos humanos.</p>
+        <p style="font-size:.73rem;margin-top:8px;font-weight:700;">Fines clave:</p>
+        <ul style="font-size:.72rem;padding-left:14px;">
+          <li>Inculcar cultura de paz</li>
+          <li>Educación cívica</li>
+          <li>Prevenir el acoso escolar</li>
+          <li>Promover educación sexual integral</li>
+        </ul>
+      </div>
+      <div style="background:linear-gradient(135deg,#FFF0ED,#FFD4CB);border-radius:var(--radius);padding:14px;">
+        <span class="badge coral" style="font-size:.6rem;">Art. 60</span>
+        <h3 style="margin:6px 0;">🎮 Derecho al Juego</h3>
+        <p style="font-size:.75rem;">El juego y la recreación son <strong>factores primordiales del desarrollo</strong>.</p>
+        <div style="background:rgba(255,107,107,.15);border-radius:8px;padding:8px;margin-top:8px;">
+          <p style="font-size:.72rem;font-weight:800;color:#c0392b;">🚫 Es ilegal imponer regímenes de estudio, trabajo o disciplina desproporcionados a su edad que menoscaben este derecho.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:0;">
+      <h3>🔑 Conceptos Clave de la Educación</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+        <div style="background:#E8F8F5;border-radius:10px;padding:8px;">
+          <p style="font-size:.75rem;font-weight:800;">Gratuita y Obligatoria</p>
+          <p style="font-size:.72rem;">Desde preescolar hasta bachillerato</p>
+        </div>
+        <div style="background:#FFFBF0;border-radius:10px;padding:8px;">
+          <p style="font-size:.75rem;font-weight:800;">Inclusiva</p>
+          <p style="font-size:.72rem;">Sin exclusión por discapacidad u origen</p>
+        </div>
+        <div style="background:#F3F0FF;border-radius:10px;padding:8px;">
+          <p style="font-size:.75rem;font-weight:800;">Con perspectiva de género</p>
+          <p style="font-size:.72rem;">Currículum libre de estereotipos</p>
+        </div>
+        <div style="background:#FFF0ED;border-radius:10px;padding:8px;">
+          <p style="font-size:.75rem;font-weight:800;">Libre de violencia</p>
+          <p style="font-size:.72rem;">Protocolos contra el acoso escolar (Art. 57)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(5)">← Anterior</button>
+    <div class="progress-dots" id="pd6"></div>
+    <button class="nav-btn" onclick="goTo(7)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 7: PILAR 4 VOZ Y PRIVACIDAD ══════ -->
+<div class="screen" id="s7">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills7"></div>
+  </nav>
+  <div class="content">
+    <span class="badge violet">🎙️ Pilar 4</span>
+    <h2>Voz y Privacidad</h2>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('t7',0,this)">Agencia y Voz</button>
+      <button class="tab-btn" onclick="switchTab('t7',1,this)">Intimidad y Datos</button>
+    </div>
+    <div id="t7">
+      <div class="tab-panel active">
+        <span class="badge" style="font-size:.6rem;">Arts. 62–65 · 71 · 73–75</span>
+        <div class="card-grid" style="margin-top:8px;">
+          <div class="card-sm">
+            <span class="badge">📢 Expresión</span>
+            <h3>Libertad de Expresión y Acceso a la Información</h3>
+            <p style="margin-top:4px;">Derecho a buscar, recibir y difundir información (Arts. 62–65).</p>
+          </div>
+          <div class="card-sm violet">
+            <span class="badge violet">🤝 Participación</span>
+            <h3>Ser escuchados</h3>
+            <p style="margin-top:4px;">Ser escuchados y tomados en cuenta en los ámbitos <strong>familiar, escolar y judicial</strong> (Arts. 71, 73, 74).</p>
+          </div>
+          <div class="card-sm green">
+            <span class="badge green">👥 Asociación</span>
+            <h3>Reunión y Asociación</h3>
+            <p style="margin-top:4px;">Derecho a organizarse libremente (Art. 75).</p>
+          </div>
+        </div>
+        <div class="highlight">
+          <h3>💡 Aplicación Práctica</h3>
+          <p style="margin-top:4px;">En juicios o procesos donde estén involucrados, <strong>deben ser escuchados</strong> y su opinión debe ser valorada conforme a su edad y madurez. No es opcional, es obligatorio.</p>
+        </div>
+      </div>
+      <div class="tab-panel">
+        <span class="badge violet" style="font-size:.6rem;">Arts. 76 y 77</span>
+        <div class="highlight violet" style="margin-top:8px;">
+          <h3>🔒 Derecho a la Intimidad y Datos Personales</h3>
+          <p style="margin-top:6px;"><strong>Protección absoluta</strong> de sus datos personales. Ninguna injerencia arbitraria en su vida privada o familiar.</p>
+        </div>
+        <div class="card">
+          <h3>¿Qué constituye violación a la intimidad?</h3>
+          <ul style="padding-left:18px;margin-top:8px;">
+            <li>Usar su imagen o nombre en medios sin autorización</li>
+            <li>Publicar información que menoscabe su honra</li>
+            <li>Difundir datos que los pongan en riesgo</li>
+            <li>Compartir información de procedimientos judiciales</li>
+            <li>Revelar su identidad como víctimas</li>
+          </ul>
+        </div>
+        <div class="highlight coral">
+          <p style="font-size:.82rem;">⚠️ El uso de redes sociales para difundir información que identifique a menores en situaciones de riesgo o vulnerabilidad puede constituir una <strong>violación legal</strong> a este artículo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(6)">← Anterior</button>
+    <div class="progress-dots" id="pd7"></div>
+    <button class="nav-btn" onclick="goTo(8)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 8: PILAR 5 FRONTERA Y JUSTICIA ═══ -->
+<div class="screen" id="s8">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills8"></div>
+  </nav>
+  <div class="content">
+    <span class="badge green">⚖️ Pilar 5</span>
+    <h2>Fronteras y Justicia</h2>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('t8',0,this)">Entorno Digital</button>
+      <button class="tab-btn" onclick="switchTab('t8',1,this)">Acceso a Justicia</button>
+      <button class="tab-btn" onclick="switchTab('t8',2,this)">Migrantes</button>
+    </div>
+    <div id="t8">
+      <!-- Digital -->
+      <div class="tab-panel active">
+        <span class="badge" style="font-size:.6rem;">Arts. 101 Bis – 101 Bis 2</span>
+        <div class="highlight" style="margin-top:8px;">
+          <p>La integración a la sociedad de la información <strong>no es un lujo, es un derecho</strong> que el Estado debe garantizar mediante políticas de inclusión digital universal.</p>
+        </div>
+        <div class="accordion">
+          <button class="acc-header open" onclick="toggleAcc(this)">🌐 Acceso Universal (Art. 101 Bis) <span class="arrow">▼</span></button>
+          <div class="acc-body open"><p>Derecho a las <strong>Tecnologías de la Información y Comunicación (TIC)</strong>, incluyendo banda ancha e Internet.</p></div>
+        </div>
+        <div class="accordion">
+          <button class="acc-header" onclick="toggleAcc(this)">🛡️ Uso Seguro (Art. 101 Bis 2) <span class="arrow">▼</span></button>
+          <div class="acc-body"><p>El Internet como medio efectivo para ejercer otros derechos: educación, salud, esparcimiento. El Estado debe garantizar entornos digitales seguros.</p></div>
+        </div>
+        <div class="accordion">
+          <button class="acc-header" onclick="toggleAcc(this)">🚫 Protección Activa contra Ciberacoso <span class="arrow">▼</span></button>
+          <div class="acc-body"><p>El Estado tiene el deber <strong>ineludible</strong> de prevenir, atender y sancionar el ciberacoso y cualquier violencia digital que vulnere su seguridad o intimidad.</p></div>
+        </div>
+      </div>
+      <!-- Justicia -->
+      <div class="tab-panel">
+        <span class="badge green" style="font-size:.6rem;">Arts. 82 · 87 · 89</span>
+        <div class="highlight" style="margin-top:8px;">
+          <h3>Principio de Mínima Intervención y No Revictimización</h3>
+        </div>
+        <div class="compare" style="margin-top:8px;">
+          <div style="background:linear-gradient(135deg,#E8F8F5,#C5EFDA);border-radius:var(--radius);padding:14px;">
+            <h3 style="font-size:.82rem;margin-bottom:6px;">👶 Menores de 12 años</h3>
+            <span class="badge green" style="font-size:.58rem;">Art. 87</span>
+            <p style="font-size:.75rem;margin-top:6px;"><strong>Exención de Responsabilidad Penal.</strong> No pueden ser privados de libertad ni sujetos a procedimiento penal. Únicamente son sujetos de <em>asistencia social</em> para la restitución de sus derechos.</p>
+          </div>
+          <div style="background:linear-gradient(135deg,#FFFBF0,#FFE4A0);border-radius:var(--radius);padding:14px;">
+            <h3 style="font-size:.82rem;margin-bottom:6px;">🧑 12 a 17 años</h3>
+            <span class="badge amber" style="font-size:.58rem;">Art. 89</span>
+            <p style="font-size:.75rem;margin-top:6px;"><strong>Sistema Especializado.</strong> Sujetos a la Ley Nacional del Sistema Integral de Justicia Penal para Adolescentes. Garantía de asistencia legal especializada y protección de identidad.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Migrantes -->
+      <div class="tab-panel">
+        <span class="badge amber" style="font-size:.6rem;">Derechos Migrantes</span>
+        <div class="highlight amber" style="margin-top:8px;">
+          <h3>🌍 Niñas, Niños y Adolescentes Migrantes</h3>
+          <p style="margin-top:4px;">Su condición migratoria <strong>no puede ser obstáculo</strong> para el ejercicio de sus derechos. La falta de documentación nunca justifica la negación de servicios.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card-sm">
+            <h3>✅ Derechos Garantizados</h3>
+            <ul style="padding-left:14px;margin-top:6px;">
+              <li>Acceso a educación y salud</li>
+              <li>Representación consular</li>
+              <li>No detención por situación migratoria</li>
+              <li>Interés Superior en decisiones migratorias</li>
+            </ul>
+          </div>
+          <div class="card-sm coral">
+            <h3>⚠️ Principio Aplicable</h3>
+            <p style="margin-top:6px;">Toda decisión en procesos migratorios que involucre a menores debe tener como consideración primordial su <strong>Interés Superior</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(7)">← Anterior</button>
+    <div class="progress-dots" id="pd8"></div>
+    <button class="nav-btn" onclick="goTo(9)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 9: SÍNTESIS ═══════════════════════ -->
+<div class="screen" id="s9">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills9"></div>
+  </nav>
+  <div class="content">
+    <span class="badge">🔄 Síntesis</span>
+    <h2>El Ecosistema de la LGDNNA</h2>
+    <div class="highlight" style="margin-bottom:12px;">
+      <p>La LGDNNA <strong>no es una lista de reglas aisladas</strong>; es un escudo de protección en <strong>tres capas concéntricas</strong> que rodean al niño como sujeto de derechos.</p>
+    </div>
+    <div class="shield-layers">
+      <div class="shield-layer sl1">
+        <div class="sl-icon">🧒</div>
+        <div>
+          <h3>El Sujeto de Derechos</h3>
+          <p>Todo parte de su dignidad, autonomía progresiva y prioridad absoluta. <em>Interés Superior, Igualdad, Identidad.</em></p>
+        </div>
+      </div>
+      <div class="shield-layer sl2">
+        <div class="sl-icon">👨‍👩‍👧</div>
+        <div>
+          <h3>Entorno Inmediato: La Familia</h3>
+          <p>Garante primordial mediante la crianza positiva y el libre desarrollo. <em>Educación, Juego, Salud.</em></p>
+        </div>
+      </div>
+      <div class="shield-layer sl3">
+        <div class="sl-icon">🏛️</div>
+        <div>
+          <h3>Obligación Estatal</h3>
+          <p>El Estado nivela con acciones afirmativas, presupuestos etiquetados y sistemas especializados. <em>Justicia, TIC, Políticas Públicas.</em></p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>📋 Tabla de Referencia Rápida</h3>
+      <div style="overflow-x:auto;margin-top:8px;">
+        <table style="width:100%;border-collapse:collapse;font-size:.72rem;">
+          <thead>
+            <tr style="background:var(--navy);color:white;">
+              <th style="padding:7px 8px;text-align:left;border-radius:8px 0 0 0;">Pilar</th>
+              <th style="padding:7px 8px;text-align:left;">Artículos</th>
+              <th style="padding:7px 8px;text-align:left;border-radius:0 8px 0 0;">Concepto Clave</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#E8F8F5;"><td style="padding:6px 8px;">🏛️ Los Cimientos</td><td>2, 3, 36, 37, 39, 53</td><td>Interés Superior · Igualdad Sustantiva</td></tr>
+            <tr style="background:#FFF0ED;"><td style="padding:6px 8px;">❤️ Supervivencia</td><td>14–17, 19–23, 44, 46</td><td>Prioridad · No Separación · Crianza Positiva</td></tr>
+            <tr style="background:#FFFBF0;"><td style="padding:6px 8px;">📚 Desarrollo</td><td>43, 50, 57, 58, 60</td><td>Salud integral · Educación · Juego</td></tr>
+            <tr style="background:#F3F0FF;"><td style="padding:6px 8px;">🎙️ Voz y Privacidad</td><td>62–65, 71, 73–77</td><td>Participación · Intimidad · Datos</td></tr>
+            <tr style="background:#EEFAF3;border-radius:0 0 8px 8px;"><td style="padding:6px 8px;">⚖️ Fronteras/Justicia</td><td>82, 87, 89, 101 Bis</td><td>Digital · Mínima Intervención</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(8)">← Anterior</button>
+    <div class="progress-dots" id="pd9"></div>
+    <button class="nav-btn" onclick="goTo(10)">Autoevaluación →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 10: QUIZ ══════════════════════════ -->
+<div class="screen" id="s10">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div style="font-size:.72rem;font-weight:700;color:#888;" id="quiz-counter-top"></div>
+  </nav>
+  <div class="content">
+    <span class="badge coral">🧠 Autoevaluación</span>
+    <h2>Repaso Interactivo</h2>
+    <div id="quiz-area">
+      <div class="card" id="quiz-card">
+        <p class="quiz-q" id="quiz-question"></p>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-fb" id="quiz-feedback"></div>
+        <div class="quiz-nav">
+          <span class="quiz-counter" id="quiz-counter"></span>
+          <button id="next-q-btn" style="display:none;" onclick="nextQuestion()">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+    <div id="quiz-score">
+      <div class="score-num" id="score-num"></div>
+      <p style="font-size:1rem;font-weight:700;margin-bottom:8px;" id="score-msg"></p>
+      <p style="font-size:.82rem;color:#555;margin-bottom:16px;">Revisa la guía y vuelve a intentarlo para reforzar tu aprendizaje.</p>
+      <button class="nav-btn" onclick="restartQuiz()" style="margin-right:8px;">🔄 Repetir</button>
+      <button class="nav-btn secondary" onclick="goTo(11)">Resumen Final →</button>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(9)">← Síntesis</button>
+    <div class="progress-dots" id="pd10"></div>
+    <button class="nav-btn" onclick="goTo(11)">Resumen →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCREEN 11: RESUMEN FINAL ═════════════════ -->
+<div class="screen" id="s11">
+  <nav class="topnav">
+    <div class="logo">LGDNNA <span>Guía</span></div>
+    <div class="pills" id="pills11"></div>
+  </nav>
+  <div class="content">
+    <span class="badge green">✅ Resumen Final</span>
+    <h2>Guía de Estudio: Lo Esencial</h2>
+    <div class="accordion">
+      <button class="acc-header open" onclick="toggleAcc(this)">🏛️ Pilar 1 – Los Cimientos <span class="arrow">▼</span></button>
+      <div class="acc-body open">
+        <ul>
+          <li><strong>Interés Superior (Arts. 2–3):</strong> Consideración primordial en toda decisión. No hay derechos sin presupuesto.</li>
+          <li><strong>Igualdad Sustantiva (Arts. 36–37):</strong> El Estado debe adoptar Acciones Afirmativas para nivelar desigualdades reales.</li>
+          <li><strong>No Discriminación (Art. 39):</strong> Prohibición de restricción por etnia, género, edad, discapacidad, salud o condición socioeconómica.</li>
+          <li><strong>Inclusión (Art. 53):</strong> Ajustes razonables y Diseño Universal. Negarlos = discriminación.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <button class="acc-header" onclick="toggleAcc(this)">❤️ Pilar 2 – Supervivencia y Familia <span class="arrow">▼</span></button>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Derecho de Prioridad (Art. 17):</strong> Atención antes que adultos en servicios y emergencias.</li>
+          <li><strong>Identidad (Art. 19):</strong> Nombre, filiación, nacionalidad. Sin documentación no se niegan derechos.</li>
+          <li><strong>No Separación (Art. 23):</strong> Solo por orden de autoridad, debido proceso y como último recurso.</li>
+          <li><strong>Crianza Positiva (Arts. 44–46):</strong> Prohibición de castigo corporal. Crianza basada en respeto y derechos humanos.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <button class="acc-header" onclick="toggleAcc(this)">📚 Pilar 3 – Desarrollo Integral <span class="arrow">▼</span></button>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Salud (Arts. 43–50):</strong> Física, mental y reproductiva. Gratuita. Incluye salud sexual integral.</li>
+          <li><strong>Educación (Arts. 57–58):</strong> Gratuita, inclusiva, con perspectiva de género y libre de violencia.</li>
+          <li><strong>Juego (Art. 60):</strong> Factor primordial del desarrollo. No se puede restringir con regímenes desproporcionados.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <button class="acc-header" onclick="toggleAcc(this)">🎙️ Pilar 4 – Voz y Privacidad <span class="arrow">▼</span></button>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Expresión y Participación (Arts. 62–65, 71, 73–75):</strong> Ser escuchados en ámbitos familiar, escolar y judicial.</li>
+          <li><strong>Intimidad y Datos (Arts. 76–77):</strong> Protección absoluta. Usar imagen sin autorización = violación legal.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <button class="acc-header" onclick="toggleAcc(this)">⚖️ Pilar 5 – Fronteras y Justicia <span class="arrow">▼</span></button>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Digital (Arts. 101 Bis):</strong> Acceso a TIC e Internet es un derecho. Estado debe combatir el ciberacoso.</li>
+          <li><strong>Menores de 12 años (Art. 87):</strong> Exentos de responsabilidad penal → solo asistencia social.</li>
+          <li><strong>Adolescentes 12–17 (Art. 89):</strong> Sistema especializado de justicia juvenil.</li>
+          <li><strong>Migrantes:</strong> Su condición migratoria no obstruye el ejercicio de sus derechos.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:0;">
+      <h3>💡 La Idea Central</h3>
+      <p style="margin-top:4px;">La LGDNNA construye un <strong>escudo de tres capas</strong>: el niño como sujeto de derechos → la familia como garante → el Estado como habilitador. Cada capa tiene obligaciones concretas y exigibles.</p>
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="nav-btn secondary" onclick="goTo(10)">← Autoevaluación</button>
+    <div class="progress-dots" id="pd11"></div>
+    <button class="nav-btn" onclick="goTo(0)">🏠 Inicio</button>
+  </div>
+</div>
+
+<!-- ═════════════════════════ FOOTER (in each screen's last line) ════════ -->
+<!-- Footer is part of bottombar area on final screens -->
+
+<script>
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+const TOTAL = 12; // screens 0–11
+let currentScreen = 0;
+const visited = new Set([0]);
+
+function goTo(n) {
+  document.getElementById('s'+currentScreen).classList.remove('active');
+  currentScreen = n;
+  visited.add(n);
+  document.getElementById('s'+n).classList.add('active');
+  renderDots(n);
+  if(n === 10) { initQuiz(); }
+  window.scrollTo(0,0);
+  // scroll content areas to top
+  const c = document.getElementById('s'+n).querySelector('.content');
+  if(c) c.scrollTop = 0;
+}
+
+function renderDots(active) {
+  const container = document.getElementById('pd'+active);
+  if(!container) return;
+  container.innerHTML = '';
+  for(let i=1;i<TOTAL-1;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (visited.has(i) && i<active ? ' done' : '') + (i===active ? ' current' : '');
+    d.title = 'Sección '+(i);
+    d.onclick = ()=>goTo(i);
+    d.style.cursor='pointer';
+    container.appendChild(d);
+  }
+}
+
+// Build pills (section quick-nav)
+const sectionNames = ['','Intro','Pilar 1A','Pilar 1B','Pilar 2','Salud','Educación','Voz','Justicia','Síntesis','Quiz','Resumen'];
+[1,2,3,4,5,6,7,8,9,10,11].forEach(i=>{
+  const c = document.getElementById('pills'+i);
+  if(!c) return;
+  sectionNames.forEach((name,j)=>{
+    if(j===0||j===i) return;
+    const b = document.createElement('button');
+    b.className = 'pill' + (j===i?' active':'');
+    b.textContent = name;
+    b.onclick = ()=>goTo(j);
+    c.appendChild(b);
+  });
+});
+
+// ── ACCORDION ───────────────────────────────────────────────────────────────
+function toggleAcc(btn){
+  const body = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+// ── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(containerId, idx, btn){
+  const container = document.getElementById(containerId);
+  const panels = container.querySelectorAll('.tab-panel');
+  panels.forEach((p,i)=> p.classList.toggle('active', i===idx));
+  const btnParent = btn.closest('.tab-bar');
+  btnParent.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── QUIZ ─────────────────────────────────────────────────────────────────────
+const quizData = [
+  {
+    q: "¿Cuál es el principio rector de la LGDNNA que establece que toda decisión debe tomarse considerando lo más benéfico para el menor?",
+    opts: ["Igualdad Formal","Interés Superior de la Niñez","Autonomía Progresiva","No Discriminación"],
+    ans: 1,
+    exp: "✅ Correcto. El Interés Superior de la Niñez (Arts. 2 y 3) es la brújula legal que orienta toda interpretación y decisión que involucre a menores."
+  },
+  {
+    q: "El Art. 87 de la LGDNNA establece que los menores de 12 años que cometan una conducta tipificada como delito:",
+    opts: ["Son juzgados con el sistema penal ordinario","Reciben únicamente asistencia social para la restitución de derechos","Son sancionados con medidas educativas en centros especiales","Son remitidos al sistema especializado para adolescentes"],
+    ans: 1,
+    exp: "✅ Correcto. Los menores de 12 años tienen exención de responsabilidad penal. No pueden ser privados de libertad; son sujetos de asistencia social."
+  },
+  {
+    q: "La diferencia clave entre Igualdad Formal e Igualdad Sustantiva es que la segunda:",
+    opts: ["Trata a todos exactamente igual sin distinción","Obliga al Estado a adoptar Acciones Afirmativas para eliminar barreras estructurales","Prohíbe cualquier trato diferenciado","Solo aplica a menores con discapacidad"],
+    ans: 1,
+    exp: "✅ Correcto. La Igualdad Sustantiva (Arts. 36–37) reconoce que tratar igual a desiguales genera más desigualdad, por lo que exige medidas especiales."
+  },
+  {
+    q: "Según el Art. 23 (Principio de No Separación), ¿en qué casos se puede separar a un niño de sus padres o tutores?",
+    opts: ["Cuando los padres lo soliciten voluntariamente","Por razones económicas o de pobreza","Solo por orden de autoridad competente, mediante debido proceso y como último recurso","Cuando los servicios sociales lo determinen sin intervención judicial"],
+    ans: 2,
+    exp: "✅ Correcto. La separación solo procede como último recurso, con orden de autoridad y siempre preservando el Interés Superior del niño."
+  },
+  {
+    q: "Negar ajustes razonables a un niño con discapacidad en una escuela constituye, legalmente:",
+    opts: ["Una falta administrativa menor","Un acto de discriminación sancionable","Una decisión discrecional del director","Solo una violación ética, no legal"],
+    ans: 1,
+    exp: "✅ Correcto. El Art. 53 establece que negar ajustes razonables o diseño universal es legalmente un acto de discriminación."
+  },
+  {
+    q: "El derecho al Juego (Art. 60) implica que:",
+    opts: ["Es un beneficio que se otorga si el niño tiene buen desempeño escolar","Puede ser restringido como medida disciplinaria educativa","Es ilegal imponer regímenes desproporcionados que menoscaben este derecho","Solo aplica en horarios extraescolares"],
+    ans: 2,
+    exp: "✅ Correcto. El juego y la recreación son factores primordiales del desarrollo. Imponer regímenes excesivos que los eliminen es ilegal."
+  },
+  {
+    q: "Publicar en redes sociales una foto que identifique a un menor en situación de víctima puede constituir:",
+    opts: ["Una práctica periodística válida","Una violación al derecho de intimidad y datos personales (Arts. 76–77)","Solo es problema si el menor lo denuncia","Una acción protegida por la libertad de expresión"],
+    ans: 1,
+    exp: "✅ Correcto. El uso de imagen o nombre que menoscabe su honra o los ponga en riesgo viola los Arts. 76–77 de la LGDNNA."
+  },
+  {
+    q: "¿Qué establece la Garantía Presupuestal de los Arts. 2 y 3 de la LGDNNA?",
+    opts: ["Que los derechos de los niños son aspiraciones programáticas sin costo","Que hay obligación de asignar recursos presupuestales para cumplir la ley: no hay derechos sin presupuesto","Que el presupuesto para niñez es optativo según capacidad fiscal","Que los recursos los aporta exclusivamente la federación"],
+    ans: 1,
+    exp: "✅ Correcto. La LGDNNA establece la obligación ineludible de incorporar en los presupuestos la asignación de recursos suficientes para cumplir sus mandatos."
+  }
+];
+
+let qIdx = 0, score = 0, answered = false;
+
+function initQuiz(){
+  qIdx = 0; score = 0; answered = false;
+  document.getElementById('quiz-score').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = quizData[qIdx];
+  document.getElementById('quiz-question').textContent = (qIdx+1)+'. '+q.q;
+  document.getElementById('quiz-counter').textContent = `Pregunta ${qIdx+1} de ${quizData.length}`;
+  document.getElementById('quiz-counter-top').textContent = `${qIdx+1}/${quizData.length}`;
+  const opts = document.getElementById('quiz-options');
+  opts.innerHTML = '';
+  q.opts.forEach((o,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = o;
+    btn.onclick = ()=> checkAnswer(i);
+    opts.appendChild(btn);
+  });
+  const fb = document.getElementById('quiz-feedback');
+  fb.className = 'quiz-fb'; fb.textContent = '';
+  document.getElementById('next-q-btn').style.display = 'none';
+  answered = false;
+}
+
+function checkAnswer(idx){
+  if(answered) return;
+  answered = true;
+  const q = quizData[qIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((b,i)=>{
+    b.disabled = true;
+    if(i===q.ans) b.classList.add('correct');
+    else if(i===idx && idx!==q.ans) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('quiz-feedback');
+  if(idx===q.ans){ score++; fb.className='quiz-fb show ok'; fb.textContent = q.exp; }
+  else { fb.className='quiz-fb show fail'; fb.textContent = '❌ Incorrecto. '+q.exp; }
+  document.getElementById('next-q-btn').style.display='inline-block';
+}
+
+function nextQuestion(){
+  qIdx++;
+  if(qIdx>=quizData.length){ showScore(); return; }
+  renderQuestion();
+}
+
+function showScore(){
+  document.getElementById('quiz-area').style.display='none';
+  const sd = document.getElementById('quiz-score');
+  sd.style.display='block';
+  const pct = Math.round(score/quizData.length*100);
+  document.getElementById('score-num').textContent = `${score}/${quizData.length}`;
+  let msg = pct>=80 ? '🎉 ¡Excelente! Dominas los pilares de la LGDNNA.' :
+            pct>=60 ? '👍 Buen avance. Repasa los artículos con menor puntaje.' :
+            '📖 Necesitas repasar la guía. ¡Tú puedes!';
+  document.getElementById('score-msg').textContent = msg;
+}
+
+function restartQuiz(){ initQuiz(); }
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+// Open first accordion in s2 on load
+document.querySelectorAll('.acc-header.open').forEach(h=>{
+  h.nextElementSibling.classList.add('open');
+});
+</script>
+
+<!-- FOOTER NOTE (visible in each screen's content as last item on final screen) -->
+<style>
+.footer-note {
+  text-align:center; font-size: .65rem; color: #aaa;
+  padding: 4px 0 2px;
+  border-top: 1px solid #eee;
+  flex-shrink: 0;
+}
+</style>
+<div style="position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:.6rem;color:#bbb;padding:2px;pointer-events:none;z-index:0;">
+  Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez
+</div>
+
+</body>
+</html>

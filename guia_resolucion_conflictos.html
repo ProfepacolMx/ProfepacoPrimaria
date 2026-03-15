@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Resolución de Conflictos Escolares</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+
+  :root {
+    --azul:    #3B82C4;
+    --azul-cl: #EBF4FF;
+    --verde:   #4CAF82;
+    --verde-cl:#E8F8EF;
+    --dorado:  #F5A623;
+    --dorado-cl:#FFF4E0;
+    --rojo:    #E05353;
+    --gris-cl: #F7F8FA;
+    --gris:    #6B7280;
+    --blanco:  #FFFFFF;
+    --oscuro:  #1E293B;
+    --radio:   14px;
+    --sombra:  0 4px 18px rgba(0,0,0,.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Nunito', sans-serif;
+    background: var(--gris-cl);
+    color: var(--oscuro);
+  }
+
+  /* ── PANTALLAS ── */
+  .pantalla {
+    position: fixed; inset: 0;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .pantalla.activa { display: flex; }
+
+  /* ── BARRA SUPERIOR ── */
+  .barra {
+    background: var(--azul);
+    color: #fff;
+    padding: 10px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+    gap: 10px;
+  }
+  .barra-titulo { font-size: clamp(.8rem,2vw,1rem); font-weight: 800; }
+  .progreso-wrap { display: flex; gap: 5px; align-items: center; }
+  .burbuja {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    border: 2px solid rgba(255,255,255,.5);
+    cursor: pointer; transition: .2s;
+    font-size: .65rem; font-weight: 800; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .burbuja.activa { background: #fff; color: var(--azul); }
+  .burbuja:hover  { background: rgba(255,255,255,.5); }
+
+  /* ── CONTENIDO ── */
+  .cuerpo {
+    flex: 1; overflow: hidden;
+    padding: clamp(10px,2vw,20px);
+    display: flex; flex-direction: column; gap: clamp(8px,1.5vw,14px);
+  }
+
+  /* ── NAVEGACIÓN INFERIOR ── */
+  .nav {
+    background: #fff; border-top: 1px solid #e5e7eb;
+    padding: 10px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .btn {
+    padding: 9px 22px; border-radius: 50px; border: none;
+    font-family: 'Nunito', sans-serif; font-weight: 800;
+    font-size: clamp(.8rem,2vw,.95rem);
+    cursor: pointer; transition: .2s; display: flex; align-items: center; gap: 7px;
+  }
+  .btn-prim  { background: var(--azul);   color: #fff; }
+  .btn-sec   { background: var(--gris-cl); color: var(--oscuro); }
+  .btn:hover { opacity: .85; transform: translateY(-1px); }
+  .btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+  .contador { font-size: .85rem; color: var(--gris); font-weight: 700; }
+
+  /* ── TIPOGRAFÍA ── */
+  .t-hero { font-family: 'Fredoka One', sans-serif; font-size: clamp(1.7rem,4.5vw,3rem); line-height: 1.1; }
+  .t-h2   { font-family: 'Fredoka One', sans-serif; font-size: clamp(1.2rem,3vw,2rem); }
+  .t-h3   { font-size: clamp(.95rem,2.2vw,1.3rem); font-weight: 800; }
+  .t-body { font-size: clamp(.82rem,1.8vw,1rem); line-height: 1.55; }
+  .t-sm   { font-size: clamp(.72rem,1.5vw,.85rem); }
+
+  /* ── TARJETAS ── */
+  .card {
+    background: #fff; border-radius: var(--radio);
+    box-shadow: var(--sombra); padding: clamp(10px,2vw,18px);
+    flex: 1;
+  }
+  .card-az { background: var(--azul-cl); }
+  .card-vd { background: var(--verde-cl); }
+  .card-do { background: var(--dorado-cl); }
+  .card-rj { background: #FFEBEB; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 12px; border-radius: 50px;
+    font-size: clamp(.7rem,1.5vw,.82rem); font-weight: 800;
+  }
+  .chip-az { background: var(--azul);   color: #fff; }
+  .chip-vd { background: var(--verde);  color: #fff; }
+  .chip-do { background: var(--dorado); color: #fff; }
+  .chip-rj { background: var(--rojo);   color: #fff; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px,1.5vw,14px); }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(8px,1.5vw,14px); }
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: clamp(6px,1.2vw,12px); }
+
+  .fila  { display: flex; gap: clamp(8px,1.5vw,14px); }
+  .col   { display: flex; flex-direction: column; gap: clamp(6px,1.2vw,12px); }
+
+  .linea-az { border-left: 5px solid var(--azul);   padding-left: 12px; }
+  .linea-vd { border-left: 5px solid var(--verde);  padding-left: 12px; }
+  .linea-do { border-left: 5px solid var(--dorado); padding-left: 12px; }
+
+  /* ── PORTADA ── */
+  #p0 { background: linear-gradient(135deg,#1E4D8C 0%,#3B82C4 55%,#5BAEF0 100%); }
+  .portada-inner {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 20px; gap: 14px;
+  }
+  .emoji-grande { font-size: clamp(2.5rem,8vw,5rem); }
+  .badge {
+    background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.4);
+    border-radius: 50px; padding: 6px 20px;
+    font-size: clamp(.75rem,1.8vw,.9rem); font-weight: 700; color: #fff;
+  }
+
+  /* ── ACORDEÓN ── */
+  .acord-item { border-radius: 10px; overflow: hidden; margin-bottom: 6px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.07); }
+  .acord-btn {
+    width: 100%; border: none; background: none; text-align: left;
+    padding: 11px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Nunito', sans-serif; font-size: clamp(.82rem,1.8vw,.95rem); font-weight: 800;
+  }
+  .acord-btn:hover { background: var(--gris-cl); }
+  .acord-body { display: none; padding: 0 16px 12px; font-size: clamp(.78rem,1.7vw,.9rem); line-height: 1.5; color: var(--oscuro); }
+  .acord-body.open { display: block; }
+  .flecha { transition: .3s; font-size: .8rem; }
+  .flecha.rot { transform: rotate(180deg); }
+
+  /* ── PESTAÑAS ── */
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tab-btn {
+    padding: 7px 16px; border-radius: 50px; border: 2px solid transparent;
+    font-family: 'Nunito', sans-serif; font-size: clamp(.75rem,1.6vw,.88rem); font-weight: 800;
+    cursor: pointer; background: var(--gris-cl); color: var(--gris); transition: .2s;
+  }
+  .tab-btn.activa { background: var(--azul); color: #fff; border-color: var(--azul); }
+  .tab-panel { display: none; }
+  .tab-panel.activa { display: block; }
+
+  /* ── QUIZ ── */
+  .pregunta { font-size: clamp(.88rem,2vw,1.05rem); font-weight: 800; margin-bottom: 12px; line-height: 1.4; }
+  .opcion {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 10px; border: 2px solid #E5E7EB;
+    cursor: pointer; margin-bottom: 7px; background: #fff; transition: .2s;
+    font-size: clamp(.78rem,1.7vw,.92rem); font-weight: 600;
+  }
+  .opcion:hover { border-color: var(--azul); background: var(--azul-cl); }
+  .opcion.correcto { border-color: var(--verde); background: var(--verde-cl); }
+  .opcion.incorrecto { border-color: var(--rojo); background: #FFEBEB; }
+  .opcion.disabled { pointer-events: none; }
+  .feedback {
+    border-radius: 10px; padding: 10px 14px;
+    font-size: clamp(.78rem,1.6vw,.9rem); font-weight: 700; margin-top: 4px;
+    display: none;
+  }
+  .feedback.ok  { background: var(--verde-cl); color: #1a6e3e; display: block; }
+  .feedback.mal { background: #FFEBEB; color: #9b2222; display: block; }
+
+  .quiz-nav { display: flex; gap: 10px; margin-top: 10px; align-items: center; }
+  .quiz-score { 
+    background: var(--dorado); color: #fff; border-radius: 50px;
+    padding: 6px 18px; font-weight: 800; font-size: clamp(.8rem,1.8vw,.95rem);
+  }
+
+  /* ── PASO ── */
+  .paso-num {
+    width: clamp(28px,4vw,40px); height: clamp(28px,4vw,40px);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: clamp(.75rem,1.7vw,.95rem); flex-shrink: 0;
+  }
+
+  /* ── MATRIZ ── */
+  .matriz {
+    display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+    gap: 8px; height: 100%;
+  }
+  .cuadrante {
+    border-radius: 12px; padding: clamp(8px,1.5vw,14px);
+    display: flex; flex-direction: column; gap: 5px;
+  }
+
+  /* ── FLUJO ── */
+  .flujo-paso {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-radius: 10px; background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.07);
+    font-size: clamp(.75rem,1.6vw,.88rem); font-weight: 700;
+  }
+  .flecha-abajo { text-align: center; font-size: 1rem; color: var(--gris); line-height: 1; }
+  .flujo-bifurcacion {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+
+  /* ── BOTIQUIN ── */
+  .herramienta {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 12px; background: #fff; border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  }
+  .num-circ {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: .8rem; flex-shrink: 0; color: #fff;
+  }
+
+  /* ── RESUMEN FINAL ── */
+  .clave-item {
+    display: flex; gap: 8px; align-items: flex-start;
+    padding: 8px 12px; border-radius: 8px; background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.07);
+    font-size: clamp(.77rem,1.6vw,.9rem);
+  }
+
+  @media (max-width: 600px) {
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .fila   { flex-direction: column; }
+    .matriz { grid-template-columns: 1fr; grid-template-rows: repeat(4,auto); }
+    .flujo-bifurcacion { grid-template-columns: 1fr; }
+    .burbuja { width: 22px; height: 22px; font-size: .55rem; }
+  }
+
+  @media (max-width: 400px) {
+    .progreso-wrap { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 0 — PORTADA
+══════════════════════════════════════════ -->
+<div class="pantalla activa" id="p0">
+  <div class="portada-inner">
+    <div class="emoji-grande">🏫✌️</div>
+    <div class="badge">Guía de Estudio Interactiva</div>
+    <h1 class="t-hero" style="color:#fff; max-width:700px;">Resolución de Conflictos Escolares</h1>
+    <p class="t-body" style="color:rgba(255,255,255,.85); max-width:560px;">
+      Un enfoque pedagógico para transformar los problemas en oportunidades de paz.
+    </p>
+    <div style="background:rgba(255,255,255,.15);border-radius:14px;padding:12px 24px;margin-top:8px;">
+      <p class="t-sm" style="color:rgba(255,255,255,.7);margin-bottom:2px;">Curado y diseñado por</p>
+      <p style="color:#fff;font-weight:900;font-size:clamp(.9rem,2.2vw,1.15rem);">Prof. Francisco De Jesús Luna Benitez</p>
+    </div>
+    <p class="t-sm" style="color:rgba(255,255,255,.6); margin-top:6px;">16 pantallas interactivas · Autoevaluación incluida</p>
+  </div>
+  <div class="nav">
+    <div></div>
+    <div class="contador">Pantalla 1 de 16</div>
+    <button class="btn btn-prim" onclick="ir(1)">Comenzar 🚀</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 1 — ¿QUÉ ES UN CONFLICTO?
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p1">
+  <div class="barra">
+    <span class="barra-titulo">🏫 Resolución de Conflictos Escolares</span>
+    <div class="progreso-wrap" id="prog1"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">💡 El Conflicto: Una Oportunidad Educativa</h2>
+    <div class="fila" style="flex:1;min-height:0;">
+      <div class="card card-az col" style="flex:1.2;justify-content:center;">
+        <p class="t-h3" style="color:var(--azul);">¿Qué es un conflicto?</p>
+        <p class="t-body" style="margin-top:6px;">
+          En la escuela, los conflictos son <strong>inevitables</strong> debido a la diversidad de intereses y valores.
+          Sin embargo, <strong>no deben verse como algo negativo</strong> que deba silenciarse.
+        </p>
+        <div style="margin-top:10px;padding:12px 16px;background:#fff;border-radius:10px;border-left:5px solid var(--azul);">
+          <p class="t-body" style="font-style:italic;color:var(--azul);">
+            "El conflicto no es una interrupción; es una oportunidad educativa."
+          </p>
+          <p class="t-sm" style="color:var(--gris);margin-top:4px;">— Prof. Francisco De Jesús Luna Benitez</p>
+        </div>
+      </div>
+      <div class="col" style="flex:1; gap:8px;">
+        <div class="card card-vd" style="flex:1;">
+          <p class="t-h3" style="color:var(--verde);">🔴 Visión Negativa</p>
+          <p class="t-sm" style="margin-top:6px;">Caos · Interrupción · Malentendido</p>
+          <p class="t-body" style="margin-top:6px;">Ver el conflicto como un obstáculo que detiene el aprendizaje.</p>
+        </div>
+        <div class="card card-do" style="flex:1;">
+          <p class="t-h3" style="color:var(--dorado);">🟢 Visión Positiva</p>
+          <p class="t-sm" style="margin-top:6px;">Oportunidad · Crecimiento · Aprendizaje · Resolución</p>
+          <p class="t-body" style="margin-top:6px;">Resolverlos nos prepara para la vida y nos enseña a hacer valer nuestros derechos de manera <strong>no violenta</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(0)">← Inicio</button>
+    <div class="contador">2 de 16</div>
+    <button class="btn btn-prim" onclick="ir(2)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 2 — RADIOGRAFÍA DEL CONFLICTO
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p2">
+  <div class="barra">
+    <span class="barra-titulo">🔍 ¿Cómo identificar un conflicto?</span>
+    <div class="progreso-wrap" id="prog2"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🩻 Radiografía de un Conflicto</h2>
+    <div class="grid-2" style="flex:1;min-height:0;">
+      <div class="col" style="gap:8px;">
+        <div class="card" style="flex:1;border-left:5px solid var(--azul);">
+          <p class="chip chip-az" style="margin-bottom:8px;">⚡ Señal 1</p>
+          <p class="t-h3">Necesidades contrapuestas</p>
+          <p class="t-body" style="margin-top:5px;">Las necesidades e intereses de personas o grupos se contraponen generando tensión.</p>
+        </div>
+        <div class="card" style="flex:1;border-left:5px solid var(--verde);">
+          <p class="chip chip-vd" style="margin-bottom:8px;">🌀 Señal 2</p>
+          <p class="t-h3">Percepción distorsionada</p>
+          <p class="t-body" style="margin-top:5px;">Existe tensión que distorsiona la percepción de la realidad entre las partes.</p>
+        </div>
+      </div>
+      <div class="col" style="gap:8px;">
+        <div class="card" style="flex:1;border-left:5px solid var(--dorado);">
+          <p class="chip chip-do" style="margin-bottom:8px;">😤 Señal 3</p>
+          <p class="t-h3">Incomodidad conductual</p>
+          <p class="t-body" style="margin-top:5px;">Incomodidad por el comportamiento de la otra parte que resulta molesto o amenazante.</p>
+        </div>
+        <div class="card" style="flex:1;border-left:5px solid var(--rojo);">
+          <p class="chip chip-rj" style="margin-bottom:8px;">💢 Señal 4</p>
+          <p class="t-h3">Emociones latentes</p>
+          <p class="t-body" style="margin-top:5px;">Aparecen emociones como <strong>enojo, tristeza, frustración, vergüenza</strong> o resentimiento.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="background: linear-gradient(90deg,#EBF4FF,#E8F8EF); padding:10px 16px;">
+      <p class="t-sm" style="color:var(--gris);">📌 <strong>Recuerda:</strong> Identificar estas 4 señales es el primer paso para transformar un conflicto en oportunidad.</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(1)">← Anterior</button>
+    <div class="contador">3 de 16</div>
+    <button class="btn btn-prim" onclick="ir(3)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 3 — 4 ESTILOS DE AFRONTAMIENTO
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p3">
+  <div class="barra">
+    <span class="barra-titulo">🧩 Estilos de Afrontamiento</span>
+    <div class="progreso-wrap" id="prog3"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">📊 Los 4 Estilos de Afrontamiento</h2>
+    <p class="t-sm" style="color:var(--gris);">Matriz según la importancia de los objetivos y la relación</p>
+    <div class="matriz" style="flex:1;min-height:0;">
+      <div class="cuadrante" style="background:#DBEAFE;">
+        <p class="chip chip-az" style="margin-bottom:5px;">🥊 Competición</p>
+        <p class="t-h3" style="color:var(--azul);">Gano / Pierdes</p>
+        <p class="t-sm" style="margin-top:4px;">Imponer intereses sin importar la relación. Alto objetivo, baja relación.</p>
+      </div>
+      <div class="cuadrante" style="background:#FEF9C3;border:3px solid var(--dorado);">
+        <p class="chip chip-do" style="margin-bottom:5px;">🤝 Cooperación</p>
+        <p class="t-h3" style="color:#92600a;">Gano / Ganas ⭐</p>
+        <p class="t-sm" style="margin-top:4px;">Ceder en lo flexible para proteger el objetivo fundamental y la relación. ¡La mejor opción!</p>
+      </div>
+      <div class="cuadrante" style="background:#DCFCE7;">
+        <p class="chip chip-vd" style="margin-bottom:5px;">🚪 Evasión</p>
+        <p class="t-h3" style="color:var(--verde);">Pierdo / Pierdes</p>
+        <p class="t-sm" style="margin-top:4px;">Renunciar a necesidades y evitar el problema. Bajo objetivo, baja relación.</p>
+      </div>
+      <div class="cuadrante" style="background:#F3E8FF;">
+        <p class="chip" style="background:#7C3AED;color:#fff;margin-bottom:5px;">🙇 Acomodación</p>
+        <p class="t-h3" style="color:#7C3AED;">Pierdo / Ganas</p>
+        <p class="t-sm" style="margin-top:4px;">Ceder totalmente para evitar problemas. Bajo objetivo, alta relación.</p>
+      </div>
+    </div>
+    <div class="card card-do" style="padding:9px 14px;">
+      <p class="t-sm">⬆️ <strong>Eje Y</strong>: Importancia de los Objetivos &nbsp;|&nbsp; ➡️ <strong>Eje X</strong>: Importancia de la Relación</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(2)">← Anterior</button>
+    <div class="contador">4 de 16</div>
+    <button class="btn btn-prim" onclick="ir(4)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 4 — EQUILIBRIO GANO/GANAS
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p4">
+  <div class="barra">
+    <span class="barra-titulo">⚖️ El equilibrio Win-Win</span>
+    <div class="progreso-wrap" id="prog4"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">⚖️ El Equilibrio del "Gano / Ganas"</h2>
+    <div class="fila" style="flex:1;min-height:0;">
+      <div class="card" style="flex:1;border:3px solid var(--rojo);display:flex;flex-direction:column;gap:8px;">
+        <p style="font-size:2rem;text-align:center;">❌</p>
+        <p class="t-h3 t-body" style="color:var(--rojo);text-align:center;">Competición</p>
+        <p class="t-body">El objetivo propio aplasta los derechos del otro.</p>
+        <p class="t-body">Genera <strong>exclusión y resentimiento</strong>.</p>
+        <div style="background:#FFEBEB;border-radius:8px;padding:8px;">
+          <p class="t-sm">👦 Yo gano todo → 👧 Pierde todo</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:1.5rem;color:var(--gris);">→</div>
+      <div class="card" style="flex:1;border:3px solid var(--verde);display:flex;flex-direction:column;gap:8px;">
+        <p style="font-size:2rem;text-align:center;">✅</p>
+        <p class="t-h3" style="color:var(--verde);text-align:center;">Cooperación</p>
+        <p class="t-body">Ambas partes ganan en lo fundamental.</p>
+        <p class="t-body">Exige <strong>asertividad</strong> para defender lo propio y <strong>empatía</strong> para ceder en lo secundario.</p>
+        <div style="background:var(--verde-cl);border-radius:8px;padding:8px;">
+          <p class="t-sm">👦 Gana lo esencial ✅ + 👧 Gana lo esencial ✅</p>
+        </div>
+      </div>
+    </div>
+    <div class="card card-az" style="padding:10px 16px;">
+      <p class="t-body">🔑 <strong>Clave:</strong> La cooperación requiere ceder en aspectos <em>secundarios</em> pero proteger el interés <em>fundamental</em> de ambas partes.</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(3)">← Anterior</button>
+    <div class="contador">5 de 16</div>
+    <button class="btn btn-prim" onclick="ir(5)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 5 — BOTIQUÍN EMOCIONAL
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p5">
+  <div class="barra">
+    <span class="barra-titulo">🧰 Regulación Emocional</span>
+    <div class="progreso-wrap" id="prog5"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🧰 El Botiquín de Regulación Emocional</h2>
+    <p class="t-sm" style="color:var(--gris);">5 herramientas de primeros auxilios emocionales</p>
+    <div class="col" style="flex:1;min-height:0;overflow:auto;justify-content:space-evenly;">
+      <div class="herramienta">
+        <div class="num-circ" style="background:var(--azul);">1</div>
+        <div>
+          <p class="t-h3">⏱️ Tiempo Fuera</p>
+          <p class="t-sm" style="color:var(--gris);margin-top:2px;">Distanciamiento temporal para calmar la emoción antes de actuar.</p>
+        </div>
+      </div>
+      <div class="herramienta">
+        <div class="num-circ" style="background:var(--dorado);">2</div>
+        <div>
+          <p class="t-h3">🏃 Distracción Conductual</p>
+          <p class="t-sm" style="color:var(--gris);margin-top:2px;">Enfocar la atención en una actividad con movimiento para liberar tensión.</p>
+        </div>
+      </div>
+      <div class="herramienta">
+        <div class="num-circ" style="background:var(--verde);">3</div>
+        <div>
+          <p class="t-h3">🧠 Reestructuración Cognitiva</p>
+          <p class="t-sm" style="color:var(--gris);margin-top:2px;">Cambiar pensamientos irracionales <em>("Me odia")</em> por racionales <em>("Tuvo un mal día")</em>.</p>
+        </div>
+      </div>
+      <div class="herramienta">
+        <div class="num-circ" style="background:#7C3AED;">4</div>
+        <div>
+          <p class="t-h3">🪞 Aceptar Responsabilidad</p>
+          <p class="t-sm" style="color:var(--gris);margin-top:2px;">Preguntarse: <em>"¿Qué hice yo para contribuir a esto?"</em></p>
+        </div>
+      </div>
+      <div class="herramienta">
+        <div class="num-circ" style="background:var(--rojo);">5</div>
+        <div>
+          <p class="t-h3">👥 Círculos de Confianza</p>
+          <p class="t-sm" style="color:var(--gris);margin-top:2px;">Espacios para expresar asertivamente: <em>"Cuando me enfado yo..."</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(4)">← Anterior</button>
+    <div class="contador">6 de 16</div>
+    <button class="btn btn-prim" onclick="ir(6)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 6 — ESCUCHA ACTIVA
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p6">
+  <div class="barra">
+    <span class="barra-titulo">👂 Escucha Activa</span>
+    <div class="progreso-wrap" id="prog6"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🔄 El Ciclo de la Escucha Activa</h2>
+    <div class="grid-2" style="flex:1;min-height:0;">
+      <div class="card" style="border-left:5px solid var(--azul);display:flex;flex-direction:column;justify-content:center;gap:6px;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="paso-num" style="background:var(--azul);color:#fff;">1</div>
+          <div>
+            <p class="t-h3">Clarificar 🔍</p>
+            <p class="t-sm" style="color:var(--gris);">Hacer preguntas abiertas.</p>
+            <p class="t-sm" style="color:var(--azul);font-style:italic;">"¿Cómo te sientes ahora?"</p>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="border-left:5px solid var(--dorado);display:flex;flex-direction:column;justify-content:center;gap:6px;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="paso-num" style="background:var(--dorado);color:#fff;">2</div>
+          <div>
+            <p class="t-h3">Parafrasear 💬</p>
+            <p class="t-sm" style="color:var(--gris);">Repetir para confirmar entendimiento.</p>
+            <p class="t-sm" style="color:#92600a;font-style:italic;">"Si te entendí bien, lo que quieres decir es..."</p>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="border-left:5px solid var(--verde);display:flex;flex-direction:column;justify-content:center;gap:6px;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="paso-num" style="background:var(--verde);color:#fff;">3</div>
+          <div>
+            <p class="t-h3">Reflejar ❤️</p>
+            <p class="t-sm" style="color:var(--gris);">Reconocer los sentimientos del otro.</p>
+            <p class="t-sm" style="color:var(--verde);font-style:italic;">"¿Tú te sentiste avergonzado por lo que te dijo?"</p>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="border-left:5px solid #7C3AED;display:flex;flex-direction:column;justify-content:center;gap:6px;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="paso-num" style="background:#7C3AED;color:#fff;">4</div>
+          <div>
+            <p class="t-h3">Resumir 📋</p>
+            <p class="t-sm" style="color:var(--gris);">Hacer una síntesis breve del problema general para avanzar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card card-vd" style="padding:9px 14px;">
+      <p class="t-sm">♻️ <strong>Ciclo continuo:</strong> Clarificar → Parafrasear → Reflejar → Resumir → Clarificar...</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(5)">← Anterior</button>
+    <div class="contador">7 de 16</div>
+    <button class="btn btn-prim" onclick="ir(7)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 7 — POSTURA DE EMPATÍA
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p7">
+  <div class="barra">
+    <span class="barra-titulo">🤲 Postura de Empatía</span>
+    <div class="progreso-wrap" id="prog7"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🤲 La Postura de la Empatía</h2>
+    <div class="grid-2" style="flex:1;min-height:0;">
+      <div class="card card-az" style="flex:1;">
+        <p class="t-h3" style="color:var(--azul);">🚫 Frenar Juicios</p>
+        <p class="t-body" style="margin-top:7px;">Nadie tiene la verdad absoluta. Ser flexible a otros puntos de vista y <strong>escuchar antes de juzgar</strong>.</p>
+      </div>
+      <div class="card card-do" style="flex:1;">
+        <p class="t-h3" style="color:#92600a;">👁️ Contacto Visual</p>
+        <p class="t-body" style="margin-top:7px;">Generar confianza e interés genuino. Mirar a los ojos <strong>sin distracciones</strong> para mostrar que escuchas.</p>
+      </div>
+      <div class="card card-vd" style="flex:1;">
+        <p class="t-h3" style="color:var(--verde);">✅ Honestidad y Asertividad</p>
+        <p class="t-body" style="margin-top:7px;">Decir la verdad con respeto para <strong>ganar confianza</strong> sin herir a la otra persona.</p>
+      </div>
+      <div class="card" style="flex:1;background:#F3E8FF;">
+        <p class="t-h3" style="color:#7C3AED;">🤗 Lenguaje Corporal Receptivo</p>
+        <p class="t-body" style="margin-top:7px;">Asentir con la cabeza e inclinar el cuerpo hacia la persona para mostrar apertura.</p>
+      </div>
+    </div>
+    <div class="card" style="background:linear-gradient(90deg,#EBF4FF,#F3E8FF);padding:9px 14px;">
+      <p class="t-sm">💡 <strong>Recuerda:</strong> La empatía no significa estar de acuerdo; significa comprender la perspectiva del otro.</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(6)">← Anterior</button>
+    <div class="contador">8 de 16</div>
+    <button class="btn btn-prim" onclick="ir(8)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 8 — SOLIDARIDAD EN EL AULA
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p8">
+  <div class="barra">
+    <span class="barra-titulo">🌱 Solidaridad en el Aula</span>
+    <div class="progreso-wrap" id="prog8"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🌱 Sembrar la Solidaridad en el Aula</h2>
+    <p class="t-body" style="color:var(--gris);">La resolución de conflictos exige una identidad colectiva. <strong>No hay competencia, hay ayuda mutua.</strong></p>
+    <div class="grid-3" style="flex:1;min-height:0;">
+      <div class="card" style="border-top:5px solid var(--dorado);display:flex;flex-direction:column;gap:8px;">
+        <p style="font-size:2rem;text-align:center;">🖊️</p>
+        <p class="t-h3" style="text-align:center;">1. Compartir</p>
+        <p class="t-body" style="text-align:center;">Uso de materiales en común para entender el <strong>beneficio colectivo</strong>.</p>
+      </div>
+      <div class="card" style="border-top:5px solid var(--azul);display:flex;flex-direction:column;gap:8px;">
+        <p style="font-size:2rem;text-align:center;">🧩</p>
+        <p class="t-h3" style="text-align:center;">2. Participar</p>
+        <p class="t-body" style="text-align:center;">Reconocer que los resultados mejoran cuando cada alumno <strong>aporta su talento único</strong>.</p>
+      </div>
+      <div class="card" style="border-top:5px solid var(--verde);display:flex;flex-direction:column;gap:8px;">
+        <p style="font-size:2rem;text-align:center;">❤️</p>
+        <p class="t-h3" style="text-align:center;">3. Empatizar</p>
+        <p class="t-body" style="text-align:center;">Trabajar en pares para comprender que las <strong>emociones del otro son tan válidas</strong> como las propias.</p>
+      </div>
+    </div>
+    <div class="card card-do" style="padding:10px 16px;">
+      <p class="t-sm">🛠️ <strong>Herramientas prácticas:</strong> Proyectos educativos, juegos de cooperación y tutorías entre pares.</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(7)">← Anterior</button>
+    <div class="contador">9 de 16</div>
+    <button class="btn btn-prim" onclick="ir(9)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 9 — NEGOCIACIÓN VS MEDIACIÓN
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p9">
+  <div class="barra">
+    <span class="barra-titulo">🔀 Negociación vs Mediación</span>
+    <div class="progreso-wrap" id="prog9"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🔀 Negociación vs. Mediación</h2>
+    <div style="flex:1;min-height:0;overflow:auto;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div class="card" style="background:var(--gris-cl);">
+          <p class="t-h3" style="color:var(--gris);text-align:center;">📐 Dimensión</p>
+        </div>
+        <div class="card card-az">
+          <p class="t-h3" style="color:var(--azul);text-align:center;">💬 Negociación</p>
+        </div>
+        <div class="card card-do">
+          <p class="t-h3" style="color:#92600a;text-align:center;">🏛️ Mediación</p>
+        </div>
+
+        <div class="card" style="background:var(--gris-cl);"><p class="t-sm" style="color:var(--gris);font-weight:700;">¿Cuándo se utiliza?</p></div>
+        <div class="card card-az"><p class="t-sm">Cuando aún existe disposición y capacidad para el <strong>diálogo directo</strong>.</p></div>
+        <div class="card card-do"><p class="t-sm">Cuando las partes <strong>agotaron sus posibilidades</strong> y el diálogo directo se ha roto.</p></div>
+
+        <div class="card" style="background:var(--gris-cl);"><p class="t-sm" style="color:var(--gris);font-weight:700;">¿Quién resuelve?</p></div>
+        <div class="card card-az"><p class="t-sm">Las <strong>propias partes</strong> involucradas.</p></div>
+        <div class="card card-do"><p class="t-sm">Las partes involucradas, <strong>guiadas por una tercera persona</strong>.</p></div>
+
+        <div class="card" style="background:var(--gris-cl);"><p class="t-sm" style="color:var(--gris);font-weight:700;">Rol del Tercero (Docente/Par)</p></div>
+        <div class="card card-az"><p class="t-sm">No existe o es solo un <strong>observador pasivo</strong>.</p></div>
+        <div class="card card-do"><p class="t-sm">Facilitador neutral e imparcial que guía el proceso, pero <strong>NUNCA impone</strong> la solución.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(8)">← Anterior</button>
+    <div class="contador">10 de 16</div>
+    <button class="btn btn-prim" onclick="ir(10)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 10 — 4 PASOS NEGOCIACIÓN
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p10">
+  <div class="barra">
+    <span class="barra-titulo">🗺️ Los 4 Pasos de la Negociación</span>
+    <div class="progreso-wrap" id="prog10"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🗺️ Ruta 1: Los 4 Pasos de la Negociación</h2>
+    <div class="grid-2" style="flex:1;min-height:0;">
+      <div class="card" style="display:flex;gap:10px;align-items:flex-start;border-top:4px solid var(--azul);">
+        <div class="paso-num" style="background:var(--azul);color:#fff;flex-shrink:0;">1</div>
+        <div>
+          <p class="t-h3">🤝 Disposición al Diálogo</p>
+          <p class="t-body" style="margin-top:5px;">Expresar percepciones asertivamente <strong>sin ofender ni amenazar</strong>. Crear un ambiente seguro.</p>
+        </div>
+      </div>
+      <div class="card" style="display:flex;gap:10px;align-items:flex-start;border-top:4px solid var(--dorado);">
+        <div class="paso-num" style="background:var(--dorado);color:#fff;flex-shrink:0;">2</div>
+        <div>
+          <p class="t-h3">🔍 Identificar el Problema</p>
+          <p class="t-body" style="margin-top:5px;">Descubrir el interés común (ej. no dañar la relación) y <strong>escuchar necesidades</strong> de cada parte.</p>
+        </div>
+      </div>
+      <div class="card" style="display:flex;gap:10px;align-items:flex-start;border-top:4px solid var(--verde);">
+        <div class="paso-num" style="background:var(--verde);color:#fff;flex-shrink:0;">3</div>
+        <div>
+          <p class="t-h3">💡 Buscar Soluciones</p>
+          <p class="t-body" style="margin-top:5px;">Usar <strong>empatía y creatividad</strong> para encontrar alternativas intermedias que beneficien a ambos.</p>
+        </div>
+      </div>
+      <div class="card" style="display:flex;gap:10px;align-items:flex-start;border-top:4px solid #7C3AED;">
+        <div class="paso-num" style="background:#7C3AED;color:#fff;flex-shrink:0;">4</div>
+        <div>
+          <p class="t-h3">📋 Establecer Acuerdos</p>
+          <p class="t-body" style="margin-top:5px;">Elegir la mejor solución mutua y definir exactamente: <strong>¿quién hace qué, cómo, cuándo y dónde?</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(9)">← Anterior</button>
+    <div class="contador">11 de 16</div>
+    <button class="btn btn-prim" onclick="ir(11)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 11 — EMBUDO DE MEDIACIÓN
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p11">
+  <div class="barra">
+    <span class="barra-titulo">🏛️ El Embudo de la Mediación</span>
+    <div class="progreso-wrap" id="prog11"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🏛️ Ruta 2: El Embudo de la Mediación</h2>
+    <div class="col" style="flex:1;min-height:0;justify-content:space-evenly;">
+      <div class="card card-az" style="border-left:6px solid var(--azul);display:flex;gap:12px;align-items:center;">
+        <div style="text-align:center;font-size:1.5rem;min-width:50px;">🔔<p class="t-sm" style="color:var(--azul);font-weight:800;">INICIO</p></div>
+        <div>
+          <p class="t-h3" style="color:var(--azul);">Comunicar y aproximar a las partes</p>
+          <p class="t-body" style="margin-top:4px;">Restablecer canales de comunicación y definir las <strong>reglas y objetivos del proceso</strong>.</p>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:1.3rem;color:var(--gris);">▼</div>
+      <div class="card card-do" style="border-left:6px solid var(--dorado);display:flex;gap:12px;align-items:center;">
+        <div style="text-align:center;font-size:1.5rem;min-width:50px;">📖<p class="t-sm" style="color:#92600a;font-weight:800;">DESCRIPCIÓN</p></div>
+        <div>
+          <p class="t-h3" style="color:#92600a;">Recopilar información</p>
+          <p class="t-body" style="margin-top:4px;">Escuchar ambas versiones <strong>sin interrupciones</strong> para entender los antecedentes y clarificar el problema real.</p>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:1.3rem;color:var(--gris);">▼</div>
+      <div class="card card-vd" style="border-left:6px solid var(--verde);display:flex;gap:12px;align-items:center;">
+        <div style="text-align:center;font-size:1.5rem;min-width:50px;">✍️<p class="t-sm" style="color:var(--verde);font-weight:800;">ACUERDO</p></div>
+        <div>
+          <p class="t-h3" style="color:var(--verde);">Obtención de Acuerdos</p>
+          <p class="t-body" style="margin-top:4px;">Clarificar necesidades y establecer <strong>compromisos concretos</strong>. El acuerdo se redacta y se firma.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(10)">← Anterior</button>
+    <div class="contador">12 de 16</div>
+    <button class="btn btn-prim" onclick="ir(12)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 12 — MODELO 3P
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p12">
+  <div class="barra">
+    <span class="barra-titulo">🔬 Modelo de las 3 P</span>
+    <div class="progreso-wrap" id="prog12"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🔬 Análisis Integral: El Modelo de las 3 'P'</h2>
+    <div class="grid-3" style="flex:1;min-height:0;">
+      <div class="card card-az col" style="gap:8px;">
+        <p style="font-size:1.8rem;text-align:center;">👥</p>
+        <p class="t-h3" style="color:var(--azul);text-align:center;">Personas</p>
+        <div class="col" style="gap:5px;flex:1;">
+          <div style="background:#fff;border-radius:8px;padding:7px 10px;"><p class="t-sm">❓ ¿Quiénes están involucrados?</p></div>
+          <div style="background:#fff;border-radius:8px;padding:7px 10px;"><p class="t-sm">😤 ¿Qué emociones predominan?</p></div>
+          <div style="background:#fff;border-radius:8px;padding:7px 10px;"><p class="t-sm">⚖️ ¿Existen alianzas o diferencias de poder?</p></div>
+        </div>
+      </div>
+      <div class="card card-do col" style="gap:8px;">
+        <p style="font-size:1.8rem;text-align:center;">⚙️</p>
+        <p class="t-h3" style="color:#92600a;text-align:center;">Proceso</p>
+        <div class="col" style="gap:5px;flex:1;">
+          <div style="background:#fff;border-radius:8px;padding:7px 10px;"><p class="t-sm">⚡ ¿Qué desencadenó el conflicto?</p></div>
+          <div style="background:#fff;border-radius:8px;padding:7px 10px;"><p class="t-sm">📈 ¿Qué factores lo empeoraron?</p></div>
+          <div style="background:#fff;border-radius:8px;padding:7px 10px;"><p class="t-sm">💬 ¿Cómo está fluyendo la comunicación?</p></div>
+        </div>
+      </div>
+      <div class="card card-vd col" style="gap:8px;">
+        <p style="font-size:1.8rem;text-align:center;">🔍</p>
+        <p class="t-h3" style="color:var(--verde);text-align:center;">Problema</p>
+        <div class="col" style="gap:5px;flex:1;">
+          <div style="background:#fff;border-radius:8px;padding:7px 10px;"><p class="t-sm">🔒 ¿Cuáles son los intereses ocultos de cada parte?</p></div>
+          <div style="background:#fff;border-radius:8px;padding:7px 10px;"><p class="t-sm">🤲 ¿Qué recursos están dispuestos a ceder?</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="background:linear-gradient(90deg,#EBF4FF,#E8F8EF,#FFF4E0);padding:9px 14px;">
+      <p class="t-sm">🎯 <strong>La Resolución</strong> se encuentra en la intersección de las 3 P: Personas + Proceso + Problema.</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(11)">← Anterior</button>
+    <div class="contador">13 de 16</div>
+    <button class="btn btn-prim" onclick="ir(13)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 13 — ALIANZA ESCUELA-FAMILIA
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p13">
+  <div class="barra">
+    <span class="barra-titulo">🏠 Alianza Escuela-Familia</span>
+    <div class="progreso-wrap" id="prog13"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🏠 La Alianza Escuela-Familia</h2>
+    <p class="t-body" style="color:var(--gris);">La resolución pacífica requiere que las prácticas educativas del aula se <strong>refuercen en casa</strong>.</p>
+    <div class="grid-2" style="flex:1;min-height:0;">
+      <div class="card" style="border-top:5px solid var(--azul);display:flex;flex-direction:column;gap:8px;">
+        <p style="font-size:1.6rem;">💛</p>
+        <p class="t-h3" style="color:var(--azul);">Fomentar Autoestima</p>
+        <p class="t-body">Evitar comparaciones y enseñar a <strong>aceptar errores</strong> como parte del aprendizaje.</p>
+      </div>
+      <div class="card" style="border-top:5px solid var(--dorado);display:flex;flex-direction:column;gap:8px;">
+        <p style="font-size:1.6rem;">💬</p>
+        <p class="t-h3" style="color:#92600a;">Búsqueda de Consenso</p>
+        <p class="t-body">Tomar <strong>decisiones familiares en conjunto</strong>, practicando la democracia en el hogar.</p>
+      </div>
+      <div class="card" style="border-top:5px solid var(--verde);display:flex;flex-direction:column;gap:8px;">
+        <p style="font-size:1.6rem;">👂</p>
+        <p class="t-h3" style="color:var(--verde);">Escuchar con Empatía</p>
+        <p class="t-body">Fomentar el <strong>diálogo seguro en el hogar</strong> donde nadie es juzgado por sentir.</p>
+      </div>
+      <div class="card" style="border-top:5px solid #7C3AED;display:flex;flex-direction:column;gap:8px;">
+        <p style="font-size:1.6rem;">🤝</p>
+        <p class="t-h3" style="color:#7C3AED;">Colaboración</p>
+        <p class="t-body">Sustituir la competitividad por la <strong>ayuda mutua en tareas diarias</strong>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(12)">← Anterior</button>
+    <div class="contador">14 de 16</div>
+    <button class="btn btn-prim" onclick="ir(14)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 14 — QUIZ AUTOEVALUACIÓN
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p14">
+  <div class="barra">
+    <span class="barra-titulo">🧪 Autoevaluación</span>
+    <div class="progreso-wrap" id="prog14"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">🧪 Pon a Prueba lo Aprendido</h2>
+    <div id="quiz-contenedor" style="flex:1;overflow:auto;">
+      <!-- Pregunta actual -->
+    </div>
+    <div class="quiz-nav">
+      <button class="btn btn-sec" id="btn-ant-q" onclick="pregAnterior()">← Anterior</button>
+      <span id="quiz-indicador" class="contador"></span>
+      <div id="score-box" class="quiz-score" style="display:none;"></div>
+      <button class="btn btn-prim" id="btn-sig-q" onclick="pregSiguiente()">Siguiente →</button>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(13)">← Anterior</button>
+    <div class="contador">15 de 16</div>
+    <button class="btn btn-prim" onclick="ir(15)">Resumen Final →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 15 — RESUMEN FINAL
+══════════════════════════════════════════ -->
+<div class="pantalla" id="p15">
+  <div class="barra">
+    <span class="barra-titulo">📚 Resumen Final</span>
+    <div class="progreso-wrap" id="prog15"></div>
+  </div>
+  <div class="cuerpo">
+    <h2 class="t-h2">📚 Guía de Estudio · Resumen Final</h2>
+    <div style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:7px;">
+      <div class="clave-item" style="border-left:4px solid var(--azul);">
+        <span style="font-size:1.2rem;">💡</span>
+        <p class="t-sm"><strong>El conflicto</strong> es una oportunidad educativa, no un problema que silenciar.</p>
+      </div>
+      <div class="clave-item" style="border-left:4px solid var(--verde);">
+        <span style="font-size:1.2rem;">🔍</span>
+        <p class="t-sm"><strong>Identificar</strong> el conflicto: necesidades contrapuestas, tensión, incomodidad y emociones latentes.</p>
+      </div>
+      <div class="clave-item" style="border-left:4px solid var(--dorado);">
+        <span style="font-size:1.2rem;">⭐</span>
+        <p class="t-sm"><strong>El mejor estilo</strong> es la Cooperación (Gano/Ganas): objetivos + relación.</p>
+      </div>
+      <div class="clave-item" style="border-left:4px solid #7C3AED;">
+        <span style="font-size:1.2rem;">🧰</span>
+        <p class="t-sm"><strong>Botiquín emocional:</strong> Tiempo fuera → Distracción → Reestructuración → Responsabilidad → Círculos.</p>
+      </div>
+      <div class="clave-item" style="border-left:4px solid var(--azul);">
+        <span style="font-size:1.2rem;">👂</span>
+        <p class="t-sm"><strong>Escucha activa:</strong> Clarificar → Parafrasear → Reflejar → Resumir.</p>
+      </div>
+      <div class="clave-item" style="border-left:4px solid var(--verde);">
+        <span style="font-size:1.2rem;">🔀</span>
+        <p class="t-sm"><strong>Negociación</strong> (partes solas, diálogo posible) vs <strong>Mediación</strong> (con facilitador, diálogo roto).</p>
+      </div>
+      <div class="clave-item" style="border-left:4px solid var(--dorado);">
+        <span style="font-size:1.2rem;">🗺️</span>
+        <p class="t-sm"><strong>4 pasos negociación:</strong> Diálogo → Identificar → Soluciones → Acuerdos.</p>
+      </div>
+      <div class="clave-item" style="border-left:4px solid var(--rojo);">
+        <span style="font-size:1.2rem;">🔬</span>
+        <p class="t-sm"><strong>Modelo 3P:</strong> Analizar Personas + Proceso + Problema para llegar a la Resolución.</p>
+      </div>
+      <div class="clave-item" style="border-left:4px solid #7C3AED;">
+        <span style="font-size:1.2rem;">🏠</span>
+        <p class="t-sm"><strong>Alianza Escuela-Familia:</strong> las prácticas de paz deben reforzarse también en el hogar.</p>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#1E4D8C,#3B82C4);padding:12px 16px;margin-top:4px;">
+        <p class="t-sm" style="color:#fff;font-style:italic;">"La resolución debe ser una práctica habitual, no solo unas horas en el horario lectivo. Es un esfuerzo sostenido para convertir la escuela en un espacio de justicia, solidaridad e igualdad."</p>
+        <p class="t-sm" style="color:rgba(255,255,255,.7);margin-top:6px;">— Prof. Francisco De Jesús Luna Benitez</p>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-sec" onclick="ir(14)">← Anterior</button>
+    <div class="contador">16 de 16</div>
+    <button class="btn btn-prim" onclick="ir(0)">🏠 Inicio</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PIE DE PÁGINA (siempre visible al final de cada pantalla)
+══════════════════════════════════════════ -->
+<div id="footer" style="position:fixed;bottom:0;left:0;right:0;z-index:99;display:none;
+  background:#f0f4fa;border-top:1px solid #dce3ef;
+  padding:5px 20px;text-align:center;">
+  <p style="font-size:.7rem;color:var(--gris);">
+    Material educativo elaborado por <strong>Prof. Francisco De Jesús Luna Benitez</strong>
+  </p>
+</div>
+
+<script>
+// ── DATOS ──────────────────────────────
+const TOTAL = 16; // pantallas 0..15
+let pantallaActual = 0;
+
+// ── QUIZ ──────────────────────────────
+const preguntas = [
+  {
+    q: "¿Cuál de los siguientes ES un indicador para identificar un conflicto?",
+    ops: [
+      "Las partes se saludan amistosamente",
+      "Existen necesidades e intereses contrapuestos",
+      "Los alumnos comparten materiales libremente",
+      "El docente resuelve el problema por las partes"
+    ],
+    ok: 1,
+    fb: "✅ Correcto. Las necesidades contrapuestas son la primera señal de un conflicto.",
+    fbm: "❌ Incorrecto. La señal clave es que las necesidades e intereses de personas o grupos se contraponen."
+  },
+  {
+    q: "En la Matriz de Afrontamiento, ¿cuál estilo es el más recomendado para resolver conflictos?",
+    ops: [
+      "Evasión (Pierdo/Pierdes)",
+      "Competición (Gano/Pierdes)",
+      "Acomodación (Pierdo/Ganas)",
+      "Cooperación (Gano/Ganas)"
+    ],
+    ok: 3,
+    fb: "✅ ¡Excelente! La Cooperación protege tanto los objetivos como la relación.",
+    fbm: "❌ Incorrecto. La Cooperación (Gano/Ganas) es el estilo ideal porque ambas partes ganan en lo fundamental."
+  },
+  {
+    q: "¿Qué herramienta del Botiquín Emocional consiste en cambiar el pensamiento 'Me odia' por 'Tuvo un mal día'?",
+    ops: [
+      "Tiempo Fuera",
+      "Distracción Conductual",
+      "Reestructuración Cognitiva",
+      "Círculos de Confianza"
+    ],
+    ok: 2,
+    fb: "✅ Correcto. La Reestructuración Cognitiva transforma pensamientos irracionales en racionales.",
+    fbm: "❌ Incorrecto. La Reestructuración Cognitiva es la herramienta que cambia pensamientos irracionales por racionales."
+  },
+  {
+    q: "¿Cuál es el segundo paso del Ciclo de la Escucha Activa?",
+    ops: [
+      "Clarificar",
+      "Parafrasear",
+      "Reflejar",
+      "Resumir"
+    ],
+    ok: 1,
+    fb: "✅ Correcto. Parafrasear (repetir para confirmar entendimiento) es el paso 2.",
+    fbm: "❌ Incorrecto. El orden correcto es: Clarificar → Parafrasear → Reflejar → Resumir."
+  },
+  {
+    q: "¿Cuándo se recomienda usar la Mediación en lugar de la Negociación?",
+    ops: [
+      "Cuando aún existe capacidad para el diálogo directo",
+      "Cuando las partes quieren resolver solos el problema",
+      "Cuando el diálogo directo se ha roto y necesitan un facilitador",
+      "Cuando el docente quiere imponer la solución"
+    ],
+    ok: 2,
+    fb: "✅ ¡Muy bien! La Mediación se usa cuando el diálogo directo ya no es posible.",
+    fbm: "❌ Incorrecto. La Mediación es para cuando las partes agotaron sus posibilidades de diálogo directo."
+  },
+  {
+    q: "¿Qué significa la 'P' de Proceso en el Modelo de las 3P?",
+    ops: [
+      "Analizar los intereses ocultos de cada parte",
+      "Identificar quiénes están involucrados y sus emociones",
+      "Examinar qué desencadenó el conflicto y cómo fluye la comunicación",
+      "Establecer los acuerdos finales por escrito"
+    ],
+    ok: 2,
+    fb: "✅ Correcto. El Proceso analiza qué originó el conflicto y cómo está la comunicación.",
+    fbm: "❌ Incorrecto. El Proceso responde: ¿Qué desencadenó el conflicto? ¿Qué factores lo empeoraron? ¿Cómo fluye la comunicación?"
+  },
+  {
+    q: "Según la Alianza Escuela-Familia, ¿qué práctica se recomienda para fomentar la autoestima en casa?",
+    ops: [
+      "Comparar el desempeño del hijo con el de sus compañeros",
+      "Evitar comparaciones y aceptar errores",
+      "Exigir siempre el primer lugar en todo",
+      "Resolver los conflictos del hijo sin consultarle"
+    ],
+    ok: 1,
+    fb: "✅ Excelente. Evitar comparaciones y aceptar errores fortalece la autoestima.",
+    fbm: "❌ Incorrecto. La recomendación es evitar comparaciones y enseñar a aceptar los errores como parte del aprendizaje."
+  }
+];
+
+let pregActual = 0;
+let respuestas = new Array(preguntas.length).fill(null);
+
+function renderQuiz() {
+  const p = preguntas[pregActual];
+  const resp = respuestas[pregActual];
+  let html = `<div class="pregunta">${pregActual+1}. ${p.q}</div>`;
+  p.ops.forEach((op, i) => {
+    let cls = 'opcion';
+    if (resp !== null) {
+      cls += ' disabled';
+      if (i === p.ok) cls += ' correcto';
+      else if (i === resp && resp !== p.ok) cls += ' incorrecto';
+    }
+    html += `<div class="${cls}" onclick="responder(${i})">${String.fromCharCode(65+i)}) ${op}</div>`;
+  });
+  if (resp !== null) {
+    const ok = resp === p.ok;
+    html += `<div class="feedback ${ok?'ok':'mal'}">${ok?p.fb:p.fbm}</div>`;
+  }
+  document.getElementById('quiz-contenedor').innerHTML = html;
+  document.getElementById('quiz-indicador').textContent = `Pregunta ${pregActual+1} de ${preguntas.length}`;
+
+  const contestadas = respuestas.filter(r=>r!==null).length;
+  const correctas   = respuestas.filter((r,i)=>r===preguntas[i].ok).length;
+  const sb = document.getElementById('score-box');
+  if(contestadas > 0) {
+    sb.style.display = 'flex';
+    sb.textContent = `⭐ ${correctas}/${contestadas}`;
+  }
+  document.getElementById('btn-ant-q').disabled = pregActual === 0;
+  document.getElementById('btn-sig-q').textContent = pregActual === preguntas.length-1 ? 'Finalizar ✅' : 'Siguiente →';
+}
+
+function responder(idx) {
+  if (respuestas[pregActual] !== null) return;
+  respuestas[pregActual] = idx;
+  renderQuiz();
+}
+
+function pregAnterior() {
+  if (pregActual > 0) { pregActual--; renderQuiz(); }
+}
+
+function pregSiguiente() {
+  if (pregActual < preguntas.length-1) { pregActual++; renderQuiz(); }
+  else { ir(15); }
+}
+
+// ── NAVEGACIÓN ────────────────────────
+function ir(n) {
+  document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('activa'));
+  document.getElementById('p'+n).classList.add('activa');
+  pantallaActual = n;
+  actualizarBurbujas();
+  if (n === 14) renderQuiz();
+}
+
+function actualizarBurbujas() {
+  for (let i=1; i<=15; i++) {
+    const el = document.getElementById('prog'+i);
+    if (!el) continue;
+    el.innerHTML = '';
+    for (let j=1; j<=15; j++) {
+      const b = document.createElement('div');
+      b.className = 'burbuja' + (j===pantallaActual?' activa':'');
+      b.textContent = j;
+      b.onclick = (()=>{const k=j;return()=>ir(k);})();
+      el.appendChild(b);
+    }
+  }
+}
+
+// ── INIT ──────────────────────────────
+actualizarBurbujas();
+</script>
+</body>
+</html>

@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Guía: Metodologías Sociocríticas y Diseño Creativo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Merriweather:wght@400;700&display=swap');
+
+:root {
+  --coral:   #e8603a;
+  --teal:    #2a7b8c;
+  --gold:    #c49a2a;
+  --pink:    #d44e8a;
+  --navy:    #1e3a5f;
+  --cream:   #faf7f2;
+  --white:   #ffffff;
+  --muted:   #6b7280;
+  --light:   #f0ece4;
+  --shadow:  0 4px 20px rgba(0,0,0,0.09);
+  --r:       16px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; height:100%; overflow:hidden;
+  font-family:'Poppins', sans-serif;
+  background:var(--cream); color:var(--navy);
+  font-size: 16px;
+}
+
+/* ─── SHELL ─── */
+#app { width:100vw; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ─── PROGRESS BAR ─── */
+#pbar {
+  position:fixed; top:0; left:0; height:4px; z-index:100;
+  background:linear-gradient(90deg, var(--coral), var(--pink), var(--teal), var(--gold));
+  transition:width .4s ease;
+}
+
+/* ─── TOP NAV ─── */
+#topnav {
+  flex-shrink:0; display:flex; align-items:center; justify-content:space-between;
+  padding:10px 20px;
+  background:linear-gradient(135deg, var(--navy) 0%, #2a4a6e 100%);
+  box-shadow:0 2px 12px rgba(0,0,0,0.2); z-index:10;
+}
+.dots { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.dot {
+  width:10px; height:10px; border-radius:50%;
+  background:rgba(255,255,255,0.2); cursor:pointer;
+  transition:background .3s, transform .3s;
+  border:2px solid transparent;
+}
+.dot.active  { background:var(--coral); transform:scale(1.5); border-color:rgba(255,255,255,0.4); }
+.dot.visited { background:rgba(255,255,255,0.5); }
+.ntitle {
+  font-size:clamp(11px,1.9vw,14px); font-weight:700;
+  color:rgba(255,255,255,0.85); text-align:center; flex:1; padding:0 10px;
+}
+.nctr { font-size:12px; color:rgba(255,255,255,0.5); font-weight:700; white-space:nowrap; }
+
+/* ─── SCREENS ─── */
+#swrap { flex:1; overflow:hidden; position:relative; }
+.screen {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  padding:16px 20px 10px;
+  opacity:0; pointer-events:none; overflow:hidden;
+}
+.screen.active  { opacity:1; pointer-events:all; transform:translateX(0); }
+.enter-right    { opacity:0; transform:translateX(60px); }
+.enter-left     { opacity:0; transform:translateX(-60px); }
+.exit-sl        { opacity:0; transform:translateX(-60px); transition:opacity .3s ease, transform .3s ease; }
+.exit-sr        { opacity:0; transform:translateX(60px);  transition:opacity .3s ease, transform .3s ease; }
+.slide-in       { transition:opacity .3s ease, transform .3s ease; }
+
+/* ─── BOTTOM NAV ─── */
+#botnav {
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  gap:12px; padding:10px 20px;
+  background:var(--white); box-shadow:0 -2px 10px rgba(0,0,0,0.07);
+}
+.btn {
+  display:flex; align-items:center; gap:6px;
+  padding:10px 24px; border-radius:50px; border:none;
+  font-family:'Poppins',sans-serif; font-weight:700;
+  font-size:14px; cursor:pointer; transition:all .2s;
+}
+.btn-p { background:var(--coral); color:var(--white); }
+.btn-p:hover { background:#d04f2a; transform:scale(1.03); }
+.btn-s { background:var(--light); color:var(--navy); }
+.btn-s:hover { background:#e0d9ce; transform:scale(1.03); }
+.btn:disabled { opacity:.35; pointer-events:none; }
+
+/* ─── FOOTER ─── */
+#foot {
+  flex-shrink:0; text-align:center;
+  font-size:11px; color:var(--muted); font-weight:600;
+  padding:5px 10px; background:var(--white);
+  border-top:1px solid var(--light); letter-spacing:.3px;
+}
+
+/* ─── SCREEN HEADER ─── */
+.sh { margin-bottom:12px; flex-shrink:0; }
+.badge {
+  display:inline-block; font-size:11px; font-weight:800;
+  text-transform:uppercase; letter-spacing:1.5px;
+  padding:3px 12px; border-radius:20px; color:var(--white); margin-bottom:6px;
+}
+.stitle {
+  font-family:'Merriweather',serif; font-weight:700;
+  font-size:clamp(20px,4vw,28px); line-height:1.2; color:var(--navy);
+}
+.ssub { font-size:clamp(13px,2.2vw,15px); color:var(--muted); margin-top:4px; font-weight:500; }
+
+/* ─── LAYOUT ─── */
+.ca  { flex:1; overflow:hidden; display:flex; flex-direction:column; gap:10px; }
+.g2  { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.g3  { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.g4  { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.row { display:flex; gap:10px; }
+.grow{ flex:1; }
+
+/* ─── CARDS ─── */
+.card {
+  background:var(--white); border-radius:var(--r);
+  padding:14px 16px; box-shadow:var(--shadow); transition:transform .2s;
+}
+.card:hover { transform:translateY(-2px); }
+.ci  { font-size:28px; margin-bottom:6px; }
+.ct  { font-family:'Merriweather',serif; font-weight:700; font-size:clamp(14px,2.4vw,17px); margin-bottom:4px; }
+.cd  { font-size:clamp(12px,2vw,14px); color:#555; line-height:1.6; font-weight:500; }
+.card.cn { color:var(--white); }
+.card.cn .cd { color:rgba(255,255,255,.87); }
+.card.cn .ct { color:var(--white); }
+
+.hl {
+  border-left:5px solid; padding:10px 15px;
+  border-radius:0 14px 14px 0;
+  font-size:clamp(12px,2vw,14px); font-weight:600; line-height:1.6;
+}
+
+/* ─── ACCORDION ─── */
+.acc { border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow); }
+.ai  { border-bottom:1px solid #ede8e0; }
+.ai:last-child { border-bottom:none; }
+.ab  {
+  width:100%; text-align:left; padding:12px 16px;
+  background:var(--white); border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:'Poppins',sans-serif; font-weight:700;
+  font-size:clamp(13px,2.2vw,15px); color:var(--navy); transition:background .2s;
+}
+.ab:hover { background:#faf7f2; }
+.ab .arr { transition:transform .3s; font-size:15px; color:var(--muted); }
+.ab.open .arr { transform:rotate(180deg); }
+.abody { max-height:0; overflow:hidden; transition:max-height .35s ease; background:#faf7f2; }
+.abody.open { max-height:200px; }
+.abinner { padding:10px 16px 14px; font-size:clamp(12px,1.9vw,14px); color:#444; line-height:1.65; font-weight:500; }
+
+/* ─── TABS ─── */
+.th {
+  display:flex; gap:5px; flex-wrap:nowrap;
+  background:var(--light); border-radius:14px; padding:5px; flex-shrink:0;
+}
+.tbtn {
+  flex:1; padding:8px 6px; border-radius:10px; border:none;
+  font-family:'Poppins',sans-serif; font-weight:700;
+  font-size:clamp(11px,1.8vw,13px); cursor:pointer;
+  background:transparent; color:var(--muted); transition:all .25s; white-space:nowrap;
+}
+.tbtn.active { background:var(--white); color:var(--navy); box-shadow:0 2px 10px rgba(0,0,0,.1); }
+.tc { display:none; flex:1; overflow:hidden; flex-direction:column; gap:9px; }
+.tc.active { display:flex; }
+
+/* ─── QUIZ ─── */
+.qq { font-family:'Merriweather',serif; font-weight:700; font-size:clamp(14px,2.5vw,18px); margin-bottom:12px; line-height:1.4; }
+.qopts { display:flex; flex-direction:column; gap:8px; }
+.qopt {
+  padding:11px 16px; border-radius:12px; border:2px solid #e5e0d8;
+  background:var(--white); cursor:pointer; text-align:left;
+  font-family:'Poppins',sans-serif; font-weight:600;
+  font-size:clamp(12px,2vw,14px); transition:all .2s;
+  display:flex; align-items:center; gap:10px;
+}
+.qopt:hover { border-color:var(--coral); background:#fff8f5; }
+.qopt.ok  { border-color:var(--teal); background:#f0f9fb; color:#1a4d57; }
+.qopt.err { border-color:var(--coral); background:#fff0ec; color:#7a2a14; }
+.qopt.dis { pointer-events:none; }
+.qfb {
+  padding:10px 16px; border-radius:12px; font-weight:700;
+  font-size:clamp(12px,2vw,14px); margin-top:9px; display:none; line-height:1.5;
+}
+.qfb.show { display:block; }
+.qfb.ok  { background:#f0f9fb; color:#1a4d57; border:2px solid var(--teal); }
+.qfb.err { background:#fff0ec; color:#7a2a14; border:2px solid var(--coral); }
+.qnav { display:flex; gap:8px; margin-top:9px; }
+
+/* ─── STEPS ─── */
+.steps { display:flex; flex-direction:column; gap:9px; }
+.step  { display:flex; gap:12px; align-items:flex-start; }
+.snum {
+  width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:900; font-size:14px; color:var(--white);
+}
+.stb  { flex:1; }
+.stt  { font-weight:800; font-size:clamp(13px,2.2vw,15px); margin-bottom:2px; }
+.std  { font-size:clamp(11px,1.9vw,13px); color:#555; line-height:1.5; font-weight:500; }
+
+/* ─── COVER ─── */
+#s0 {
+  background:linear-gradient(140deg, #e8603a 0%, #d44e8a 40%, #2a7b8c 80%, #1e3a5f 100%);
+  align-items:center; justify-content:center; text-align:center; padding:24px;
+}
+.ctag {
+  display:inline-block; background:rgba(255,255,255,.18);
+  color:rgba(255,255,255,.95); border-radius:30px; padding:5px 18px;
+  font-size:clamp(11px,2vw,13px); font-weight:700; letter-spacing:1.5px;
+  text-transform:uppercase; margin-bottom:16px;
+  border:1px solid rgba(255,255,255,.25);
+}
+.ctitle {
+  font-family:'Merriweather',serif; font-weight:700;
+  font-size:clamp(24px,5vw,42px); color:var(--white); line-height:1.15; margin-bottom:10px;
+}
+.csub   { font-size:clamp(13px,2.3vw,17px); color:rgba(255,255,255,.80); font-weight:600; margin-bottom:8px; }
+.cauthor{ font-size:clamp(12px,2vw,15px); color:rgba(255,255,255,.65); font-weight:600; margin-bottom:24px; }
+.cstart {
+  background:var(--white); color:var(--coral); border:none; border-radius:50px;
+  padding:13px 32px; font-family:'Poppins',sans-serif; font-weight:800;
+  font-size:clamp(14px,2.5vw,17px); cursor:pointer;
+  box-shadow:0 6px 22px rgba(0,0,0,.25); transition:transform .2s, box-shadow .2s;
+}
+.cstart:hover { transform:scale(1.05); box-shadow:0 8px 28px rgba(0,0,0,.3); }
+.cico { font-size:clamp(44px,8vw,66px); margin-bottom:16px; animation:float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+/* ─── COLOR VARIANTS ─── */
+.bg-coral  { background:var(--coral)!important; }
+.bg-teal   { background:var(--teal)!important; }
+.bg-gold   { background:var(--gold)!important; }
+.bg-pink   { background:var(--pink)!important; }
+.bg-navy   { background:var(--navy)!important; }
+.bl-coral  { border-color:var(--coral)!important; background:#fff5f2; }
+.bl-teal   { border-color:var(--teal)!important;  background:#f0f9fb; }
+.bl-gold   { border-color:var(--gold)!important;  background:#fdf8ec; }
+.bl-pink   { border-color:var(--pink)!important;  background:#fdf0f6; }
+.bl-navy   { border-color:var(--navy)!important;  background:#f0f4f9; }
+
+/* ─── TABLE ─── */
+.mtbl { width:100%; border-collapse:collapse; font-size:clamp(11px,1.8vw,13px); }
+.mtbl th {
+  padding:9px 11px; font-weight:800; font-size:clamp(12px,2vw,14px);
+  border-bottom:2px solid var(--light); text-align:center;
+}
+.mtbl td { padding:8px 11px; border-bottom:1px solid var(--light); line-height:1.45; font-weight:500; text-align:center; font-size:clamp(10px,1.7vw,12px); }
+.mtbl tr:last-child td { border-bottom:none; }
+.th1 { background:#fff5f2; color:var(--coral); }
+.th2 { background:#f0f9fb; color:var(--teal); }
+.th3 { background:#fff8ec; color:var(--gold); }
+.th4 { background:#fdf0f6; color:var(--pink); }
+
+/* ─── SCORE ─── */
+.score-c {
+  width:80px; height:80px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Merriweather',serif; font-weight:700; font-size:28px;
+  color:var(--white); background:var(--teal); margin:0 auto 12px;
+  box-shadow:0 4px 16px rgba(42,123,140,.35);
+}
+
+/* ─── SUMMARY ─── */
+.sumwrap {
+  display:grid; grid-template-columns:1fr 1fr; gap:9px;
+  flex:1; overflow-y:auto;
+}
+.sumwrap::-webkit-scrollbar { width:4px; }
+.sumwrap::-webkit-scrollbar-thumb { background:#ddd; border-radius:10px; }
+.sumi {
+  background:var(--white); border-radius:14px; padding:13px 14px;
+  box-shadow:var(--shadow); border-left:5px solid;
+}
+.sumit { font-weight:800; font-size:clamp(12px,2vw,14px); margin-bottom:3px; }
+.sumd  { font-size:clamp(10px,1.7vw,12px); color:#555; font-weight:500; line-height:1.45; }
+
+.scr { overflow-y:auto; flex:1; }
+.scr::-webkit-scrollbar { width:4px; }
+.scr::-webkit-scrollbar-thumb { background:#ddd; border-radius:10px; }
+
+/* ─── METODOLOGIA BADGE ─── */
+.met-pill {
+  display:inline-block; padding:4px 12px; border-radius:20px;
+  font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.8px;
+  color:var(--white); margin-bottom:6px;
+}
+/* ─── FUNNEL ─── */
+.funnel { display:flex; flex-direction:column; gap:0; flex:1; }
+.funnel-level {
+  border-radius:10px; padding:10px 14px; margin:2px 0;
+  display:flex; align-items:center; gap:10px;
+  transition:transform .2s; cursor:default;
+}
+.funnel-level:hover { transform:scale(1.01); }
+.fl-icon { font-size:20px; flex-shrink:0; }
+.fl-title { font-weight:800; font-size:clamp(12px,2.2vw,14px); }
+.fl-sub   { font-size:clamp(11px,1.8vw,13px); font-weight:500; opacity:.9; }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:600px){
+  .g2 { grid-template-columns:1fr; }
+  .g3 { grid-template-columns:1fr 1fr; }
+  .g4 { grid-template-columns:1fr 1fr; }
+  .sumwrap { grid-template-columns:1fr; }
+  .th { overflow-x:auto; }
+  .row { flex-direction:column; }
+  .mtbl th, .mtbl td { padding:6px 7px; }
+}
+@media(max-width:400px){
+  .g3 { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="pbar" style="width:0%"></div>
+
+  <!-- TOP NAV -->
+  <div id="topnav">
+    <div class="dots" id="dots"></div>
+    <div class="ntitle" id="ntitle">Portada</div>
+    <div class="nctr" id="nctr">1 / 14</div>
+  </div>
+
+  <div id="swrap">
+
+    <!-- S0 PORTADA -->
+    <div class="screen active" id="s0">
+      <div class="cico">⚙️</div>
+      <div class="ctag">Nueva Escuela Mexicana · Pedagogía Activa</div>
+      <div class="ctitle">Metodologías Sociocríticas<br>y el Diseño Creativo</div>
+      <div class="csub">De la teoría pedagógica a la acción transformadora<br>en el aula y la comunidad</div>
+      <div class="cauthor">👨‍🏫 Prof. Francisco De Jesús Luna Benitez</div>
+      <button class="cstart" onclick="goTo(1)">Iniciar Guía ▶</button>
+    </div>
+
+    <!-- S1 EL CAMBIO DE PARADIGMA -->
+    <div class="screen" id="s1">
+      <div class="sh">
+        <div class="badge bg-coral">Punto de Partida</div>
+        <div class="stitle">El Cambio de Paradigma</div>
+        <div class="ssub">Educación con Sentido Comunitario</div>
+      </div>
+      <div class="ca">
+        <div class="card bl-coral hl" style="border-left-width:5px; flex-shrink:0">
+          Las <strong>metodologías sociocríticas</strong> no son recetas rígidas, sino <strong>posibilidades de acercamiento interdisciplinar</strong>. Representan un cambio fundamental en cómo concebimos el aprendizaje.
+        </div>
+        <div class="g3" style="flex-shrink:0">
+          <div class="card" style="text-align:center; border-top:4px solid var(--coral)">
+            <div class="ci">💡</div>
+            <div class="ct" style="font-size:14px">Autonomía Profesional</div>
+            <div class="cd">Respetan y exigen la creatividad del maestro para adaptar el Plan de Estudio 2022.</div>
+          </div>
+          <div class="card" style="text-align:center; border-top:4px solid var(--teal)">
+            <div class="ci">📍</div>
+            <div class="ct" style="font-size:14px">Contexto Vivo</div>
+            <div class="cd">Reconstruyen significados a partir de escenarios pedagógicos reales y cotidianos.</div>
+          </div>
+          <div class="card" style="text-align:center; border-top:4px solid var(--pink)">
+            <div class="ci">🤝</div>
+            <div class="ct" style="font-size:14px">Acción Transformadora</div>
+            <div class="cd">Los estudiantes dejan de ser receptores para convertirse en sujetos solidarios y responsables.</div>
+          </div>
+        </div>
+        <div class="hl bl-navy" style="flex-shrink:0">
+          🎯 <strong>Idea central:</strong> La NEM no entrega recetas terminadas; entrega un <strong>lienzo</strong>. El maestro es el diseñador del aprendizaje.
+        </div>
+      </div>
+    </div>
+
+    <!-- S2 LAS 4 METODOLOGÍAS (PANORAMA) -->
+    <div class="screen" id="s2">
+      <div class="sh">
+        <div class="badge bg-teal">Las 4 Rutas</div>
+        <div class="stitle">Cuatro Rutas, Un Mismo Horizonte</div>
+        <div class="ssub">Las metodologías sociocríticas para la NEM</div>
+      </div>
+      <div class="ca">
+        <div class="g2" style="flex:1">
+          <div class="card cn bg-coral" style="cursor:pointer" onclick="goTo(3)">
+            <div class="met-pill" style="background:rgba(255,255,255,.2)">Metodología 1</div>
+            <div class="ct">🏘️ Proyectos Comunitarios</div>
+            <div class="cd">Explorar, resolver y transformar el entorno inmediato. 3 fases y 11 momentos estructurados.</div>
+          </div>
+          <div class="card cn bg-teal" style="cursor:pointer" onclick="goTo(5)">
+            <div class="met-pill" style="background:rgba(255,255,255,.2)">Metodología 2</div>
+            <div class="ct">⚙️ Indagación STEAM</div>
+            <div class="cd">Pensamiento científico, matemático y diseño tecnológico guiado por las artes.</div>
+          </div>
+          <div class="card cn bg-navy" style="cursor:pointer" onclick="goTo(7)">
+            <div class="met-pill" style="background:rgba(255,255,255,.2)">Metodología 3</div>
+            <div class="ct">🧩 Aprendizaje Basado en Problemas</div>
+            <div class="cd">Pensamiento crítico para resolver situaciones reales y complejas. 6 momentos.</div>
+          </div>
+          <div class="card cn bg-pink" style="cursor:pointer" onclick="goTo(9)">
+            <div class="met-pill" style="background:rgba(255,255,255,.2)">Metodología 4</div>
+            <div class="ct">⭐ Aprendizaje Servicio</div>
+            <div class="cd">Aprender haciendo al satisfacer una necesidad social real. Protagonismo activo.</div>
+          </div>
+        </div>
+        <div class="hl bl-gold" style="flex-shrink:0">
+          💡 <strong>Tip:</strong> Toca cualquier tarjeta para ir directamente a esa metodología — o usa los botones de navegación.
+        </div>
+      </div>
+    </div>
+
+    <!-- S3 PROYECTOS COMUNITARIOS -->
+    <div class="screen" id="s3">
+      <div class="sh">
+        <div class="badge bg-coral">Metodología 1</div>
+        <div class="stitle">Aprendizaje Basado en Proyectos Comunitarios</div>
+        <div class="ssub">Explorar, resolver y transformar el entorno inmediato</div>
+      </div>
+      <div class="ca">
+        <div class="card bl-coral hl" style="flex-shrink:0; border-left-width:5px">
+          <strong>La Justificación:</strong> Permite explorar el entorno para identificar situaciones-problema, promover diversidad de soluciones y tejer redes con distintos actores de la comunidad.
+        </div>
+        <div class="g3" style="flex-shrink:0">
+          <div class="card" style="border-top:4px solid var(--coral)">
+            <div class="ci">🎨</div>
+            <div class="ct" style="font-size:13px">Experimentación Creativa</div>
+            <div class="cd">Resolución de problemas sociales, culturales y pedagógicos.</div>
+          </div>
+          <div class="card" style="border-top:4px solid var(--teal)">
+            <div class="ci">🗣️</div>
+            <div class="ct" style="font-size:13px">Diversidad de Lenguajes</div>
+            <div class="cd">Oral, escrita, corporal, hápica, teatral y artística.</div>
+          </div>
+          <div class="card" style="border-top:4px solid var(--gold)">
+            <div class="ci">👨‍👩‍👧</div>
+            <div class="ct" style="font-size:13px">Involucramiento Gradual</div>
+            <div class="cd">Integrar a la comunidad activamente en todas las fases del proyecto.</div>
+          </div>
+        </div>
+        <div class="card bl-teal hl" style="flex-shrink:0; border-left-width:5px">
+          📋 <strong>Estructura:</strong> El proyecto se organiza en <strong>3 Fases</strong> (Planeación · Acción · Intervención) con un total de <strong>11 Momentos</strong> secuenciales. — <em>Ver siguiente pantalla</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4 ESTRUCTURA DEL PROYECTO COMUNITARIO (11 momentos) -->
+    <div class="screen" id="s4">
+      <div class="sh">
+        <div class="badge bg-coral">Metodología 1 · Estructura</div>
+        <div class="stitle">Las 3 Fases y 11 Momentos</div>
+        <div class="ssub">La arquitectura completa del Proyecto Comunitario</div>
+      </div>
+      <div class="ca">
+        <div class="th" style="flex-shrink:0">
+          <button class="tbtn active" onclick="swTab(this,'pf1')" style="color:var(--teal)">🟢 Fase 1: Planeación</button>
+          <button class="tbtn" onclick="swTab(this,'pf2')" style="color:var(--coral)">🟠 Fase 2: Acción</button>
+          <button class="tbtn" onclick="swTab(this,'pf3')" style="color:var(--gold)">🟡 Fase 3: Intervención</button>
+        </div>
+        <div class="tc active scr" id="pf1">
+          <div class="steps">
+            <div class="step"><div class="snum bg-teal">1</div><div class="stb"><div class="stt">Identificación</div><div class="std">Situación real e insumo inicial para el proyecto.</div></div></div>
+            <div class="step"><div class="snum bg-teal">2</div><div class="stb"><div class="stt">Recuperación</div><div class="std">Vincular conocimientos previos, generar disonancia cognitiva.</div></div></div>
+            <div class="step"><div class="snum bg-teal">3</div><div class="stb"><div class="stt">Planificación</div><div class="std">Negociar pasos, producciones y tiempos con el grupo.</div></div></div>
+          </div>
+        </div>
+        <div class="tc scr" id="pf2">
+          <div class="steps">
+            <div class="step"><div class="snum bg-coral">4</div><div class="stb"><div class="stt">Acercamiento</div><div class="std">Exploración profunda del problema identificado.</div></div></div>
+            <div class="step"><div class="snum bg-coral">5</div><div class="stb"><div class="stt">Comprensión y Producción</div><div class="std">Elaborar las producciones necesarias para el proyecto.</div></div></div>
+            <div class="step"><div class="snum bg-coral">6</div><div class="stb"><div class="stt">Reconocimiento</div><div class="std">Identificar avances y dificultades del proceso.</div></div></div>
+            <div class="step"><div class="snum bg-coral">7</div><div class="stb"><div class="stt">Concreción</div><div class="std">Primera versión del producto o propuesta.</div></div></div>
+          </div>
+        </div>
+        <div class="tc scr" id="pf3">
+          <div class="steps">
+            <div class="step"><div class="snum bg-gold">8</div><div class="stb"><div class="stt">Integración</div><div class="std">Exposición, retroalimentación y ajuste final.</div></div></div>
+            <div class="step"><div class="snum bg-gold">9</div><div class="stb"><div class="stt">Difusión</div><div class="std">Presentación del producto final a la comunidad.</div></div></div>
+            <div class="step"><div class="snum bg-gold">10</div><div class="stb"><div class="stt">Consideraciones</div><div class="std">Seguimiento del impacto áulico y comunitario.</div></div></div>
+            <div class="step"><div class="snum bg-gold">11</div><div class="stb"><div class="stt">Avances</div><div class="std">Toma de decisiones para futuros proyectos.</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S5 STEAM -->
+    <div class="screen" id="s5">
+      <div class="sh">
+        <div class="badge bg-teal">Metodología 2</div>
+        <div class="stitle">Aprendizaje Basado en Indagación (STEAM)</div>
+        <div class="ssub">Visión interdisciplinaria para el Campo de Saberes y Pensamiento Científico</div>
+      </div>
+      <div class="ca">
+        <div class="g2" style="flex-shrink:0">
+          <div class="card bl-teal hl" style="border-left-width:5px">
+            <strong>¿Qué es STEAM?</strong> Ciencia + Tecnología + Ingeniería + Arte + Matemáticas. Una visión <strong>interdisciplinaria y transdisciplinaria</strong> del aprendizaje.
+          </div>
+          <div class="card cn bg-teal">
+            <div class="ct">🇲🇽 Visión STEAM para México</div>
+            <div class="cd">No solo ciencia exacta. Las <strong style="color:white">artes y la lengua</strong> convergen con la <strong style="color:white">capacidad numérica</strong> y el pensamiento computacional para una educación integral.</div>
+          </div>
+        </div>
+        <div class="g3" style="flex-shrink:0">
+          <div class="card" style="text-align:center; border-top:4px solid var(--teal)">
+            <div class="ci">❓</div>
+            <div class="ct" style="font-size:13px">Preguntas Orientadas</div>
+            <div class="cd">Comprometer a los estudiantes con preguntas que guíen la indagación.</div>
+          </div>
+          <div class="card" style="text-align:center; border-top:4px solid var(--coral)">
+            <div class="ci">🔬</div>
+            <div class="ct" style="font-size:13px">Evidencia Experimental</div>
+            <div class="cd">Priorizar la evidencia en diseños experimentales rigurosos.</div>
+          </div>
+          <div class="card" style="text-align:center; border-top:4px solid var(--gold)">
+            <div class="ci">📐</div>
+            <div class="ct" style="font-size:13px">Argumentos Coherentes</div>
+            <div class="cd">Construir explicaciones basadas en evidencia con coherencia lógica.</div>
+          </div>
+        </div>
+        <div class="hl bl-teal" style="flex-shrink:0">
+          ⚙️ <strong>Diseño de Ingeniería:</strong> Diseñar → Crear → Probar → Mejorar el prototipo. Un ciclo iterativo de mejora continua.
+        </div>
+      </div>
+    </div>
+
+    <!-- S6 CICLO STEAM 5 FASES -->
+    <div class="screen" id="s6">
+      <div class="sh">
+        <div class="badge bg-teal">Metodología 2 · Ciclo</div>
+        <div class="stitle">El Ciclo de Aprendizaje STEAM</div>
+        <div class="ssub">5 fases para la indagación científica en el aula</div>
+      </div>
+      <div class="ca">
+        <div class="steps scr">
+          <div class="step">
+            <div class="snum bg-teal">1</div>
+            <div class="stb">
+              <div class="stt">Introducción al Tema</div>
+              <div class="std">Uso de conocimientos previos, generación de disonancia, identificación de la problemática vinculada a la comunidad.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="snum bg-coral">2</div>
+            <div class="stb">
+              <div class="stt">Diseño de la Investigación</div>
+              <div class="std">Acuerdos de indagación: ¿Qué? ¿Quién? ¿Cómo? ¿Cuándo? ¿Dónde? ¿Para qué? Aplicación en el aula.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="snum bg-gold">3</div>
+            <div class="stb">
+              <div class="stt">Organización y Estructuración</div>
+              <div class="std">Analizar, organizar e interpretar datos. Clarificar conceptos y establecer conclusiones preliminares.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="snum bg-pink">4</div>
+            <div class="stb">
+              <div class="stt">Presentación de Resultados</div>
+              <div class="std">Elaborar propuestas de acción para resolver la problemática general identificada.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="snum bg-navy">5</div>
+            <div class="stb">
+              <div class="stt">Metacognición</div>
+              <div class="std">Reflexión sobre planes de trabajo, logros, dificultades y fracasos. ¿Qué aprendí? ¿Cómo lo aprendí?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S7 ABP -->
+    <div class="screen" id="s7">
+      <div class="sh">
+        <div class="badge bg-navy">Metodología 3</div>
+        <div class="stitle">Aprendizaje Basado en Problemas (ABP)</div>
+        <div class="ssub">Solución de problemas reales que conectan el aprendizaje con la vida</div>
+      </div>
+      <div class="ca">
+        <div class="card bl-navy hl" style="flex-shrink:0; border-left-width:5px">
+          Orientado a la solución de <strong>problemas reales</strong> que conectan el aprendizaje con la vida más allá de la escuela. Forma ciudadanos responsables de su comunidad.
+        </div>
+        <div class="g3" style="flex-shrink:0">
+          <div class="card" style="border-top:4px solid var(--coral)">
+            <div class="ci">🔗</div>
+            <div class="ct" style="font-size:13px">1. Perspectivas Interrelacionadas</div>
+            <div class="cd">Conecta disciplinas aparentemente inconexas para entender la naturaleza multifactorial de un problema.</div>
+          </div>
+          <div class="card" style="border-top:4px solid var(--teal)">
+            <div class="ci">🧠</div>
+            <div class="ct" style="font-size:13px">2. Pensamiento Crítico</div>
+            <div class="cd">Genera distintas propuestas de solución analíticas con evidencia.</div>
+          </div>
+          <div class="card" style="border-top:4px solid var(--gold)">
+            <div class="ci">🌱</div>
+            <div class="ct" style="font-size:13px">3. Sujetos Solidarios</div>
+            <div class="cd">Forma ciudadanos responsables de su comunidad y de la naturaleza.</div>
+          </div>
+        </div>
+        <div class="hl bl-navy" style="flex-shrink:0">
+          📋 <strong>Estructura:</strong> El ABP tiene <strong>6 Momentos</strong> secuenciales desde la presentación del problema hasta los resultados y análisis. — <em>Ver siguiente pantalla</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- S8 ABP 6 MOMENTOS -->
+    <div class="screen" id="s8">
+      <div class="sh">
+        <div class="badge bg-navy">Metodología 3 · Estructura</div>
+        <div class="stitle">Los 6 Momentos del ABP</div>
+        <div class="ssub">De la presentación del problema a los resultados</div>
+      </div>
+      <div class="ca">
+        <div class="steps scr">
+          <div class="step"><div class="snum bg-coral">1</div><div class="stb"><div class="stt">Presentemos</div><div class="std">Reflexión inicial. Introducción del escenario o problemática mediante imagen o lectura.</div></div></div>
+          <div class="step"><div class="snum bg-teal">2</div><div class="stb"><div class="stt">Recolectemos</div><div class="std">Explorar saberes sociales y escolares previos de los estudiantes sobre la temática.</div></div></div>
+          <div class="step"><div class="snum bg-gold">3</div><div class="stb"><div class="stt">Formulemos el Problema</div><div class="std">Determinar con claridad el problema a trabajar y las inquietudes de los estudiantes.</div></div></div>
+          <div class="step"><div class="snum bg-pink">4</div><div class="stb"><div class="stt">Organicemos la Experiencia</div><div class="std">Trazar la ruta: objetivos, acuerdos, tiempos. Dirección: comprender, resignificar o transformar.</div></div></div>
+          <div class="step"><div class="snum bg-navy">5</div><div class="stb"><div class="stt">Vivamos la Experiencia</div><div class="std">Indagación documental o vivencial. Discusión grupal y análisis metódico.</div></div></div>
+          <div class="step"><div class="snum bg-coral">6</div><div class="stb"><div class="stt">Resultados y Análisis</div><div class="std">Visualizar avances, divulgar resultados e identificar nuevos problemas para el futuro.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S9 APRENDIZAJE SERVICIO -->
+    <div class="screen" id="s9">
+      <div class="sh">
+        <div class="badge bg-pink">Metodología 4</div>
+        <div class="stitle">Aprendizaje Servicio (AS)</div>
+        <div class="ssub">La Pedagogía de la Experiencia: protagonismo activo</div>
+      </div>
+      <div class="ca">
+        <div class="card cn bg-pink" style="flex-shrink:0">
+          <div class="ct">⭐ La Fórmula del AS</div>
+          <div class="cd"><strong style="color:white">Contenido Curricular</strong> (Aprendizaje Intencionado) <strong style="color:white">+</strong> <strong style="color:white">Necesidad Social</strong> (Servicio Solidario) <strong style="color:white">= Aprendizaje Servicio</strong> (Protagonismo Activo)</div>
+        </div>
+        <div class="hl bl-pink" style="flex-shrink:0; border-left-width:5px">
+          Contrario a la simple acumulación académica, el AS exige que los estudiantes desarrollen <strong>sentido de responsabilidad</strong> al trabajar sobre necesidades reales del entorno con el objetivo de mejorarlo.
+        </div>
+        <div class="g2" style="flex:1">
+          <div class="card" style="border-top:4px solid var(--pink)">
+            <div class="ci">🎓</div>
+            <div class="ct" style="font-size:13px">Desarrollo Integral</div>
+            <div class="cd">Es una actividad escolar que abona al desarrollo integral y su proyección social.</div>
+          </div>
+          <div class="card" style="border-top:4px solid var(--teal)">
+            <div class="ci">🏘️</div>
+            <div class="ct" style="font-size:13px">Impacto Real</div>
+            <div class="cd">Los estudiantes trabajan sobre necesidades reales de su entorno, no sobre situaciones simuladas.</div>
+          </div>
+        </div>
+        <div class="hl bl-gold" style="flex-shrink:0">
+          📋 <strong>Estructura:</strong> El AS tiene <strong>5 Etapas</strong> desde la sensibilización hasta la evaluación final de resultados. — <em>Ver siguiente pantalla</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- S10 AS 5 ETAPAS -->
+    <div class="screen" id="s10">
+      <div class="sh">
+        <div class="badge bg-pink">Metodología 4 · Etapas</div>
+        <div class="stitle">Las 5 Etapas del Aprendizaje Servicio</div>
+        <div class="ssub">Desde el punto de partida hasta la evaluación social</div>
+      </div>
+      <div class="ca">
+        <div class="steps scr">
+          <div class="step"><div class="snum bg-pink">1</div><div class="stb"><div class="stt">Sensibilización</div><div class="std">Detección de una necesidad social y el interés de los estudiantes por abordarla.</div></div></div>
+          <div class="step"><div class="snum bg-teal">2</div><div class="stb"><div class="stt">Diagnóstico Participativo</div><div class="std">Recabar información, escuchar a la comunidad, identificar aliados y recursos disponibles.</div></div></div>
+          <div class="step"><div class="snum bg-gold">3</div><div class="stb"><div class="stt">Planificación Pedagógica y Social</div><div class="std">Definir: ¿Qué? ¿Por qué? ¿Para qué? ¿A quiénes? ¿Cómo? ¿Cuándo? ¿Con qué?</div></div></div>
+          <div class="step"><div class="snum bg-coral">4</div><div class="stb"><div class="stt">Creatividad en Marcha (Puesta en Práctica)</div><div class="std">Monitoreo del contenido curricular y del servicio. Interacción alumnos, maestros y familia.</div></div></div>
+          <div class="step"><div class="snum bg-navy">5</div><div class="stb"><div class="stt">Evaluación Final de Resultados</div><div class="std">Logros académicos + cumplimiento de objetivos de servicio. Autoevaluación y reflexión colectiva.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S11 DISEÑO CREATIVO Y PLANOS -->
+    <div class="screen" id="s11">
+      <div class="sh">
+        <div class="badge bg-gold">Diseño Creativo</div>
+        <div class="stitle">La Ruta del Diseño Creativo</div>
+        <div class="ssub">Del Programa Sintético al aula: 3 niveles del Programa Analítico</div>
+      </div>
+      <div class="ca">
+        <div class="funnel" style="flex-shrink:0">
+          <div class="funnel-level" style="background:#2a7b8c; color:white; padding:12px 18px;">
+            <div class="fl-icon">🌍</div>
+            <div><div class="fl-title">Nivel Macro — Lectura de la Realidad (Plano 1)</div><div class="fl-sub">Entender el mundo, el país, la región y la comunidad escolar.</div></div>
+          </div>
+          <div class="funnel-level" style="background:#c49a2a; color:white; padding:12px 18px;">
+            <div class="fl-icon">🔧</div>
+            <div><div class="fl-title">Nivel Meso — Programa Analítico (Planos 2 y 3)</div><div class="fl-sub">Contextualización de saberes + Codiseño de contenidos locales.</div></div>
+          </div>
+          <div class="funnel-level" style="background:#d44e8a; color:white; padding:12px 18px;">
+            <div class="fl-icon">📝</div>
+            <div><div class="fl-title">Nivel Micro — Plano Didáctico</div><div class="fl-sub">Secuencia de actividades y metodologías activas en el aula.</div></div>
+          </div>
+        </div>
+        <div class="g2" style="flex-shrink:0">
+          <div class="card bl-teal hl" style="border-left-width:5px">
+            <strong>Plano 2 – Contextualización:</strong> Articular contenidos nacionales con la lectura de la realidad local. Ej: usar la pandemia para enseñar contenidos existentes.
+          </div>
+          <div class="card bl-pink hl" style="border-left-width:5px">
+            <strong>Plano 3 – Codiseño:</strong> Incorporar contenidos locales no contemplados en el programa. Ej: Lengua de Señas Mexicana, lenguas indígenas.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S12 AUTOEVALUACIÓN -->
+    <div class="screen" id="s12">
+      <div class="sh">
+        <div class="badge bg-coral">Autoevaluación</div>
+        <div class="stitle">¿Cuánto aprendiste? 🧠</div>
+        <div class="ssub">Responde las preguntas de repaso sobre las metodologías</div>
+      </div>
+      <div class="ca">
+        <div class="card" id="qcard" style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size:12px; color:var(--muted); font-weight:700; margin-bottom:8px;" id="qnum">Pregunta 1 de 6</div>
+            <div class="qq" id="qtext"></div>
+            <div class="qopts" id="qopts"></div>
+            <div class="qfb" id="qfb"></div>
+          </div>
+          <div class="qnav">
+            <button class="btn btn-p" id="qnext" onclick="nextQ()" style="display:none">Siguiente ▶</button>
+            <button class="btn btn-s" id="qretry" onclick="startQ()" style="display:none">🔄 Reintentar</button>
+          </div>
+        </div>
+        <div id="qresult" style="display:none; flex-direction:column; align-items:center; gap:10px;">
+          <div class="score-c" id="qscore">0/6</div>
+          <div style="font-family:'Merriweather',serif; font-size:19px; font-weight:700; text-align:center;" id="qmsg"></div>
+          <button class="btn btn-p" onclick="startQ()">🔄 Volver a intentar</button>
+          <button class="btn btn-s" onclick="goTo(13)">Ver Resumen Final ▶</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- S13 RESUMEN FINAL -->
+    <div class="screen" id="s13">
+      <div class="sh">
+        <div class="badge bg-teal">Resumen Final</div>
+        <div class="stitle">Todo en un vistazo 📌</div>
+        <div class="ssub">Guía de bolsillo: Metodologías Sociocríticas y Diseño Creativo</div>
+      </div>
+      <div class="ca">
+        <div class="sumwrap scr">
+          <div class="sumi" style="border-color:var(--coral)">
+            <div class="sumit">🏘️ Proyectos Comunitarios</div>
+            <div class="sumd"><strong>Enfoque:</strong> Exploración comunitaria y múltiples lenguajes.<br><strong>Estructura:</strong> 3 Fases · 11 Momentos.<br><strong>Resultado:</strong> Producto difundido en la comunidad.</div>
+          </div>
+          <div class="sumi" style="border-color:var(--teal)">
+            <div class="sumit">⚙️ Indagación STEAM</div>
+            <div class="sumd"><strong>Enfoque:</strong> Ciencia + Tecnología + Ingeniería + Arte + Matemáticas.<br><strong>Estructura:</strong> 5 Fases + Diseño de Ingeniería.<br><strong>Resultado:</strong> Prototipos tecnológicos basados en evidencia.</div>
+          </div>
+          <div class="sumi" style="border-color:var(--navy)">
+            <div class="sumit">🧩 ABP (Basado en Problemas)</div>
+            <div class="sumd"><strong>Enfoque:</strong> Análisis profundo de causas y efectos.<br><strong>Estructura:</strong> 6 Momentos secuenciales.<br><strong>Resultado:</strong> Solución o resignificación de fenómeno complejo.</div>
+          </div>
+          <div class="sumi" style="border-color:var(--pink)">
+            <div class="sumit">⭐ Aprendizaje Servicio</div>
+            <div class="sumd"><strong>Enfoque:</strong> Acción solidaria y protagonismo social.<br><strong>Estructura:</strong> 5 Etapas.<br><strong>Resultado:</strong> Un servicio real que transforma una necesidad comunitaria.</div>
+          </div>
+          <div class="sumi" style="border-color:var(--gold)">
+            <div class="sumit">🎨 Diseño Creativo (3 Planos)</div>
+            <div class="sumd">Macro: Lectura de la Realidad → Meso: Contextualización y Codiseño → Micro: Plano Didáctico con metodologías activas.</div>
+          </div>
+          <div class="sumi" style="border-color:var(--coral); grid-column:1/-1">
+            <div class="sumit">🔑 El Maestro como Diseñador del Aprendizaje</div>
+            <div class="sumd">La NEM no entrega recetas terminadas; entrega un lienzo. El dominio de las metodologías sociocríticas y el diseño del Programa Analítico devuelven al docente su mayor herramienta: <strong>la autonomía profesional</strong>. Tienes el poder de transformar tu comunidad, un proyecto a la vez.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /swrap -->
+
+  <div id="botnav">
+    <button class="btn btn-s" id="bprev" onclick="nav(-1)" disabled>◀ Anterior</button>
+    <button class="btn btn-p" id="bnext" onclick="nav(1)">Siguiente ▶</button>
+  </div>
+  <div id="foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<script>
+const TOTAL = 14;
+let cur = 0;
+const vis = new Set([0]);
+
+const titles = [
+  'Portada','El Cambio de Paradigma','Las 4 Metodologías',
+  'Proyectos Comunitarios','Estructura del Proyecto (11 Momentos)',
+  'Indagación STEAM','Ciclo STEAM (5 Fases)',
+  'ABP – Basado en Problemas','Los 6 Momentos del ABP',
+  'Aprendizaje Servicio','Las 5 Etapas del AS',
+  'Diseño Creativo','Autoevaluación','Resumen Final'
+];
+
+function buildDots(){
+  const c=document.getElementById('dots'); c.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===cur?' active':vis.has(i)?' visited':'');
+    d.onclick=(()=>{const x=i;return()=>goTo(x);})();
+    c.appendChild(d);
+  }
+}
+
+function updateUI(){
+  buildDots();
+  document.getElementById('ntitle').textContent=titles[cur];
+  document.getElementById('nctr').textContent=(cur+1)+' / '+TOTAL;
+  const pct=Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('bprev').disabled=cur===0;
+  document.getElementById('bnext').disabled=cur===TOTAL-1;
+  document.getElementById('bnext').textContent=cur===TOTAL-1?'✅ Fin':'Siguiente ▶';
+}
+
+function goTo(n){
+  if(n<0||n>=TOTAL||n===cur)return;
+  const ss=document.querySelectorAll('.screen');
+  const prev=cur, fwd=n>prev;
+
+  ss[n].classList.remove('active','slide-in','exit-sl','exit-sr','enter-right','enter-left');
+  ss[n].classList.add(fwd?'enter-right':'enter-left');
+  void ss[n].offsetWidth;
+
+  ss[prev].classList.remove('active');
+  ss[prev].classList.add(fwd?'exit-sl':'exit-sr');
+
+  ss[n].classList.remove('enter-right','enter-left');
+  ss[n].classList.add('slide-in','active');
+
+  setTimeout(()=>{ ss[prev].classList.remove('exit-sl','exit-sr'); }, 350);
+
+  cur=n; vis.add(n); updateUI();
+  if(n===12) startQ();
+}
+function nav(d){ goTo(cur+d); }
+
+function swTab(btn,id){
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// ─── QUIZ ───
+const qs=[
+  {q:'¿Qué característica fundamental distingue a las metodologías sociocríticas?',
+   o:['Son recetas rígidas y estandarizadas','Son posibilidades de acercamiento interdisciplinar que respetan la creatividad docente','Son formatos burocráticos que completan los maestros','Son evaluaciones nacionales estandarizadas'],
+   c:1, fb:'✅ ¡Correcto! Las metodologías sociocríticas no son recetas rígidas; son posibilidades de acercamiento interdisciplinar que respetan y exigen la creatividad del maestro.'},
+  {q:'¿Cuántos momentos tiene la estructura del Proyecto Comunitario?',
+   o:['6 momentos en 2 fases','8 momentos en 3 fases','11 momentos en 3 fases','5 momentos en 1 fase'],
+   c:2, fb:'✅ ¡Exacto! El Proyecto Comunitario tiene 3 Fases (Planeación, Acción e Intervención) y 11 Momentos secuenciales.'},
+  {q:'En el enfoque STEAM para México, ¿qué se reconoce como elemento central?',
+   o:['Solo la ciencia exacta y las matemáticas','Las artes y la lengua convergen con la capacidad numérica para una educación integral','La tecnología es el único elemento prioritario','El pensamiento computacional desplaza a las artes'],
+   c:1, fb:'✅ ¡Muy bien! La visión STEAM para México reconoce que las artes y la lengua convergen con la capacidad numérica y el pensamiento computacional para una educación integral.'},
+  {q:'¿Cuál es la "fórmula" del Aprendizaje Servicio (AS)?',
+   o:['Contenido Curricular − Servicio = Academicismo','Contenido Curricular × Evaluación = Calificación','Contenido Curricular + Necesidad Social = Protagonismo Activo','Servicio − Contenido = Voluntariado'],
+   c:2, fb:'✅ ¡Perfecto! AS = Contenido Curricular (aprendizaje intencionado) + Necesidad Social (servicio solidario) = Protagonismo Activo.'},
+  {q:'¿Qué son los Planos 2 y 3 en el Diseño Creativo del Programa Analítico?',
+   o:['Plano 2: Evaluación, Plano 3: Calificación','Plano 2: Contextualización, Plano 3: Codiseño con contenidos locales','Plano 2: Administración, Plano 3: Supervisión','Plano 2: Nacional, Plano 3: Internacional'],
+   c:1, fb:'✅ ¡Correcto! Plano 2 es Contextualización (articular contenidos nacionales con la realidad local) y Plano 3 es Codiseño (incorporar contenidos locales no contemplados en el programa).'},
+  {q:'¿Cuál es el rol del maestro en la Nueva Escuela Mexicana, según la Guía Maestra?',
+   o:['Ejecutor de instrucciones federales sin adaptación','Evaluador de logros memorísticos','Diseñador del aprendizaje con autonomía profesional','Administrador de tiempos y formatos burocráticos'],
+   c:2, fb:'✅ ¡Excelente! La NEM no entrega recetas; entrega un lienzo. El maestro es el diseñador del aprendizaje, con autonomía profesional para transformar su comunidad, un proyecto a la vez.'}
+];
+
+let qi=0, sc=0, done=false;
+
+function startQ(){
+  qi=0; sc=0; done=false;
+  document.getElementById('qcard').style.display='flex';
+  document.getElementById('qresult').style.display='none';
+  renderQ();
+}
+
+function renderQ(){
+  const q=qs[qi];
+  document.getElementById('qnum').textContent='Pregunta '+(qi+1)+' de '+qs.length;
+  document.getElementById('qtext').textContent=q.q;
+  const op=document.getElementById('qopts'); op.innerHTML='';
+  q.o.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='qopt';
+    b.innerHTML='<span style="font-weight:900;color:var(--muted);font-size:15px">'+(String.fromCharCode(65+i))+'</span> '+o;
+    b.onclick=()=>ansQ(i);
+    op.appendChild(b);
+  });
+  const fb=document.getElementById('qfb');
+  fb.className='qfb'; fb.textContent='';
+  document.getElementById('qnext').style.display='none';
+  document.getElementById('qretry').style.display='none';
+  done=false;
+}
+
+function ansQ(idx){
+  if(done)return; done=true;
+  const q=qs[qi];
+  document.querySelectorAll('.qopt').forEach((o,i)=>{
+    o.classList.add('dis');
+    if(i===q.c) o.classList.add('ok');
+    else if(i===idx) o.classList.add('err');
+  });
+  const fb=document.getElementById('qfb');
+  if(idx===q.c){ sc++; fb.className='qfb show ok'; }
+  else { fb.className='qfb show err'; }
+  fb.textContent=q.fb;
+  const nb=document.getElementById('qnext');
+  nb.style.display='inline-flex';
+  nb.textContent=qi<qs.length-1?'Siguiente ▶':'Ver resultados 🎯';
+}
+
+function nextQ(){
+  qi++;
+  if(qi>=qs.length){ showResult(); return; }
+  renderQ();
+}
+
+function showResult(){
+  document.getElementById('qcard').style.display='none';
+  const r=document.getElementById('qresult'); r.style.display='flex';
+  const s=document.getElementById('qscore');
+  s.textContent=sc+'/'+qs.length;
+  s.style.background=sc>=5?'var(--teal)':sc>=3?'var(--gold)':'var(--coral)';
+  const m=['¡Sigue repasando el material! 💪','¡Buen avance! Revisa las metodologías de nuevo 📚','¡Dominio excepcional del tema! 🏆'];
+  document.getElementById('qmsg').textContent=sc>=5?m[2]:sc>=3?m[1]:m[0];
+}
+
+updateUI();
+</script>
+</body>
+</html>

@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador 2026 - Aprendamos en Comunidad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 900px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+
+        .header h2 {
+            font-size: 1.1em;
+            font-weight: normal;
+            opacity: 0.95;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.85;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            margin: 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4CAF50, #81C784);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-container {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .question-container.active {
+            display: flex;
+        }
+
+        .question-number {
+            background: #667eea;
+            color: white;
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            background: #f5f5f5;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: #e8eaf6;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #e8eaf6;
+        }
+
+        .option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .option-letter {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            flex-shrink: 0;
+        }
+
+        .option.correct .option-letter {
+            background: #4CAF50;
+        }
+
+        .option.incorrect .option-letter {
+            background: #f44336;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1.05em;
+            color: #333;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-prev {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            background: #bdbdbd;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex: 1;
+        }
+
+        .results-container.active {
+            display: flex;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .score-label {
+            font-size: 0.3em;
+            margin-top: 10px;
+        }
+
+        .results-details {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.1em;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-height: 700px) {
+            .content {
+                padding: 20px;
+            }
+            .question-text {
+                font-size: 1.1em;
+                margin-bottom: 20px;
+            }
+            .option {
+                padding: 14px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Simulador 2026</h1>
+            <h2>Aprendamos en Comunidad</h2>
+            <p>Profesor Francisco De Jesús Luna Benitez</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="content" id="content">
+            <!-- Preguntas -->
+            <div class="question-container active" data-question="1">
+                <div class="question-number">Reactivo 1 de 15</div>
+                <div class="question-text">Consiste en reconocer las condiciones socioeducativas de la escuela (lectura de la realidad) con objeto de identificar situaciones o problemas que sirvan como punto de partida para contextualizar y codiseñar contenidos.</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Análisis del contexto socioeducativo de la escuela</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Codiseño de contenidos</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Contextualización</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()" disabled>← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="2">
+                <div class="question-number">Reactivo 2 de 15</div>
+                <div class="question-text">El profesor Jesús, después de realizar el diagnóstico escolar, se encuentra revisando el programa sintético con la intención de identificar y elegir los contenidos que le ayudarán a la atención de las problemáticas detectadas ¿En qué momento del diseño del Programa Analítico se encuentra?</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Contextualización</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Codiseño</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Plano didáctico</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="3">
+                <div class="question-number">Reactivo 3 de 15</div>
+                <div class="question-text">De las siguientes afirmaciones sobre los contenidos del Programa Sintético ¿Cuál es correcta?</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Los contenidos se encuentran organizados por grados escolares y establecen lo que los estudiantes deben de aprender</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Se agrupan por nivel educativo en las disciplinas que conforman los Campos Formativos estableciendo los PDAs</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">No son secuenciales ni obedecen a un criterio particular; es decir, ninguno es más importante que otro</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="4">
+                <div class="question-number">Reactivo 4 de 15</div>
+                <div class="question-text">Completa la frase correctamente: "Los _________ integran los contenidos nacionales que se busca promover durante el trayecto por la educación básica de niñas, niños y adolescentes"</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">PDAs</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Campos formativos</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Ejes articuladores</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="5">
+                <div class="question-number">Reactivo 5 de 15</div>
+                <div class="question-text">El profesor Sergio, junto a sus estudiantes, se encuentra analizando la relación que existe entre el cambio climático y el aumento de las enfermedades transmitidas por mosquitos con la intención de establecer las formas en que se podrían atender las problemáticas ¿Qué campos formativos están abordando?<br><br>I.- Lenguajes<br>II.- Saberes y pensamiento científico<br>III.- Ética, naturaleza y sociedades<br>IV.- De lo humano y lo comunitario</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">I y II</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">II y III</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">II y IV</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="6">
+                <div class="question-number">Reactivo 6 de 15</div>
+                <div class="question-text">¿Qué campo formativo promueve experiencias individuales y colectivas que favorecen la construcción de la identidad?</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Lenguajes</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Ética, naturaleza y sociedades</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">De lo humano y lo comunitario</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="7">
+                <div class="question-number">Reactivo 7 de 15</div>
+                <div class="question-text">¿Qué Eje Articulador posibilita una práctica reflexiva orientada al cuestionamiento sobre las condiciones del mundo que nos rodea?</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Interculturalidad crítica</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Pensamiento crítico</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Inclusión</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="8">
+                <div class="question-number">Reactivo 8 de 15</div>
+                <div class="question-text">La maestra Olivia está abordando el contenido de "alternativas ante conflictos y problemas de la vida en la comunidad", para ello promueve que sus estudiantes propongan diversas formas en las que pueden comentar y resolver problemáticas que pueden acontecer tanto en el salón de clases como en la escuela ¿Qué eje articulador está abordando?</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Pensamiento crítico</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Interculturalidad crítica</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Igualdad de género</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="9">
+                <div class="question-number">Reactivo 9 de 15</div>
+                <div class="question-text">Este campo formativo favorece la indagación, exploración, conocimiento y comprensión de los fenómenos naturales y su relación con lo social, desde la perspectiva de diversos saberes</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Saberes y pensamiento científico</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Ética, naturaleza y sociedades</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">De lo humano y lo comunitario</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="10">
+                <div class="question-number">Reactivo 10 de 15</div>
+                <div class="question-text">Con base en el diagnóstico escolar, la maestra Nicole realiza un listado de las problemáticas que acontecen en su salón de clases. Posteriormente, al momento de analizar el programa sintético, observa que debe de realizar ajustes a los contenidos para que atiendan de manera correcta a las necesidades de los estudiantes ¿En qué plano del Programa Analítico se encuentra desarrollando?</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Lectura de la realidad</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Contextualización</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Codiseño</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="11">
+                <div class="question-number">Reactivo 11 de 15</div>
+                <div class="question-text">Este campo formativo ayuda a que los estudiantes expresen sensaciones, emociones o experiencias tanto individuales como familiares que han vivido.</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Lenguajes</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Ética, naturaleza y sociedades</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">De lo humano y lo comunitario</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="12">
+                <div class="question-number">Reactivo 12 de 15</div>
+                <div class="question-text">¿Qué campo formativo favorece la construcción de una ciudadanía responsable, participativa, comunitaria y democrática?</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Saberes y pensamiento científico</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Ética, naturaleza y sociedades</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">De lo humano y lo comunitario</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="13">
+                <div class="question-number">Reactivo 13 de 15</div>
+                <div class="question-text">Favorece la importancia del buen vivir en comunidad a partir de generar cambios y actitudes para reconocer, apreciar y hacer exigible el derecho a la protección</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Igualdad de género</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Inclusión</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Vida saludable</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="14">
+                <div class="question-number">Reactivo 14 de 15</div>
+                <div class="question-text">¿Cuáles son los tres escenarios que propone el Plan de Estudios 2022 para desarrollar el aprendizaje?</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Aula, escuela y comunidad</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Comunidad, nacional y mundial</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Local, nacional e internacional</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+
+            <div class="question-container" data-question="15">
+                <div class="question-number">Reactivo 15 de 15</div>
+                <div class="question-text">Son un referente para la enseñanza en los que no es obligatorio seguir los pasos o momentos de manera rígida</div>
+                <div class="options">
+                    <div class="option" data-answer="A">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Las secuencias didácticas</div>
+                    </div>
+                    <div class="option" data-answer="B">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Las metodologías didácticas</div>
+                    </div>
+                    <div class="option" data-answer="C">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Las estrategias de aprendizaje</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-prev" onclick="previousQuestion()">← Anterior</button>
+                    <button class="btn-next" onclick="showResults()">Ver Resultados</button>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <div class="results-container">
+                <div class="score-circle" id="scoreCircle">
+                    <div id="scorePercentage">0%</div>
+                    <div class="score-label">Calificación</div>
+                </div>
+                <div class="results-details" id="resultsDetails"></div>
+                <button class="btn-restart" onclick="restartQuiz()">🔄 Reiniciar Simulador</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const correctAnswers = {
+            1: 'A', 2: 'A', 3: 'C', 4: 'B', 5: 'B',
+            6: 'C', 7: 'B', 8: 'B', 9: 'A', 10: 'C',
+            11: 'A', 12: 'B', 13: 'C', 14: 'A', 15: 'B'
+        };
+
+        let currentQuestion = 1;
+        let userAnswers = {};
+        let quizFinished = false;
+
+        // Selección de opciones
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                if (quizFinished) return;
+                
+                const container = this.closest('.question-container');
+                const questionNum = parseInt(container.dataset.question);
+                
+                // Remover selección previa
+                container.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Marcar como seleccionada
+                this.classList.add('selected');
+                userAnswers[questionNum] = this.dataset.answer;
+                
+                updateProgress();
+            });
+        });
+
+        function updateProgress() {
+            const answered = Object.keys(userAnswers).length;
+            const progress = (answered / 15) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < 15) {
+                document.querySelectorAll('.question-container')[currentQuestion - 1].classList.remove('active');
+                currentQuestion++;
+                document.querySelectorAll('.question-container')[currentQuestion - 1].classList.add('active');
+                
+                // Actualizar estado de botones
+                document.querySelectorAll('.btn-prev').forEach(btn => {
+                    btn.disabled = currentQuestion === 1;
+                });
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                document.querySelectorAll('.question-container')[currentQuestion - 1].classList.remove('active');
+                currentQuestion--;
+                document.querySelectorAll('.question-container')[currentQuestion - 1].classList.add('active');
+                
+                // Actualizar estado de botones
+                document.querySelectorAll('.btn-prev').forEach(btn => {
+                    btn.disabled = currentQuestion === 1;
+                });
+            }
+        }
+
+        function showResults() {
+            quizFinished = true;
+            
+            // Calcular resultados
+            let correct = 0;
+            for (let i = 1; i <= 15; i++) {
+                if (userAnswers[i] === correctAnswers[i]) {
+                    correct++;
+                }
+            }
+            
+            const percentage = Math.round((correct / 15) * 100);
+            
+            // Mostrar respuestas correctas/incorrectas
+            for (let i = 1; i <= 15; i++) {
+                const container = document.querySelectorAll('.question-container')[i - 1];
+                const options = container.querySelectorAll('.option');
+                
+                options.forEach(option => {
+                    const answer = option.dataset.answer;
+                    option.style.cursor = 'default';
+                    
+                    if (answer === correctAnswers[i]) {
+                        option.classList.add('correct');
+                    } else if (answer === userAnswers[i] && answer !== correctAnswers[i]) {
+                        option.classList.add('incorrect');
+                    }
+                });
+            }
+            
+            // Ocultar preguntas y mostrar resultados
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+            document.querySelector('.results-container').classList.add('active');
+            
+            // Actualizar resultados
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+            document.getElementById('resultsDetails').innerHTML = 
+                `<strong>${correct} de 15 respuestas correctas</strong><br>` +
+                `${15 - correct} incorrectas`;
+            
+            // Color del círculo según calificación
+            const circle = document.getElementById('scoreCircle');
+            if (percentage >= 80) {
+                circle.style.background = 'linear-gradient(135deg, #4CAF50, #81C784)';
+            } else if (percentage >= 60) {
+                circle.style.background = 'linear-gradient(135deg, #FF9800, #FFB74D)';
+            } else {
+                circle.style.background = 'linear-gradient(135deg, #f44336, #e57373)';
+            }
+            
+            // Barra de progreso al 100%
+            document.getElementById('progressFill').style.width = '100%';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            userAnswers = {};
+            quizFinished = false;
+            
+            // Resetear todas las opciones
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+                option.style.cursor = 'pointer';
+            });
+            
+            // Mostrar primera pregunta
+            document.querySelector('.results-container').classList.remove('active');
+            document.querySelectorAll('.question-container')[0].classList.add('active');
+            
+            // Resetear barra de progreso
+            document.getElementById('progressFill').style.width = '0%';
+            
+            // Deshabilitar botón anterior
+            document.querySelectorAll('.btn-prev').forEach(btn => {
+                btn.disabled = true;
+            });
+        }
+    </script>
+</body>
+</html>

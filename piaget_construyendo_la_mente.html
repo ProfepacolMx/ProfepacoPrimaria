@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Construyendo la Mente – Piaget</title>
+<style>
+/* ── FONTS ── */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Bitter:wght@400;600;700;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #1A2744;
+  --navy2:  #243260;
+  --teal:   #0E8C8C;
+  --teal2:  #19B5B5;
+  --teal-light: #C8F0F0;
+  --gold:   #E8A020;
+  --gold2:  #F5C050;
+  --gold-light: #FEF3D0;
+  --slate:  #4A6080;
+  --steel:  #7A98B8;
+  --ice:    #EAF2FB;
+  --paper:  #F4F7FA;
+  --white:  #FFFFFF;
+  --text1:  #0D1B2A;
+  --text2:  #2C4060;
+  --text3:  #5A7090;
+  --red:    #D04040;
+  --green:  #2A8050;
+  --shadow: 0 6px 28px rgba(10,30,60,0.13);
+  --shadow2: 0 2px 10px rgba(10,30,60,0.09);
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--paper);
+  font-family: 'Outfit', sans-serif;
+  color: var(--text1);
+  font-size: 16px;
+}
+
+/* ── GRID PAPER BG ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(14,140,140,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14,140,140,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ══ SCREENS ══ */
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transition: opacity .35s ease;
+  z-index: 1; overflow: hidden;
+}
+.screen.active { opacity: 1; pointer-events: all; }
+
+/* ══ PROGRESS ══ */
+#prog-bar {
+  position: fixed; top: 0; left: 0; height: 4px; z-index: 200;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  transition: width .35s ease;
+}
+
+/* ══ NAV ARROWS ══ */
+.nav-arr {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--white); border: 2px solid var(--ice);
+  box-shadow: var(--shadow2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--navy); cursor: pointer;
+  z-index: 200; transition: all .22s;
+}
+.nav-arr:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
+.nav-arr.off { opacity: 0; pointer-events: none; }
+#prev { left: 8px; }
+#next { right: 8px; }
+
+/* ══ DOTS ══ */
+#dots {
+  position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 7px; z-index: 200;
+}
+.dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--steel); opacity: .45; cursor: pointer;
+  transition: all .25s;
+}
+.dot.on { background: var(--teal); opacity: 1; transform: scale(1.25); }
+
+/* ══ SHARED LAYOUT ══ */
+.s-head {
+  flex-shrink: 0; padding: 16px 28px 14px;
+  display: flex; align-items: center; gap: 14px;
+}
+.s-head h2 {
+  font-family: 'Bitter', serif;
+  font-size: clamp(17px, 2.8vw, 24px); font-weight: 700;
+  color: #fff; line-height: 1.25;
+}
+.s-head .s-num {
+  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+  background: rgba(255,255,255,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: #fff;
+}
+.s-body {
+  flex: 1; overflow: hidden;
+  padding: 16px 28px; display: flex; flex-direction: column; gap: 14px;
+}
+.s-foot {
+  flex-shrink: 0; padding: 7px 28px;
+  font-size: 11px; color: var(--text3); text-align: center;
+  border-top: 1px solid rgba(14,140,140,0.15);
+}
+.s-foot.inv { color: rgba(255,255,255,.35); border-top-color: rgba(255,255,255,.12); }
+
+/* ── CARDS ── */
+.card {
+  background: var(--white); border-radius: 14px;
+  padding: 16px 20px; box-shadow: var(--shadow2);
+  border-left: 4px solid var(--teal);
+}
+.card.gold  { border-left-color: var(--gold); }
+.card.navy  { border-left-color: var(--navy); }
+.card.red   { border-left-color: var(--red); }
+.card.green { border-left-color: var(--green); }
+.card-label {
+  font-size: 10.5px; letter-spacing: 2.5px; text-transform: uppercase;
+  font-weight: 700; color: var(--text3); margin-bottom: 5px;
+}
+.card-title {
+  font-family: 'Bitter', serif;
+  font-size: clamp(15px, 2.2vw, 18px); font-weight: 700; color: var(--text1);
+  margin-bottom: 6px; line-height: 1.3;
+}
+.card-body {
+  font-size: clamp(13px, 1.8vw, 15px); color: var(--text2);
+  line-height: 1.65;
+}
+.card.dark {
+  background: var(--navy); border-color: var(--teal2);
+}
+.card.dark .card-label { color: var(--teal2); }
+.card.dark .card-title { color: #fff; }
+.card.dark .card-body  { color: rgba(255,255,255,.75); }
+
+/* ── BULLETS ── */
+.blist { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.blist li {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: clamp(13px, 1.8vw, 15px); color: var(--text2); line-height: 1.55;
+}
+.blist li .bmark {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  margin-top: 6px; background: var(--teal);
+}
+.blist.gold li .bmark { background: var(--gold); }
+.blist.navy li .bmark { background: var(--navy); }
+.blist.red  li .bmark { background: var(--red); }
+
+/* ── HIGHLIGHT BOX ── */
+.hbox {
+  border-radius: 12px; padding: 14px 18px;
+  font-size: clamp(13px, 1.9vw, 15px); line-height: 1.65; font-weight: 500;
+}
+.hbox.teal  { background: var(--teal-light); color: #0A5555; border: 1px solid rgba(14,140,140,.3); }
+.hbox.gold  { background: var(--gold-light); color: #7A5008; border: 1px solid rgba(232,160,32,.3); }
+.hbox.navy  { background: var(--navy); color: rgba(255,255,255,.85); }
+.hbox strong { font-weight: 700; }
+
+/* ── TAGS ── */
+.tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+.tag {
+  padding: 4px 13px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  background: var(--ice); color: var(--navy2); border: 1px solid rgba(14,140,140,.25);
+}
+.tag.t { background: rgba(14,140,140,.12); color: var(--teal); }
+.tag.g { background: var(--gold-light); color: #7A5008; }
+
+/* ══════════════════════════════════════
+   SCREEN 0 – PORTADA
+══════════════════════════════════════ */
+#s0 {
+  background: linear-gradient(145deg, #0D1B2A 0%, #1A2F5A 55%, #0E4A6A 100%);
+  justify-content: center; align-items: center; text-align: center;
+  padding: 32px 28px; gap: 0;
+}
+#s0::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 65% 25%, rgba(14,140,140,.22) 0%, transparent 55%),
+              radial-gradient(ellipse at 20% 75%, rgba(232,160,32,.14) 0%, transparent 45%);
+}
+.cov-chip {
+  position: relative; z-index: 2;
+  display: inline-block; background: rgba(14,140,140,.22);
+  border: 1px solid rgba(14,140,140,.5); color: var(--teal2);
+  padding: 6px 22px; border-radius: 40px;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600;
+  margin-bottom: 22px;
+}
+.cov-title {
+  position: relative; z-index: 2;
+  font-family: 'Bitter', serif;
+  font-size: clamp(32px, 6vw, 60px); font-weight: 900;
+  color: #fff; line-height: 1.1; margin-bottom: 10px;
+}
+.cov-title span { color: var(--teal2); }
+.cov-sub {
+  position: relative; z-index: 2;
+  font-size: clamp(14px, 2vw, 18px); color: rgba(255,255,255,.6);
+  max-width: 520px; margin: 0 auto 28px; line-height: 1.55;
+}
+.cov-author {
+  position: relative; z-index: 2;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+  padding: 11px 26px; border-radius: 40px; margin-bottom: 36px;
+  font-size: clamp(13px, 1.8vw, 15px); color: rgba(255,255,255,.8);
+}
+.cov-author b { color: var(--gold2); }
+.btn-start {
+  position: relative; z-index: 2;
+  background: linear-gradient(135deg, var(--teal), #0A6060);
+  color: #fff; border: none; padding: 16px 44px; border-radius: 40px;
+  font-family: 'Outfit', sans-serif; font-size: clamp(14px, 1.8vw, 16px); font-weight: 700;
+  cursor: pointer; box-shadow: 0 8px 28px rgba(14,140,140,.45);
+  transition: all .28s; letter-spacing: .5px;
+}
+.btn-start:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(14,140,140,.55); }
+.cov-topics {
+  position: relative; z-index: 2;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 24px;
+}
+.ctopic {
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.6); padding: 5px 14px; border-radius: 20px;
+  font-size: 12px;
+}
+
+/* ══════════════════════════════════════
+   SCREEN 1 – CONSTRUCTIVISMO
+══════════════════════════════════════ */
+#s1 .s-head { background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%); }
+#s1 .s-body { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr auto; }
+
+/* ══════════════════════════════════════
+   SCREEN 2 – ESQUEMAS
+══════════════════════════════════════ */
+#s2 .s-head { background: linear-gradient(135deg, #0A4A6A 0%, var(--teal) 100%); }
+#s2 .s-body { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto 1fr; }
+
+/* ══════════════════════════════════════
+   SCREEN 3 – ASIMILACIÓN vs ACOMODACIÓN
+══════════════════════════════════════ */
+#s3 .s-head { background: linear-gradient(135deg, #7A4500 0%, var(--gold) 100%); }
+#s3 .s-body { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr auto; }
+
+/* ══════════════════════════════════════
+   SCREEN 4 – MECANISMOS
+══════════════════════════════════════ */
+#s4 .s-head { background: linear-gradient(135deg, #1A3A60 0%, var(--slate) 100%); }
+#s4 .s-body { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 12px; }
+
+/* ══════════════════════════════════════
+   SCREEN 5 – CICLO DE EQUILIBRIO
+══════════════════════════════════════ */
+#s5 .s-head { background: linear-gradient(135deg, #0A4A4A 0%, var(--teal) 100%); }
+#s5 .s-body { display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: auto; }
+
+/* ══════════════════════════════════════
+   SCREEN 6 – 4 ETAPAS (overview)
+══════════════════════════════════════ */
+#s6 .s-head { background: linear-gradient(135deg, var(--navy) 0%, #2A4A90 100%); }
+#s6 .s-body { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: auto 1fr; }
+
+/* ══════════════════════════════════════
+   SCREEN 7 – ETAPAS DETALLE (TABS)
+══════════════════════════════════════ */
+#s7 .s-head { background: linear-gradient(135deg, #1A3A60 0%, #2A5A90 100%); }
+#s7 .s-body { gap: 10px; }
+
+/* ══════════════════════════════════════
+   SCREEN 8 – TRANSFORMACIÓN RADICAL
+══════════════════════════════════════ */
+#s8 .s-head { background: linear-gradient(135deg, #2A1A60 0%, #5A3A90 100%); }
+#s8 .s-body { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr auto; }
+
+/* ══════════════════════════════════════
+   SCREEN 9 – AUTOEVALUACIÓN
+══════════════════════════════════════ */
+#s9 .s-head { background: linear-gradient(135deg, #0A3A30 0%, var(--teal) 100%); }
+
+/* ══════════════════════════════════════
+   SCREEN 10 – RESUMEN
+══════════════════════════════════════ */
+#s10 {
+  background: linear-gradient(145deg, #0D1B2A 0%, #1A2F5A 60%, #0E4A6A 100%);
+}
+#s10::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 70% 20%, rgba(14,140,140,.2) 0%, transparent 55%);
+}
+
+/* ─── STAGE CARDS (s6) ─── */
+.stage-card {
+  border-radius: 14px; padding: 16px 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  text-align: center; cursor: pointer; transition: transform .25s, box-shadow .25s;
+  border: 2px solid transparent;
+}
+.stage-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.sc-0 { background: linear-gradient(160deg, #E8F8F8, #C0EDED); border-color: var(--teal2); }
+.sc-1 { background: linear-gradient(160deg, #FEF3D0, #FCE598); border-color: var(--gold2); }
+.sc-2 { background: linear-gradient(160deg, #E8EEF8, #C8D8F0); border-color: var(--steel); }
+.sc-3 { background: linear-gradient(160deg, #E8E8F8, #C8C8F0); border-color: #8888CC; }
+.sc-num {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 17px; color: #fff; flex-shrink: 0;
+}
+.sc-0 .sc-num { background: var(--teal); }
+.sc-1 .sc-num { background: var(--gold); }
+.sc-2 .sc-num { background: var(--slate); }
+.sc-3 .sc-num { background: #7070C0; }
+.sc-icon { font-size: 28px; }
+.sc-name { font-family: 'Bitter', serif; font-size: 14px; font-weight: 700; color: var(--text1); line-height: 1.25; }
+.sc-age  { font-size: 12px; color: var(--text3); font-weight: 600; }
+.sc-profile { font-size: 12px; font-style: italic; color: var(--text2); }
+
+/* ─── TABS (s7) ─── */
+.tab-bar { display: flex; gap: 6px; flex-shrink: 0; }
+.tab-btn {
+  flex: 1; padding: 10px 8px; border-radius: 10px;
+  border: 2px solid var(--ice); background: var(--white);
+  font-family: 'Outfit', sans-serif; font-size: clamp(11px, 1.5vw, 13px);
+  font-weight: 700; cursor: pointer; transition: all .22s;
+  color: var(--text2); text-align: center;
+}
+.tab-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.tab-btn:hover:not(.active) { border-color: var(--teal); color: var(--teal); }
+.tab-pane { display: none; flex: 1; }
+.tab-pane.active { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ─── CYCLE CARDS (s5) ─── */
+.cycle-card {
+  border-radius: 14px; padding: 14px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  text-align: center;
+}
+.cy-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--teal); flex-shrink: 0;
+  align-self: center;
+}
+.cy-num {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 15px; color: #fff;
+}
+.cy-title { font-family: 'Bitter', serif; font-size: 13px; font-weight: 700; color: var(--text1); line-height: 1.3; }
+.cy-body  { font-size: 11.5px; color: var(--text2); line-height: 1.5; }
+
+/* ─── MECHANISM CARDS ─── */
+.mech-card {
+  border-radius: 14px; padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.mech-card .mc-num {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 17px; color: #fff; margin-bottom: 4px;
+}
+.mech-card .mc-title { font-family: 'Bitter', serif; font-size: clamp(14px, 2vw, 17px); font-weight: 700; }
+.mech-card .mc-sub   { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; }
+.mech-card .mc-body  { font-size: clamp(12.5px, 1.7vw, 14px); line-height: 1.6; }
+.mc-teal   { background: linear-gradient(135deg,#E0F6F6,#B0E8E8); }
+.mc-teal   .mc-num { background: var(--teal); } .mc-teal .mc-title { color: #054444; } .mc-teal .mc-sub { color: var(--teal); } .mc-teal .mc-body { color: #0A5050; }
+.mc-gold   { background: linear-gradient(135deg,#FEF3D0,#FCDFA0); }
+.mc-gold   .mc-num { background: var(--gold); } .mc-gold .mc-title { color: #4A3000; } .mc-gold .mc-sub { color: #A07010; } .mc-gold .mc-body { color: #5A4010; }
+.mc-navy   { background: linear-gradient(135deg,#E8EEF8,#C0D0E8); }
+.mc-navy   .mc-num { background: var(--navy); } .mc-navy .mc-title { color: var(--navy); } .mc-navy .mc-sub { color: var(--navy2); } .mc-navy .mc-body { color: var(--navy2); }
+.mc-purple { background: linear-gradient(135deg,#EDE8F8,#D0C0F0); }
+.mc-purple .mc-num { background: #7060B8; } .mc-purple .mc-title { color: #2A1060; } .mc-purple .mc-sub { color: #7060B8; } .mc-purple .mc-body { color: #3A2070; }
+
+/* ─── QUIZ ─── */
+.quiz-wrap { flex: 1; display: flex; flex-direction: column; padding: 16px 28px; gap: 12px; overflow: hidden; }
+.q-prog-row { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.q-prog-bar { flex: 1; height: 6px; background: var(--ice); border-radius: 3px; overflow: hidden; }
+.q-prog-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--gold)); border-radius: 3px; transition: width .35s; }
+.q-counter   { font-size: 13px; color: var(--text3); font-weight: 600; }
+.q-score     { background: var(--ice); border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 700; color: var(--navy2); }
+.q-text {
+  font-family: 'Bitter', serif;
+  font-size: clamp(15px, 2.5vw, 19px); font-weight: 700; color: var(--text1);
+  background: var(--white); border-left: 5px solid var(--teal);
+  padding: 16px 20px; border-radius: 12px; line-height: 1.45; flex-shrink: 0;
+}
+.q-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; }
+.q-opt {
+  background: var(--white); border: 2px solid var(--ice);
+  border-radius: 12px; padding: 13px 17px;
+  font-family: 'Outfit', sans-serif; font-size: clamp(13px, 1.8vw, 15px);
+  color: var(--text1); text-align: left; cursor: pointer;
+  transition: all .22s; line-height: 1.45; font-weight: 500;
+}
+.q-opt:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-light); }
+.q-opt.ok   { background: #D0F0DA; border-color: #2A8050; color: #0A4020; }
+.q-opt.bad  { background: #F8D8D0; border-color: var(--red); color: #6A1010; }
+.q-opt:disabled { cursor: default; }
+.q-fb { border-radius: 12px; padding: 12px 18px; font-size: clamp(13px, 1.8vw, 15px); line-height: 1.55; flex-shrink: 0; }
+.q-fb.ok  { background: #D0F0DA; color: #0A4020; border: 1px solid #2A8050; }
+.q-fb.bad { background: #F8D8D0; color: #6A1010; border: 1px solid var(--red); }
+.q-fb.hide { display: none; }
+.q-nav { display: flex; justify-content: flex-end; gap: 10px; flex-shrink: 0; }
+.qbtn {
+  background: var(--teal); color: #fff; border: none;
+  padding: 11px 28px; border-radius: 24px; font-family: 'Outfit', sans-serif;
+  font-size: clamp(13px, 1.7vw, 15px); font-weight: 700; cursor: pointer; transition: all .22s;
+}
+.qbtn:hover { background: #0A6060; }
+.qbtn.sec { background: var(--ice); color: var(--text2); }
+.qbtn.sec:hover { background: var(--ice); color: var(--teal); }
+.q-result {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 18px; text-align: center;
+}
+.res-ring {
+  width: 110px; height: 110px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal), var(--gold));
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  box-shadow: 0 8px 32px rgba(14,140,140,.35);
+}
+.res-ring .rn { font-family: 'Bitter', serif; font-size: 36px; font-weight: 900; color: #fff; }
+.res-ring .rd { font-size: 13px; color: rgba(255,255,255,.75); }
+.res-msg { font-family: 'Bitter', serif; font-size: clamp(18px,3vw,24px); font-weight: 700; color: var(--navy); }
+.res-sub { font-size: clamp(13px,1.8vw,15px); color: var(--text3); max-width: 420px; line-height: 1.6; }
+.res-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+/* ─── FINAL SCREEN ─── */
+.fin-head { padding: 22px 32px; text-align: center; flex-shrink: 0; position: relative; z-index: 2; }
+.fin-head h2 { font-family: 'Bitter', serif; font-size: clamp(20px,3.5vw,30px); font-weight: 900; color: #fff; }
+.fin-head p  { font-size: 13px; color: rgba(255,255,255,.55); margin-top: 5px; }
+.fin-grid {
+  flex: 1; overflow: hidden; padding: 0 28px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  position: relative; z-index: 2;
+}
+.fin-card {
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+  border-radius: 14px; padding: 16px 14px;
+  display: flex; flex-direction: column; gap: 8px; text-align: center;
+}
+.fin-card .fi { font-size: 28px; }
+.fin-card .ft { font-family: 'Bitter', serif; font-size: 13.5px; font-weight: 700; color: var(--teal2); }
+.fin-card .fb { font-size: 12px; color: rgba(255,255,255,.65); line-height: 1.55; }
+.fin-quote {
+  background: rgba(232,160,32,.15); border: 1px solid rgba(232,160,32,.3);
+  border-radius: 12px; padding: 14px 22px; margin: 0 28px 10px;
+  font-size: clamp(12px,1.7vw,14px); color: rgba(255,255,255,.8);
+  font-style: italic; text-align: center; flex-shrink: 0;
+  position: relative; z-index: 2;
+}
+.fin-cta { padding: 14px 28px; text-align: center; flex-shrink: 0; position: relative; z-index: 2; }
+.fin-cta p { font-size: 11px; color: rgba(255,255,255,.3); margin-top: 10px; }
+
+/* ─── SPAN HELPERS ─── */
+.span2 { grid-column: span 2; }
+.span3 { grid-column: span 3; }
+.full  { grid-column: 1 / -1; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 800px) {
+  #s1 .s-body, #s3 .s-body, #s4 .s-body, #s8 .s-body { grid-template-columns: 1fr; }
+  #s2 .s-body { grid-template-columns: 1fr; }
+  #s5 .s-body { grid-template-columns: 1fr 1fr; }
+  #s6 .s-body { grid-template-columns: 1fr 1fr; }
+  .fin-grid   { grid-template-columns: 1fr 1fr; }
+  .tab-pane.active { grid-template-columns: 1fr; }
+  .q-opts { grid-template-columns: 1fr; }
+  .s-body, .quiz-wrap { padding: 12px 14px; }
+  .s-head { padding: 12px 16px; }
+  #prev { left: 3px; } #next { right: 3px; }
+}
+@media (max-width: 500px) {
+  #s6 .s-body, .fin-grid { grid-template-columns: 1fr 1fr; }
+  .stage-card { padding: 10px 8px; }
+  .tab-btn { font-size: 10px; padding: 8px 5px; }
+}
+</style>
+</head>
+<body>
+
+<div id="prog-bar" style="width:0%"></div>
+<button class="nav-arr off" id="prev" onclick="go(-1)">&#8592;</button>
+<button class="nav-arr" id="next" onclick="go(1)">&#8594;</button>
+<div id="dots"></div>
+
+<!-- ════════════════════════════════════════
+     S0 – PORTADA
+════════════════════════════════════════ -->
+<div class="screen active" id="s0">
+  <span class="cov-chip">🧠 Guía de Estudio Dinámica</span>
+  <h1 class="cov-title">Construyendo<br>la <span>Mente</span></h1>
+  <p class="cov-sub">Teoría del Desarrollo Cognoscitivo de Jean Piaget</p>
+  <div class="cov-author">✍️ <b>Prof. Francisco De Jesús Luna Benitez</b></div>
+  <button class="btn-start" onclick="goTo(1)">Comenzar Guía ➜</button>
+  <div class="cov-topics">
+    <span class="ctopic">🏗️ Constructivismo</span>
+    <span class="ctopic">🧩 Esquemas</span>
+    <span class="ctopic">⚙️ Asimilación & Acomodación</span>
+    <span class="ctopic">⚖️ Equilibrio</span>
+    <span class="ctopic">📊 4 Etapas</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S1 – EL ENFOQUE CONSTRUCTIVISTA
+════════════════════════════════════════ -->
+<div class="screen" id="s1">
+  <div class="s-head">
+    <div class="s-num">🏗️</div>
+    <h2>Los Cimientos: El Enfoque Constructivista</h2>
+  </div>
+  <div class="s-body">
+    <!-- Mito -->
+    <div class="card red">
+      <div class="card-label">❌ El Mito — Visión Tradicional</div>
+      <div class="card-title">El Niño como Recipiente Pasivo</div>
+      <ul class="blist red" style="margin-top:6px">
+        <li><span class="bmark"></span>Los niños reciben el conocimiento sin procesarlo</li>
+        <li><span class="bmark"></span>El conocimiento es plasmado y moldeado por el ambiente</li>
+        <li><span class="bmark"></span>El maestro "vacía" información en la mente del alumno</li>
+      </ul>
+    </div>
+    <!-- Realidad -->
+    <div class="card green">
+      <div class="card-label">✅ La Realidad de Piaget</div>
+      <div class="card-title">El Niño como Pequeño Científico</div>
+      <ul class="blist" style="margin-top:6px">
+        <li><span class="bmark"></span><strong>Activo:</strong> busca activamente el conocimiento</li>
+        <li><span class="bmark"></span><strong>Interacción Recíproca:</strong> posee su propia lógica</li>
+        <li><span class="bmark"></span>Interpreta el mundo a través de la experiencia directa</li>
+      </ul>
+    </div>
+    <!-- Principio central -->
+    <div class="hbox navy full">
+      <strong>📌 Principio Central:</strong> El conocimiento no se puede transmitir directamente. Es necesario <strong>operar sobre la información, manipularla y transformarla</strong> para que tenga significado.
+    </div>
+    <!-- Implicación -->
+    <div class="card gold full">
+      <div class="card-label">💡 Implicación Pedagógica</div>
+      <div class="card-body">El papel del docente no es "depositar" información, sino <strong>crear ambientes y experiencias</strong> que permitan al estudiante construir su propio conocimiento mediante la exploración activa y el pensamiento.</div>
+    </div>
+  </div>
+  <div class="s-foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S2 – LOS ESQUEMAS
+════════════════════════════════════════ -->
+<div class="screen" id="s2">
+  <div class="s-head">
+    <div class="s-num">🧩</div>
+    <h2>Bloques de Construcción: ¿Qué son los Esquemas?</h2>
+  </div>
+  <div class="s-body">
+    <!-- Definición -->
+    <div class="card full">
+      <div class="card-label">📖 Definición</div>
+      <div class="card-title">Esquemas: Las Estructuras Mentales</div>
+      <div class="card-body">Los <strong>esquemas</strong> son conjuntos de acciones físicas, operaciones mentales, conceptos o teorías que usamos para <strong>organizar y obtener información</strong> sobre el mundo. Son los "bloques de construcción" del pensamiento.</div>
+    </div>
+    <!-- Tipo 1 -->
+    <div class="mech-card mc-teal">
+      <div class="mc-num">1</div>
+      <div class="mc-sub">Primer nivel</div>
+      <div class="mc-title">⚙️ Acción Física</div>
+      <div class="mc-body">El lactante conoce el mundo a través de las acciones que realiza: <strong>agarrar, chupar, golpear</strong>. El conocimiento ES la acción.</div>
+    </div>
+    <!-- Tipo 2 -->
+    <div class="mech-card mc-gold">
+      <div class="mc-num">2</div>
+      <div class="mc-sub">Segundo nivel</div>
+      <div class="mc-title">⚙️⚙️ Operación Mental</div>
+      <div class="mc-body">El niño mayor comienza a <strong>organizar el conocimiento internamente</strong>, sin necesidad de actuar físicamente. Piensa antes de actuar.</div>
+    </div>
+    <!-- Tipo 3 -->
+    <div class="mech-card mc-navy">
+      <div class="mc-num">3</div>
+      <div class="mc-sub">Tercer nivel</div>
+      <div class="mc-title">🔤 Sistema de Símbolos</div>
+      <div class="mc-body">Uso de <strong>lenguaje y lógica abstracta</strong>. El adolescente piensa en hipótesis, símbolos y conceptos sin referentes concretos.</div>
+    </div>
+    <!-- Nota importante -->
+    <div class="hbox gold full">
+      <strong>⚠️ Nota Clave:</strong> El desarrollo cognoscitivo no solo construye nuevos esquemas, sino que <strong>reorganiza y diferencia los ya existentes</strong>. Es una transformación cualitativa continua.
+    </div>
+  </div>
+  <div class="s-foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S3 – ASIMILACIÓN vs ACOMODACIÓN
+════════════════════════════════════════ -->
+<div class="screen" id="s3">
+  <div class="s-head">
+    <div class="s-num">⚙️</div>
+    <h2>El Proceso de Adaptación: Asimilación vs. Acomodación</h2>
+  </div>
+  <div class="s-body">
+    <!-- Escenario -->
+    <div class="hbox teal full">
+      🎬 <strong>Escenario:</strong> El "pequeño científico" ve un <strong>burro</strong> por primera vez. ¿Qué hace su mente?
+    </div>
+    <!-- Asimilación -->
+    <div class="card" style="border-left-color: var(--teal)">
+      <div class="card-label">🔵 Asimilación</div>
+      <div class="card-title">Moldear lo Nuevo a lo Existente</div>
+      <div class="card-body"><strong>¿Qué es?</strong> Moldea la nueva información para que encaje en los esquemas actuales.</div>
+      <div style="margin-top:10px; background: var(--teal-light); border-radius:10px; padding:10px 14px; font-size:13.5px; color:#054444;">
+        <strong>🔍 Proceso:</strong> Busca en su "archivo" mental → Encuentra esquema de 'Caballo'.<br>
+        <strong>📤 Resultado:</strong> Lo llama <em>"caballito con grandes orejas"</em>. La información se ajusta a lo que ya sabe.
+      </div>
+    </div>
+    <!-- Acomodación -->
+    <div class="card gold">
+      <div class="card-label">🟡 Acomodación</div>
+      <div class="card-title">Modificar los Esquemas Existentes</div>
+      <div class="card-body"><strong>¿Qué es?</strong> Modifica los esquemas actuales para encajar información discrepante.</div>
+      <div style="margin-top:10px; background: var(--gold-light); border-radius:10px; padding:10px 14px; font-size:13.5px; color:#5A4010;">
+        <strong>🔍 Proceso:</strong> Nota que hace sonido distinto y no se comporta como caballo.<br>
+        <strong>📤 Resultado:</strong> Crea un nuevo esquema: <em>"Un Burro"</em>. Reestructuración real.
+      </div>
+    </div>
+    <!-- Resumen -->
+    <div class="hbox navy full">
+      <strong>🔑 La diferencia clave:</strong> En la <strong style="color:var(--teal2)">Asimilación</strong> la información se adapta al esquema; en la <strong style="color:var(--gold2)">Acomodación</strong> el esquema se adapta a la información. Ambas son necesarias para crecer cognitivamente.
+    </div>
+  </div>
+  <div class="s-foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S4 – MECANISMOS DEL DESARROLLO
+════════════════════════════════════════ -->
+<div class="screen" id="s4">
+  <div class="s-head">
+    <div class="s-num">⚙️</div>
+    <h2>Los Mecanismos del Desarrollo: El Motor Cognitivo</h2>
+  </div>
+  <div class="s-body">
+    <div class="mech-card mc-teal">
+      <div class="mc-num">1</div>
+      <div class="mc-sub">Mecanismo 1</div>
+      <div class="mc-title">🧬 Maduración</div>
+      <div class="mc-body">Maduración de las estructuras físicas heredadas genéticamente. El <strong>"hardware" biológico base</strong>. Sin la maduración apropiada, ciertas capacidades no son posibles.</div>
+    </div>
+    <div class="mech-card mc-gold">
+      <div class="mc-num">2</div>
+      <div class="mc-sub">Mecanismo 2</div>
+      <div class="mc-title">🖐️ Experiencias Físicas</div>
+      <div class="mc-body">Interacción directa con el entorno físico. <strong>Manipulación directa del entorno</strong>: tocar, experimentar, explorar. El aprendizaje activo en acción.</div>
+    </div>
+    <div class="mech-card mc-navy">
+      <div class="mc-num">3</div>
+      <div class="mc-sub">Mecanismo 3</div>
+      <div class="mc-title">👥 Transmisión Social</div>
+      <div class="mc-body">Información y conocimientos compartidos por otros. <strong>Educación y cultura</strong>: idioma, valores, normas y saberes transmitidos por la sociedad.</div>
+    </div>
+    <div class="mech-card mc-purple">
+      <div class="mc-num">4</div>
+      <div class="mc-sub">Mecanismo 4 — El más importante</div>
+      <div class="mc-title">⚖️ Equilibrio</div>
+      <div class="mc-body"><strong>El engranaje principal.</strong> La tendencia innata a conservar estables las estructuras cognoscitivas. Impulsa la Asimilación y la Acomodación para restaurar el balance mental.</div>
+    </div>
+    <div class="hbox teal full">
+      <strong>🔬 Piaget es un teórico interactivo:</strong> el desarrollo cognoscitivo es una <strong>compleja interacción</strong> de factores innatos y ambientales. Los 4 mecanismos trabajan juntos siempre.
+    </div>
+  </div>
+  <div class="s-foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S5 – CICLO DE EQUILIBRIO
+════════════════════════════════════════ -->
+<div class="screen" id="s5">
+  <div class="s-head">
+    <div class="s-num">🔄</div>
+    <h2>Síntesis: El Ciclo de Equilibrio — Bucle de Resolución de Problemas</h2>
+  </div>
+  <div class="s-body" style="grid-template-columns: repeat(5,1fr); align-items: center;">
+    <div class="cycle-card" style="background:linear-gradient(160deg,#E8F8F8,#C0EDED)">
+      <div class="cy-num" style="background:var(--teal)">1</div>
+      <div class="cy-title">⚖️ Estado de Equilibrio</div>
+      <div class="cy-body">Los esquemas están en <strong>armonía con el entorno</strong>. Todo tiene sentido. El niño está cómodo.</div>
+    </div>
+    <div class="cycle-card" style="background:linear-gradient(160deg,#FEF3D0,#FCE598)">
+      <div class="cy-num" style="background:var(--gold)">2</div>
+      <div class="cy-title">📥 Nueva Información</div>
+      <div class="cy-body">Entra información <strong>discrepante</strong> que los esquemas actuales no pueden procesar.</div>
+    </div>
+    <div class="cycle-card" style="background:linear-gradient(160deg,#F8E8E8,#F0C0C0)">
+      <div class="cy-num" style="background:var(--red)">3</div>
+      <div class="cy-title">⚡ Desequilibrio</div>
+      <div class="cy-body">Estado intrínsecamente <strong>insatisfactorio</strong>. Genera tensión cognitiva. El niño necesita resolver.</div>
+    </div>
+    <div class="cycle-card" style="background:linear-gradient(160deg,#E8EEF8,#C0D0E8)">
+      <div class="cy-num" style="background:var(--navy)">4</div>
+      <div class="cy-title">🔧 Adaptación Activa</div>
+      <div class="cy-body">El niño usa <strong>Asimilación y Acomodación</strong> para resolver el conflicto cognitivo.</div>
+    </div>
+    <div class="cycle-card" style="background:linear-gradient(160deg,#E8F8E8,#B0E8C0)">
+      <div class="cy-num" style="background:var(--green)">5</div>
+      <div class="cy-title">🌟 Nivel Superior</div>
+      <div class="cy-body">Equilibrio restaurado a un <strong>nivel más alto</strong> de funcionamiento mental. ¡Creció cognitivamente!</div>
+    </div>
+    <div class="hbox navy full" style="margin-top:6px">
+      🔁 El ciclo se repite constantemente. Cada desequilibrio resuelto produce <strong>un pensamiento más sofisticado</strong>. Así avanza el desarrollo.
+    </div>
+  </div>
+  <div class="s-foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S6 – LAS 4 ETAPAS (OVERVIEW)
+════════════════════════════════════════ -->
+<div class="screen" id="s6">
+  <div class="s-head">
+    <div class="s-num">📊</div>
+    <h2>El Plano General: Las 4 Etapas Cognoscitivas</h2>
+  </div>
+  <div class="s-body">
+    <div class="hbox teal full">
+      🔑 <strong>Secuencia Invariable:</strong> Todos los niños pasan por las 4 etapas <strong>en el mismo orden</strong>. No hay retroceso a formas anteriores de razonamiento.
+    </div>
+    <div class="stage-card sc-0" onclick="openTab(0)">
+      <div class="sc-num">1</div>
+      <div class="sc-icon">👶</div>
+      <div class="sc-name">Sensoriomotora</div>
+      <div class="sc-age">0 – 2 años</div>
+      <div class="sc-profile">El niño <em>activo</em></div>
+    </div>
+    <div class="stage-card sc-1" onclick="openTab(1)">
+      <div class="sc-num">2</div>
+      <div class="sc-icon">🧸</div>
+      <div class="sc-name">Preoperacional</div>
+      <div class="sc-age">2 – 7 años</div>
+      <div class="sc-profile">El niño <em>intuitivo</em></div>
+    </div>
+    <div class="stage-card sc-2" onclick="openTab(2)">
+      <div class="sc-num">3</div>
+      <div class="sc-icon">⚖️</div>
+      <div class="sc-name">Operaciones Concretas</div>
+      <div class="sc-age">7 – 11 años</div>
+      <div class="sc-profile">El niño <em>práctico</em></div>
+    </div>
+    <div class="stage-card sc-3" onclick="openTab(3)">
+      <div class="sc-num">4</div>
+      <div class="sc-icon">🔭</div>
+      <div class="sc-name">Operaciones Formales</div>
+      <div class="sc-age">11 – 12+ años</div>
+      <div class="sc-profile">El niño <em>reflexivo</em></div>
+    </div>
+    <div class="hbox gold full" style="text-align:center">
+      👆 Toca cualquier etapa para ver su detalle, o avanza a la siguiente pantalla
+    </div>
+  </div>
+  <div class="s-foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S7 – ETAPAS DETALLE (TABS)
+════════════════════════════════════════ -->
+<div class="screen" id="s7">
+  <div class="s-head">
+    <div class="s-num">📋</div>
+    <h2>Las 4 Etapas — Detalle por Etapa</h2>
+  </div>
+  <div class="s-body">
+    <!-- Tab buttons -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(0)">👶 Sensoriomotora</button>
+      <button class="tab-btn" onclick="switchTab(1)">🧸 Preoperacional</button>
+      <button class="tab-btn" onclick="switchTab(2)">⚖️ Op. Concretas</button>
+      <button class="tab-btn" onclick="switchTab(3)">🔭 Op. Formales</button>
+    </div>
+    <!-- Pane 0 -->
+    <div class="tab-pane active" id="tp0">
+      <div class="card">
+        <div class="card-label">👶 Etapa 1 · 0–2 años · El niño ACTIVO</div>
+        <div class="card-title">Sensoriomotora</div>
+        <div class="card-body">El bebé aprende a través de los <strong>sentidos y movimientos</strong>. Cada acción es un acto de conocimiento. El mundo existe porque puede tocarlo.</div>
+        <div class="tags"><span class="tag t">Reflejos</span><span class="tag t">Exploración</span><span class="tag t">Acción directa</span></div>
+      </div>
+      <div class="card gold">
+        <div class="card-label">🏆 Logros Clave</div>
+        <div class="card-title">Permanencia de Objetos</div>
+        <ul class="blist gold" style="margin-top:6px">
+          <li><span class="bmark"></span><strong>Conducta propositiva:</strong> orientada a metas (busca el juguete escondido)</li>
+          <li><span class="bmark"></span><strong>Permanencia de objetos:</strong> los objetos existen aunque no se vean</li>
+          <li><span class="bmark"></span>Inicio de la representación mental básica</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Pane 1 -->
+    <div class="tab-pane" id="tp1">
+      <div class="card">
+        <div class="card-label">🧸 Etapa 2 · 2–7 años · El niño INTUITIVO</div>
+        <div class="card-title">Preoperacional</div>
+        <div class="card-body">Aparece el <strong>lenguaje y el pensamiento simbólico</strong>. El niño usa palabras e imágenes para representar objetos. Pero el pensamiento aún es rígido y egocéntrico.</div>
+        <div class="tags"><span class="tag t">Juego simbólico</span><span class="tag t">Lenguaje</span><span class="tag t">Dibujo</span></div>
+      </div>
+      <div class="card gold">
+        <div class="card-label">⚠️ Limitaciones de esta Etapa</div>
+        <div class="card-title">Características del Pensamiento</div>
+        <ul class="blist gold" style="margin-top:6px">
+          <li><span class="bmark"></span><strong>Egocentrismo:</strong> dificultad para ver desde la perspectiva del otro</li>
+          <li><span class="bmark"></span><strong>Centralización:</strong> se enfoca en un solo aspecto a la vez</li>
+          <li><span class="bmark"></span><strong>Pensamiento rígido:</strong> no comprende la reversibilidad</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Pane 2 -->
+    <div class="tab-pane" id="tp2">
+      <div class="card">
+        <div class="card-label">⚖️ Etapa 3 · 7–11 años · El niño PRÁCTICO</div>
+        <div class="card-title">Operaciones Concretas</div>
+        <div class="card-body">El pensamiento se vuelve <strong>lógico</strong>, pero ligado a fenómenos reales y concretos. El niño puede resolver problemas con objetos físicos pero aún no con hipótesis abstractas.</div>
+        <div class="tags"><span class="tag t">Lógica concreta</span><span class="tag t">Reversibilidad</span><span class="tag t">Descentración</span></div>
+      </div>
+      <div class="card gold">
+        <div class="card-label">🏆 Operaciones Lógicas Adquiridas</div>
+        <div class="card-title">Nuevas Capacidades</div>
+        <ul class="blist gold" style="margin-top:6px">
+          <li><span class="bmark"></span><strong>Seriación:</strong> ordenar objetos según una dimensión</li>
+          <li><span class="bmark"></span><strong>Clasificación:</strong> agrupar objetos por categorías lógicas</li>
+          <li><span class="bmark"></span><strong>Conservación:</strong> la cantidad no cambia aunque cambie la forma</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Pane 3 -->
+    <div class="tab-pane" id="tp3">
+      <div class="card">
+        <div class="card-label">🔭 Etapa 4 · 11–12+ años · El niño REFLEXIVO</div>
+        <div class="card-title">Operaciones Formales</div>
+        <div class="card-body">Capacidad para el <strong>pensamiento abstracto y científico</strong>. Puede razonar sobre hipótesis, posibilidades y sistemas de ideas, sin necesidad de referentes concretos.</div>
+        <div class="tags"><span class="tag t">Pensamiento abstracto</span><span class="tag t">Hipótesis</span><span class="tag t">Deducción</span></div>
+      </div>
+      <div class="card gold">
+        <div class="card-label">🏆 Capacidades del Pensamiento Formal</div>
+        <div class="card-title">Logros Clave</div>
+        <ul class="blist gold" style="margin-top:6px">
+          <li><span class="bmark"></span><strong>Lógica proposicional:</strong> razona con "si...entonces"</li>
+          <li><span class="bmark"></span><strong>Razonamiento científico:</strong> formula y prueba hipótesis</li>
+          <li><span class="bmark"></span><strong>Pensamiento proporcional y sistemático:</strong> coordina múltiples variables</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="s-foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S8 – TRANSFORMACIÓN RADICAL
+════════════════════════════════════════ -->
+<div class="screen" id="s8">
+  <div class="s-head">
+    <div class="s-num">🌟</div>
+    <h2>Una Estructura en Transformación Radical</h2>
+  </div>
+  <div class="s-body">
+    <div class="hbox teal full">
+      🔬 El desarrollo cognoscitivo según Piaget no consiste solo en acumular datos (<em>cambios cuantitativos</em>), sino en <strong>transformaciones radicales</strong> de cómo se organiza el conocimiento (<em>cambios cualitativos</em>).
+    </div>
+    <div class="card">
+      <div class="card-label">📦 Cambio Cuantitativo — El Modelo Incorrecto</div>
+      <div class="card-title">Acumular más información</div>
+      <div class="card-body">Visión simplista: el desarrollo es solo agregar más datos a la misma estructura mental. Como llenar una biblioteca con más libros sin reorganizarla. <strong>Piaget rechaza este modelo.</strong></div>
+    </div>
+    <div class="card gold">
+      <div class="card-label">🔄 Cambio Cualitativo — El Modelo Correcto</div>
+      <div class="card-title">Reestructurar cómo se organiza el conocimiento</div>
+      <div class="card-body">En cada etapa, el niño <strong>destruye su antigua forma de entender el mundo</strong> y diseña una nueva. No es más conocimiento: es un conocimiento cualitativamente diferente y superior.</div>
+    </div>
+    <div class="hbox navy full">
+      🏗️ <strong>La metáfora perfecta:</strong> Aprender es fundamentalmente un acto de <strong>construcción arquitectónica</strong>. En cada etapa se demuele el edificio anterior y se erige uno nuevo, más sólido y complejo.
+    </div>
+    <div class="card" style="border-left-color: var(--navy)">
+      <div class="card-label">🎓 Implicación para el Aula</div>
+      <div class="card-title">¿Qué significa esto para el docente?</div>
+      <ul class="blist navy" style="margin-top:6px">
+        <li><span class="bmark"></span>Los errores de los niños son <strong>formas lógicas de pensar</strong> propias de su etapa</li>
+        <li><span class="bmark"></span>No se puede acelerar artificialmente el desarrollo con solo "enseñar más"</li>
+        <li><span class="bmark"></span>El docente debe <strong>respetar y estimular</strong> el nivel de desarrollo actual</li>
+      </ul>
+    </div>
+  </div>
+  <div class="s-foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S9 – AUTOEVALUACIÓN
+════════════════════════════════════════ -->
+<div class="screen" id="s9">
+  <div class="s-head">
+    <div class="s-num">🧪</div>
+    <h2>Autoevaluación — Pon a Prueba tu Comprensión</h2>
+  </div>
+  <div class="quiz-wrap">
+    <div class="q-prog-row">
+      <span class="q-counter" id="qctr">Pregunta 1 de 7</span>
+      <div class="q-prog-bar"><div class="q-prog-fill" id="qfill" style="width:0%"></div></div>
+      <span class="q-score" id="qsc">✅ 0 correctas</span>
+    </div>
+    <div id="qarea"></div>
+    <div class="q-nav" id="qnav"></div>
+  </div>
+  <div class="s-foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S10 – RESUMEN FINAL
+════════════════════════════════════════ -->
+<div class="screen" id="s10">
+  <div class="fin-head">
+    <h2>🏗️ Construyendo la Mente: Síntesis Final</h2>
+    <p>Lo que debes recordar de la Teoría Cognoscitiva de Jean Piaget</p>
+  </div>
+  <div class="fin-grid">
+    <div class="fin-card">
+      <div class="fi">🔨</div>
+      <div class="ft">Constructivismo</div>
+      <div class="fb">El niño construye activamente su conocimiento. No es un recipiente pasivo: es un pequeño científico.</div>
+    </div>
+    <div class="fin-card">
+      <div class="fi">🧩</div>
+      <div class="ft">Esquemas</div>
+      <div class="fb">Estructuras mentales que se reorganizan y diferencian: acción física → operación mental → símbolos.</div>
+    </div>
+    <div class="fin-card">
+      <div class="fi">⚙️</div>
+      <div class="ft">Adaptación</div>
+      <div class="fb">Asimilación (ajustar info al esquema) + Acomodación (ajustar esquema a la info) = aprendizaje real.</div>
+    </div>
+    <div class="fin-card">
+      <div class="fi">⚖️</div>
+      <div class="ft">Equilibrio</div>
+      <div class="fb">El motor del desarrollo: Desequilibrio → Adaptación → Nuevo equilibrio a nivel superior.</div>
+    </div>
+    <div class="fin-card" style="grid-column:span 2">
+      <div class="fi">📊</div>
+      <div class="ft">Las 4 Etapas (Secuencia Invariable)</div>
+      <div class="fb">Sensoriomotora (0-2) → Preoperacional (2-7) → Operaciones Concretas (7-11) → Operaciones Formales (11+). Todos pasan por ellas en ese orden.</div>
+    </div>
+    <div class="fin-card" style="grid-column:span 2">
+      <div class="fi">🔄</div>
+      <div class="ft">Transformación Radical</div>
+      <div class="fb">El desarrollo no acumula información: reestructura cómo se organiza el conocimiento. Cada etapa es una reconstrucción cualitativa de la realidad.</div>
+    </div>
+  </div>
+  <div class="fin-quote">
+    "En cada etapa, el niño destruye su antigua forma de entender el mundo y diseña una nueva, demostrando que aprender es, fundamentalmente, un acto de construcción arquitectónica."
+  </div>
+  <div class="fin-cta">
+    <button class="btn-start" onclick="goTo(0)" style="font-size:14px; padding:13px 32px">🔁 Reiniciar Guía</button>
+    <p>Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</p>
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────
+const TOTAL = 11;
+let cur = 0;
+
+// ── SCREENS ──────────────────────────────────────────
+function goTo(n) {
+  if (n === cur) return;
+  document.querySelectorAll('.screen')[cur].classList.remove('active');
+  document.querySelectorAll('.screen')[n].classList.add('active');
+  cur = n;
+  updateUI();
+  if (cur === 9) initQuiz();
+}
+function go(d) { goTo(Math.max(0, Math.min(TOTAL - 1, cur + d))); }
+
+function updateUI() {
+  const pct = (cur / (TOTAL - 1)) * 100;
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('prev').classList.toggle('off', cur === 0);
+  document.getElementById('next').classList.toggle('off', cur === TOTAL - 1);
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+
+// ── DOTS ──────────────────────────────────────────────
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+// ── TABS (s7) ──────────────────────────────────────────
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-pane').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+function openTab(idx) { goTo(7); switchTab(idx); }
+
+// ── QUIZ ──────────────────────────────────────────────
+const QS = [
+  {
+    q: "Según Piaget, ¿cómo ve el niño el conocimiento?",
+    opts: ["Lo recibe pasivamente del maestro","Lo construye activamente a través de la experiencia","Lo memoriza repitiendo la información","Lo copia del comportamiento de adultos"],
+    ans: 1,
+    fb: "✅ ¡Correcto! Para Piaget el niño es un 'pequeño científico' que construye activamente su conocimiento interactuando con el entorno."
+  },
+  {
+    q: "¿Qué son los 'esquemas' en la teoría de Piaget?",
+    opts: ["Dibujos que hacen los niños en clase","Solo los reflejos innatos del bebé","Conjuntos de acciones, operaciones o conceptos para organizar la realidad","El currículo escolar de cada grado"],
+    ans: 2,
+    fb: "✅ ¡Exacto! Los esquemas son conjuntos de acciones físicas, operaciones mentales, conceptos o teorías usados para organizar y obtener información sobre el mundo."
+  },
+  {
+    q: "Un niño ve un burro por primera vez y lo llama 'caballito con orejas grandes'. ¿Qué proceso usa?",
+    opts: ["Acomodación","Equilibrio","Desequilibrio","Asimilación"],
+    ans: 3,
+    fb: "✅ ¡Muy bien! Es Asimilación: moldea la nueva información (burro) para que encaje en un esquema existente (caballo)."
+  },
+  {
+    q: "¿Cuál es el mecanismo más importante del desarrollo según Piaget?",
+    opts: ["La maduración biológica","La transmisión social de conocimientos","El equilibrio","Las experiencias físicas con el entorno"],
+    ans: 2,
+    fb: "✅ ¡Correcto! El Equilibrio es 'el engranaje principal': la tendencia innata a conservar estables las estructuras cognoscitivas, que impulsa toda adaptación."
+  },
+  {
+    q: "¿En qué orden ocurren las etapas cognoscitivas de Piaget?",
+    opts: [
+      "Preoperacional → Sensoriomotora → Op. Concretas → Op. Formales",
+      "Sensoriomotora → Preoperacional → Op. Concretas → Op. Formales",
+      "Op. Formales → Op. Concretas → Preoperacional → Sensoriomotora",
+      "El orden varía según el niño"
+    ],
+    ans: 1,
+    fb: "✅ ¡Correcto! La secuencia es invariable: Sensoriomotora (0-2) → Preoperacional (2-7) → Operaciones Concretas (7-11) → Operaciones Formales (11+). Todos siguen ese orden."
+  },
+  {
+    q: "¿Qué es el 'Desequilibrio' en el ciclo cognitivo de Piaget?",
+    opts: [
+      "Un estado de descanso mental",
+      "Un estado insatisfactorio generado por información que los esquemas no pueden procesar",
+      "La meta final del desarrollo",
+      "Un problema de conducta del estudiante"
+    ],
+    ans: 1,
+    fb: "✅ ¡Perfecto! El desequilibrio es un estado intrínsecamente insatisfactorio que genera tensión cognitiva y obliga al niño a usar asimilación y acomodación para resolverlo."
+  },
+  {
+    q: "¿Cuál es la característica principal del pensamiento en la etapa de Operaciones Concretas?",
+    opts: [
+      "El pensamiento es abstracto e hipotético",
+      "El pensamiento es lógico pero ligado a fenómenos reales y concretos",
+      "El niño presenta egocentrismo y pensamiento rígido",
+      "El bebé conoce el mundo solo a través de sus sentidos"
+    ],
+    ans: 1,
+    fb: "✅ ¡Así es! En las Operaciones Concretas (7-11 años) el niño puede usar lógica y hacer operaciones como seriación, clasificación y conservación, pero aplicadas a situaciones concretas, no abstractas."
+  }
+];
+
+let qIdx = 0, score = 0, qAnswered = false;
+
+function initQuiz() {
+  qIdx = 0; score = 0; qAnswered = false;
+  renderQ();
+}
+
+function renderQ() {
+  if (qIdx >= QS.length) { showResult(); return; }
+  const q = QS[qIdx];
+  qAnswered = false;
+  document.getElementById('qctr').textContent = `Pregunta ${qIdx + 1} de ${QS.length}`;
+  document.getElementById('qfill').style.width = (qIdx / QS.length * 100) + '%';
+  document.getElementById('qarea').innerHTML = `
+    <div class="q-text">${q.q}</div>
+    <div class="q-opts">
+      ${q.opts.map((o, i) => `<button class="q-opt" onclick="pick(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="q-fb hide" id="qfb"></div>
+  `;
+  document.getElementById('qnav').innerHTML = `<button class="qbtn sec" onclick="goTo(8)">↩ Volver</button>`;
+}
+
+function pick(idx) {
+  if (qAnswered) return;
+  qAnswered = true;
+  const q = QS[qIdx];
+  document.querySelectorAll('.q-opt').forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.ans) b.classList.add('ok');
+    else if (i === idx) b.classList.add('bad');
+  });
+  const fb = document.getElementById('qfb');
+  const correct = idx === q.ans;
+  if (correct) score++;
+  fb.className = 'q-fb ' + (correct ? 'ok' : 'bad');
+  fb.textContent = correct ? q.fb : '❌ No es correcto. ' + q.fb.replace(/^✅\s*/,'');
+  document.getElementById('qsc').textContent = `✅ ${score} correctas`;
+  document.getElementById('qnav').innerHTML = `
+    <button class="qbtn sec" onclick="goTo(8)">↩ Volver</button>
+    <button class="qbtn" onclick="nextQ()">Siguiente ➜</button>
+  `;
+}
+
+function nextQ() { qIdx++; renderQ(); }
+
+function showResult() {
+  const pct = Math.round(score / QS.length * 100);
+  const msg = pct === 100 ? '¡Dominio perfecto! 🌟' : pct >= 85 ? '¡Excelente! 👏' : pct >= 65 ? '¡Buen trabajo! 📚' : 'Sigue repasando 🔄';
+  const sub = pct >= 65 ? 'Tienes un buen dominio de la Teoría de Piaget. ¡Sigue así!' : 'Te recomendamos repasar los módulos y volver a intentarlo.';
+  document.getElementById('qarea').innerHTML = `
+    <div class="q-result">
+      <div class="res-ring"><span class="rn">${score}</span><span class="rd">de ${QS.length}</span></div>
+      <div class="res-msg">${msg}</div>
+      <p class="res-sub">${sub}</p>
+      <div class="res-btns">
+        <button class="qbtn sec" onclick="initQuiz()">🔁 Reintentar</button>
+        <button class="qbtn" onclick="goTo(10)">Ver Resumen Final ➜</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('qnav').innerHTML = '';
+  document.getElementById('qfill').style.width = '100%';
+}
+
+// ── INIT ──────────────────────────────────────────────
+updateUI();
+</script>
+</body>
+</html>

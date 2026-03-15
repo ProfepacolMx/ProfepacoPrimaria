@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- =============================================
+       META Y CONFIGURACIÓN BÁSICA
+  ============================================= -->
+  <meta charset="UTF-8" />
+  <!-- Meta viewport: ESENCIAL para que no se deforme en móviles -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador LGE | Prof. Francisco De Jesus Luna Benitez</title>
+
+  <!-- Tipografías externas elegantes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- =============================================
+       ESTILOS CSS — TODO EN UN SOLO ARCHIVO
+       Usamos unidades relativas (rem, %, vw, clamp)
+       para que todo se ajuste automáticamente
+  ============================================= -->
+  <style>
+
+    /* ================================================
+       VARIABLES GLOBALES DE DISEÑO (tema azul claro)
+    ================================================ */
+    :root {
+      --azul-oscuro:    #1a3a5c;
+      --azul-medio:     #2563a8;
+      --azul-claro:     #4a90d9;
+      --azul-suave:     #ddeeff;
+      --azul-fondo:     #eef4fb;
+      --dorado:         #c8832a;
+      --dorado-claro:   #f5ddb0;
+      --rosa:           #c2185b;
+      --naranja:        #e07b2a;
+      --blanco:         #ffffff;
+      --gris-texto:     #3a3a4a;
+      --gris-claro:     #f0f4f8;
+      --correcto:       #1d7d4e;
+      --correcto-bg:    #d4f0e4;
+      --incorrecto:     #b52a2a;
+      --incorrecto-bg:  #fde8e8;
+      --radio:          0.75rem;
+      --sombra:         0 4px 20px rgba(26,58,92,0.12);
+      --transicion:     0.3s ease;
+    }
+
+    /* ================================================
+       RESET GLOBAL — box-sizing y márgenes cero
+    ================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Evita desbordamiento horizontal en móvil */
+    html, body {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--azul-fondo);
+      color: var(--gris-texto);
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    /* ================================================
+       ENCABEZADO PRINCIPAL
+    ================================================ */
+    header {
+      background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 100%);
+      color: var(--blanco);
+      padding: 1.5rem 1rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;   /* contiene los círculos decorativos */
+    }
+
+    /* Círculos decorativos de fondo — puramente estéticos */
+    header::before {
+      content: '';
+      position: absolute; top: -50px; right: -50px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+    header::after {
+      content: '';
+      position: absolute; bottom: -40px; left: -40px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      pointer-events: none;
+    }
+
+    /* Nombre del profesor — pequeño y elegante encima del título */
+    .header-prof {
+      font-size: clamp(0.68rem, 2vw, 0.82rem);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dorado-claro);
+      margin-bottom: 0.45rem;
+    }
+
+    /* Título principal con Playfair Display */
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.35rem, 5vw, 2.3rem);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+    }
+
+    /* Subtítulo temático */
+    .subtitulo {
+      font-size: clamp(0.78rem, 2.5vw, 0.98rem);
+      opacity: 0.85;
+      max-width: 540px;
+      margin: 0 auto 1rem;
+    }
+
+    /* Insignias informativas del simulador */
+    .header-badges {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;       /* se adaptan en pantalla pequeña */
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 2rem;
+      padding: 0.28rem 0.85rem;
+      font-size: clamp(0.68rem, 2vw, 0.8rem);
+      font-weight: 500;
+    }
+
+    /* ================================================
+       BARRA DE TEMPORIZADOR — sticky, siempre visible
+    ================================================ */
+    .timer-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--blanco);
+      box-shadow: 0 2px 10px rgba(26,58,92,0.13);
+      padding: 0.5rem 1rem;
+      display: none;            /* JS la activa al iniciar */
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    /* Ícono + dígitos del cronómetro */
+    .timer-display {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      font-weight: 700;
+      color: var(--azul-oscuro);
+      letter-spacing: 0.03em;
+    }
+
+    /* Estado naranja: ≤ 10 min */
+    .timer-display.advertencia { color: #b55e00; }
+
+    /* Estado rojo parpadeante: ≤ 5 min */
+    .timer-display.urgente {
+      color: var(--incorrecto);
+      animation: parpadeo 1s ease infinite;
+    }
+    @keyframes parpadeo {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* Mini barra de progreso del tiempo */
+    .timer-prog-fondo {
+      flex: 1;
+      min-width: 80px;
+      max-width: 260px;
+      height: 7px;
+      background: var(--azul-suave);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .timer-prog-relleno {
+      height: 100%;
+      background: linear-gradient(90deg, var(--azul-claro), var(--azul-medio));
+      border-radius: 4px;
+      width: 100%;
+      transition: width 1s linear, background 0.8s ease;
+    }
+
+    /* Etiqueta "tiempo agotado" */
+    .timer-agotado {
+      display: none;
+      font-weight: 700;
+      color: var(--incorrecto);
+      font-size: 0.82rem;
+    }
+
+    /* ================================================
+       MODAL — TIEMPO AGOTADO
+    ================================================ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26,58,92,0.65);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.activo { display: flex; }
+
+    .modal-card {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+      padding: clamp(1.5rem, 5vw, 2.5rem);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      animation: aparecer 0.4s ease;
+    }
+    .modal-icono  { font-size: 3rem; margin-bottom: 0.7rem; display: block; }
+    .modal-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.1rem, 4vw, 1.4rem);
+      color: var(--azul-oscuro);
+      margin-bottom: 0.5rem;
+    }
+    .modal-desc {
+      font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+      color: var(--gris-texto);
+      margin-bottom: 1.4rem;
+      line-height: 1.6;
+    }
+
+    /* ================================================
+       CONTENEDOR PRINCIPAL — centra y limita el ancho
+    ================================================ */
+    .contenedor {
+      max-width: 820px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 4rem;
+    }
+
+    /* ================================================
+       ANIMACIÓN DE ENTRADA — usada en tarjetas y pantallas
+    ================================================ */
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ================================================
+       BARRA DE PROGRESO DE PREGUNTAS
+    ================================================ */
+    .progreso-wrapper {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      padding: 0.9rem 1.2rem;
+      margin-bottom: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;         /* responsive: baja elementos si no caben */
+    }
+    .progreso-texto {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--azul-medio);
+      white-space: nowrap;
+    }
+    .barra-fondo {
+      flex: 1;
+      min-width: 100px;
+      height: 10px;
+      background: var(--azul-suave);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .barra-relleno {
+      height: 100%;
+      background: linear-gradient(90deg, var(--azul-claro), var(--azul-medio));
+      border-radius: 5px;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    .progreso-num {
+      font-size: 0.82rem;
+      color: var(--gris-texto);
+      white-space: nowrap;
+    }
+
+    /* ================================================
+       TARJETA DE PREGUNTA
+    ================================================ */
+    .tarjeta-pregunta {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      padding: clamp(1.2rem, 4vw, 2rem);
+      margin-bottom: 1.2rem;
+      animation: aparecer 0.4s ease;
+    }
+
+    /* Chip del tipo de reactivo */
+    .tipo-reactivo {
+      display: inline-block;
+      background: var(--azul-suave);
+      color: var(--azul-medio);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 2rem;
+      padding: 0.2rem 0.75rem;
+      margin-bottom: 0.8rem;
+    }
+
+    /* Número de la pregunta */
+    .num-pregunta {
+      font-size: 0.78rem;
+      color: var(--azul-claro);
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    /* Enunciado */
+    .enunciado-pregunta {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.93rem, 2.5vw, 1.08rem);
+      font-weight: 700;
+      color: var(--azul-oscuro);
+      margin-bottom: 1.2rem;
+      line-height: 1.45;
+    }
+
+    /* ================================================
+       TABLA DE RELACIÓN DE ELEMENTOS
+    ================================================ */
+    .tabla-relacion {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+      font-size: clamp(0.76rem, 2vw, 0.86rem);
+      display: block;        /* permite scroll horizontal en móvil */
+      overflow-x: auto;
+    }
+    .tabla-relacion th {
+      background: var(--azul-oscuro);
+      color: var(--blanco);
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .tabla-relacion td {
+      border: 1px solid #d0dce8;
+      padding: 0.45rem 0.8rem;
+      vertical-align: top;
+    }
+    .tabla-relacion tr:nth-child(even) td { background: var(--azul-fondo); }
+
+    /* ================================================
+       LISTA DE OPCIONES DE RESPUESTA
+    ================================================ */
+    .opciones-lista {
+      display: flex;
+      flex-direction: column;   /* apiladas = responsive nativo */
+      gap: 0.65rem;
+      list-style: none;
+    }
+
+    /* Botón de opción */
+    .opcion-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      width: 100%;
+      text-align: left;
+      background: var(--gris-claro);
+      border: 2px solid transparent;
+      border-radius: 0.6rem;
+      padding: 0.75rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(0.8rem, 2.2vw, 0.92rem);
+      color: var(--gris-texto);
+      cursor: pointer;
+      transition: background var(--transicion), border-color var(--transicion), transform var(--transicion);
+      line-height: 1.45;
+    }
+    .opcion-btn:hover:not(:disabled) {
+      background: var(--azul-suave);
+      border-color: var(--azul-claro);
+      transform: translateX(3px);
+    }
+
+    /* Círculo con la letra (A, B, C) */
+    .opcion-letra {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--azul-medio);
+      color: var(--blanco);
+      font-weight: 700;
+      font-size: 0.76rem;
+      flex-shrink: 0;
+      transition: background var(--transicion);
+    }
+
+    /* Estado: correcta */
+    .opcion-btn.correcta {
+      background: var(--correcto-bg);
+      border-color: var(--correcto);
+    }
+    .opcion-btn.correcta .opcion-letra { background: var(--correcto); }
+
+    /* Estado: incorrecta */
+    .opcion-btn.incorrecta {
+      background: var(--incorrecto-bg);
+      border-color: var(--incorrecto);
+    }
+    .opcion-btn.incorrecta .opcion-letra { background: var(--incorrecto); }
+
+    /* Deshabilitado tras responder */
+    .opcion-btn:disabled { cursor: default; transform: none; }
+
+    /* ================================================
+       RETROALIMENTACIÓN
+    ================================================ */
+    .retroalimentacion {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 0.6rem;
+      font-size: clamp(0.78rem, 2.2vw, 0.87rem);
+      line-height: 1.55;
+      border-left: 4px solid;
+    }
+    .retroalimentacion.correcto {
+      background: var(--correcto-bg);
+      border-color: var(--correcto);
+      color: #155334;
+    }
+    .retroalimentacion.incorrecto {
+      background: var(--incorrecto-bg);
+      border-color: var(--incorrecto);
+      color: #7a1a1a;
+    }
+    .retroalimentacion.visible { display: block; }
+
+    /* ================================================
+       BOTONES DE NAVEGACIÓN
+    ================================================ */
+    .controles {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Botón genérico */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.4rem;
+      border: none;
+      border-radius: 0.55rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transicion), transform var(--transicion), opacity var(--transicion);
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.42; cursor: not-allowed; transform: none; }
+
+    /* Azul relleno */
+    .btn-primario { background: var(--azul-medio); color: var(--blanco); }
+    .btn-primario:hover:not(:disabled) { background: var(--azul-oscuro); }
+
+    /* Contorno azul */
+    .btn-secundario {
+      background: var(--blanco);
+      color: var(--azul-medio);
+      border: 2px solid var(--azul-medio);
+    }
+    .btn-secundario:hover:not(:disabled) { background: var(--azul-suave); }
+
+    /* ================================================
+       PANTALLA DE BIENVENIDA
+    ================================================ */
+    #pantalla-inicio { text-align: center; animation: aparecer 0.5s ease; }
+
+    .inicio-card {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      padding: clamp(1.5rem, 5vw, 2.8rem);
+      margin-bottom: 1.5rem;
+    }
+    .inicio-icono {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .inicio-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 4vw, 1.7rem);
+      color: var(--azul-oscuro);
+      margin-bottom: 0.75rem;
+    }
+    .inicio-desc {
+      font-size: clamp(0.82rem, 2.2vw, 0.94rem);
+      color: var(--gris-texto);
+      max-width: 500px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.75;
+    }
+
+    /* Chips de tipos de reactivo en la pantalla de inicio */
+    .tipos-lista {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.8rem;
+    }
+    .tipo-chip {
+      background: var(--azul-suave);
+      color: var(--azul-medio);
+      border-radius: 2rem;
+      padding: 0.32rem 0.9rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+
+    /* Pilares decorativos en la pantalla de inicio */
+    .pilares-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.8rem;
+    }
+    .pilar-item {
+      border-radius: 0.6rem;
+      padding: 0.85rem 0.6rem;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--blanco);
+    }
+    .pilar-item span { font-size: 1.5rem; display: block; margin-bottom: 0.3rem; }
+    .p1 { background: var(--azul-oscuro); }
+    .p2 { background: var(--azul-medio); }
+    .p3 { background: var(--naranja); }
+    .p4 { background: var(--rosa); }
+
+    /* ================================================
+       PANTALLA DE RESULTADOS
+    ================================================ */
+    #pantalla-resultados {
+      display: none;
+      text-align: center;
+      animation: aparecer 0.5s ease;
+    }
+    .resultado-card {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      padding: clamp(1.5rem, 5vw, 2.8rem);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Círculo de puntuación */
+    .circulo-score {
+      width: clamp(100px, 25vw, 140px);
+      height: clamp(100px, 25vw, 140px);
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--azul-medio), var(--azul-oscuro));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 8px 24px rgba(37,99,168,0.3);
+    }
+    .score-numero {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 900;
+      color: var(--blanco);
+      line-height: 1;
+    }
+    .score-total { font-size: 0.8rem; color: rgba(255,255,255,0.75); }
+
+    .resultado-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 4vw, 1.65rem);
+      color: var(--azul-oscuro);
+      margin-bottom: 0.5rem;
+    }
+    .resultado-desc {
+      font-size: clamp(0.82rem, 2.2vw, 0.93rem);
+      color: var(--gris-texto);
+      max-width: 440px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.65;
+    }
+
+    /* Resumen en cuadrículas */
+    .resumen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .resumen-item {
+      background: var(--azul-fondo);
+      border-radius: 0.6rem;
+      padding: 0.85rem 0.5rem;
+      text-align: center;
+    }
+    .resumen-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      font-weight: 700;
+    }
+    .resumen-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--azul-medio);
+      font-weight: 600;
+    }
+    .color-correcto  { color: var(--correcto); }
+    .color-incorrecto{ color: var(--incorrecto); }
+    .color-azul      { color: var(--azul-medio); }
+
+    /* ================================================
+       PIE DE PÁGINA
+    ================================================ */
+    footer {
+      background: var(--azul-oscuro);
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      padding: 1rem;
+      font-size: clamp(0.68rem, 2vw, 0.8rem);
+    }
+    footer strong { color: var(--dorado-claro); }
+
+    /* ================================================
+       RESPONSIVE — ajustes para pantalla pequeña
+    ================================================ */
+    @media (max-width: 480px) {
+      /* Los botones ocupan todo el ancho disponible */
+      .controles { justify-content: stretch; }
+      .btn { flex: 1; justify-content: center; }
+      .opcion-btn { padding: 0.65rem 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       ENCABEZADO
+  ============================================= -->
+  <header>
+    <p class="header-prof">Prof. Francisco De Jesus Luna Benitez</p>
+    <h1>Simulador de Reactivos</h1>
+    <p class="subtitulo">Ley General de Educación — Guía de Estudio Visual y Síntesis Conceptual</p>
+    <div class="header-badges">
+      <span class="badge">📝 25 Preguntas</span>
+      <span class="badge">⚖️ LGE Reforma 2024</span>
+      <span class="badge">⏱ 45 Minutos</span>
+      <span class="badge">⭐ Con Retroalimentación</span>
+    </div>
+  </header>
+
+  <!-- =============================================
+       BARRA DEL TEMPORIZADOR (sticky)
+  ============================================= -->
+  <div class="timer-bar" id="timer-bar">
+    <div class="timer-display" id="timer-display">
+      <span>⏱</span>
+      <span id="timer-texto">45:00</span>
+    </div>
+    <div class="timer-prog-fondo">
+      <div class="timer-prog-relleno" id="timer-prog"></div>
+    </div>
+    <span class="timer-agotado" id="timer-agotado">⛔ Tiempo agotado</span>
+  </div>
+
+  <!-- =============================================
+       MODAL — TIEMPO AGOTADO
+  ============================================= -->
+  <div class="modal-overlay" id="modal-tiempo" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <span class="modal-icono">⏰</span>
+      <h2 class="modal-titulo">¡Tiempo agotado!</h2>
+      <p class="modal-desc">
+        Los 45 minutos han concluido. Se contabilizarán las respuestas
+        que registraste hasta este momento.
+      </p>
+      <button class="btn btn-primario" onclick="cerrarModalYResultados()"
+              style="width:100%; justify-content:center; font-size:1rem; padding:.8rem 2rem;">
+        📊 Ver mis resultados
+      </button>
+    </div>
+  </div>
+
+  <!-- =============================================
+       CONTENIDO PRINCIPAL
+  ============================================= -->
+  <main class="contenedor">
+
+    <!-- ── PANTALLA DE BIENVENIDA ── -->
+    <div id="pantalla-inicio">
+      <div class="inicio-card">
+        <span class="inicio-icono">⚖️</span>
+        <h2 class="inicio-titulo">Ley General de Educación</h2>
+        <p class="inicio-desc">
+          Pon a prueba tus conocimientos sobre la <strong>LGE (Reforma 2024)</strong>.
+          El simulador incluye <strong>25 reactivos</strong> con los formatos del
+          instrumento oficial: cuestionamiento directo, completamiento,
+          ordenamiento y relación de elementos.
+          <br><br>
+          Tendrás <strong>45 minutos</strong> para completar el examen.
+        </p>
+
+        <!-- Los 4 pilares de la ley como decoración informativa -->
+        <div class="pilares-grid">
+          <div class="pilar-item p1"><span>🌱</span>Derecho a la Educación</div>
+          <div class="pilar-item p2"><span>🏫</span>Nueva Escuela Mexicana</div>
+          <div class="pilar-item p3"><span>🌟</span>Orientación Integral</div>
+          <div class="pilar-item p4"><span>🤝</span>Participación Social</div>
+        </div>
+
+        <div class="tipos-lista">
+          <span class="tipo-chip">🎯 Cuestionamiento Directo</span>
+          <span class="tipo-chip">✏️ Completamiento</span>
+          <span class="tipo-chip">🔢 Ordenamiento</span>
+          <span class="tipo-chip">🔗 Relación de Elementos</span>
+        </div>
+
+        <button class="btn btn-primario"
+                onclick="iniciarSimulador()"
+                style="font-size:1rem; padding:0.85rem 2.2rem;">
+          ▶ Comenzar Simulación
+        </button>
+      </div>
+    </div>
+
+    <!-- ── SIMULADOR (oculto hasta iniciar) ── -->
+    <div id="pantalla-simulador" style="display:none;">
+
+      <!-- Barra de progreso de preguntas -->
+      <div class="progreso-wrapper">
+        <span class="progreso-texto">Progreso</span>
+        <div class="barra-fondo">
+          <div class="barra-relleno" id="barra-relleno"></div>
+        </div>
+        <span class="progreso-num" id="progreso-num">0 / 25</span>
+      </div>
+
+      <!-- JS inyecta aquí la tarjeta de la pregunta activa -->
+      <div id="contenedor-pregunta"></div>
+
+      <!-- Botones de navegación -->
+      <div class="controles">
+        <button class="btn btn-secundario" id="btn-anterior"
+                onclick="preguntaAnterior()" disabled>← Anterior</button>
+        <button class="btn btn-primario"   id="btn-siguiente"
+                onclick="preguntaSiguiente()">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- ── PANTALLA DE RESULTADOS ── -->
+    <div id="pantalla-resultados">
+      <div class="resultado-card">
+        <div class="circulo-score">
+          <span class="score-numero" id="score-num">0</span>
+          <span class="score-total">de 25</span>
+        </div>
+        <h2 class="resultado-titulo" id="resultado-titulo">¡Simulación completada!</h2>
+        <p class="resultado-desc" id="resultado-desc"></p>
+        <div class="resumen-grid">
+          <div class="resumen-item">
+            <div class="resumen-num color-correcto"   id="res-correctas">0</div>
+            <div class="resumen-label">Correctas</div>
+          </div>
+          <div class="resumen-item">
+            <div class="resumen-num color-incorrecto" id="res-incorrectas">0</div>
+            <div class="resumen-label">Incorrectas</div>
+          </div>
+          <div class="resumen-item">
+            <div class="resumen-num color-azul"       id="res-porcentaje">0%</div>
+            <div class="resumen-label">Calificación</div>
+          </div>
+        </div>
+        <!-- Botón de contenido dinámico: reinicia todo el simulador -->
+        <button class="btn btn-primario"
+                onclick="reiniciarSimulador()"
+                style="font-size:1rem; padding:0.8rem 2rem;">
+          🔄 Intentar de nuevo
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =============================================
+       PIE DE PÁGINA
+  ============================================= -->
+  <footer>
+    <strong>Prof. Francisco De Jesus Luna Benitez</strong>&nbsp;|&nbsp;
+    Simulador — Ley General de Educación (LGE 2024)&nbsp;|&nbsp;2025
+  </footer>
+
+
+  <!-- =============================================
+       JAVASCRIPT — TODA LA LÓGICA DEL SIMULADOR
+  ============================================= -->
+  <script>
+
+    /*
+     * ============================================================
+     *  BANCO DE 25 PREGUNTAS sobre la LGE
+     *  Basado en la Guía de Estudio Visual del Prof. Luna Benitez
+     *
+     *  Estructura de cada objeto:
+     *    tipo      — etiqueta visible del tipo de reactivo
+     *    enunciado — texto HTML de la pregunta
+     *    opciones  — [{letra, texto}]  (siempre 3 opciones)
+     *    correcta  — letra de la opción correcta
+     *    feedback  — argumento de la respuesta correcta
+     * ============================================================
+     */
+    const preguntas = [
+
+      /* ═══════════════════════════════════════════════
+         CUESTIONAMIENTO DIRECTO — Preguntas 1 a 10
+      ═══════════════════════════════════════════════ */
+
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "¿Cuál es la característica de la educación que, según el Artículo 7 de la LGE, prohíbe que la prestación del servicio educativo se condicione a cualquier contraprestación o pago?",
+        opciones: [
+          { letra: "A", texto: "Laica: la educación se mantiene completamente ajena a cualquier doctrina religiosa en los planteles." },
+          { letra: "B", texto: "Gratuita: está prohibido condicionar la prestación del servicio educativo a cualquier contraprestación o pago." },
+          { letra: "C", texto: "Pública: la educación es impartida y administrada directamente por el Estado con fines de orden público." }
+        ],
+        correcta: "B",
+        feedback: "El Art. 7 de la LGE define cinco características irrenunciables de la educación: Universal, Inclusiva, Pública, Gratuita y Laica. La gratuidad implica específicamente que está prohibido condicionar la prestación del servicio a cualquier contraprestación o pago."
+      },
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "¿Cuál es el centro de la acción pública que coloca la Nueva Escuela Mexicana, según el Artículo 11 de la LGE?",
+        opciones: [
+          { letra: "A", texto: "La formación de ciudadanos competitivos capaces de responder a los retos del mercado laboral global." },
+          { letra: "B", texto: "El máximo logro de aprendizaje de niñas, niños, adolescentes y jóvenes." },
+          { letra: "C", texto: "La estandarización curricular nacional para garantizar resultados uniformes en todas las regiones del país." }
+        ],
+        correcta: "B",
+        feedback: "El Art. 11 establece que la NEM buscará la equidad, la excelencia y la mejora continua, colocando en el centro de la acción pública el máximo logro de aprendizaje de niñas, niños, adolescentes y jóvenes."
+      },
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "¿Cuál de las siguientes situaciones ejemplifica el criterio 'inclusiva' de la educación según el Artículo 16 de la LGE?",
+        opciones: [
+          { letra: "A", texto: "Una escuela que promueve la identidad nacional a través del estudio de la historia y los símbolos patrios." },
+          { letra: "B", texto: "Una escuela que elimina las distintas barreras al aprendizaje y a la participación, realizando ajustes razonables para todos los alumnos." },
+          { letra: "C", texto: "Una escuela que busca el mejoramiento permanente del pensamiento crítico de sus estudiantes a través de estrategias innovadoras." }
+        ],
+        correcta: "B",
+        feedback: "El criterio 'inclusiva' del Art. 16 significa tomar en cuenta los ritmos de aprendizaje y eliminar las barreras al aprendizaje y a la participación, incluyendo los ajustes razonables para garantizar el acceso de todos."
+      },
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "Según el Artículo 15 de la LGE, ¿cuál de los siguientes es un fin de la educación impartida por el Estado?",
+        opciones: [
+          { letra: "A", texto: "Formar ciudadanos con habilidades para el emprendimiento y la economía de mercado globalizada." },
+          { letra: "B", texto: "Promover la cultura de la paz mediante la tolerancia, el diálogo constructivo y la no violencia." },
+          { letra: "C", texto: "Garantizar que todos los estudiantes obtengan los mismos resultados en las evaluaciones estandarizadas." }
+        ],
+        correcta: "B",
+        feedback: "El Art. 15 establece los objetivos permanentes de la educación estatal. Entre ellos se encuentran: Desarrollo Integral, Dignidad Humana, Respeto a la Naturaleza, Amor a la Patria, Pluralidad Intercultural y Cultura de la Paz (tolerancia, diálogo constructivo y no violencia)."
+      },
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "¿Cuál es el papel que reconoce la LGE a los maestros y maestras dentro de la Nueva Escuela Mexicana?",
+        opciones: [
+          { letra: "A", texto: "Son ejecutores de planes y programas diseñados por las autoridades educativas federales." },
+          { letra: "B", texto: "Son agentes fundamentales del proceso educativo y profesionales de la formación (Art. 13 NEM)." },
+          { letra: "C", texto: "Son administradores del aprendizaje que reportan resultados a los padres de familia periódicamente." }
+        ],
+        correcta: "B",
+        feedback: "La revalorización docente es uno de los pilares de la NEM (Arts. 11-14). La ley reconoce a maestras y maestros como agentes fundamentales del proceso educativo y como profesionales de la formación, lo que implica su formación continua y dignificación laboral."
+      },
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "¿Cuál es el objetivo del Consejo de Participación Escolar, según los Artículos 131-132 de la LGE?",
+        opciones: [
+          { letra: "A", texto: "Supervisar el desempeño individual de cada docente y emitir recomendaciones curriculares a las autoridades." },
+          { letra: "B", texto: "Coadyuvar para que los resultados de las evaluaciones contribuyan a la mejora continua de la educación." },
+          { letra: "C", texto: "Gestionar los recursos económicos de la escuela y administrar el presupuesto asignado por la SEP." }
+        ],
+        correcta: "B",
+        feedback: "Los Arts. 131-132 establecen que cada escuela instalará un Consejo de Participación integrado por padres, maestros y autoridades. Su función primaria es coadyuvar para que los resultados de las evaluaciones contribuyan a la mejora continua de la educación."
+      },
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "¿Cuál de las siguientes características NO corresponde al criterio 'democrática' de la educación según el Artículo 16 de la LGE?",
+        opciones: [
+          { letra: "A", texto: "Un sistema de vida fundado en el mejoramiento constante económico, social y cultural del pueblo." },
+          { letra: "B", texto: "Comprensión, respeto e intercambio lingüístico y cultural entre comunidades." },
+          { letra: "C", texto: "Fomentar la participación activa de la sociedad en el proceso de mejora del sistema educativo." }
+        ],
+        correcta: "B",
+        feedback: "La opción B describe el criterio 'intercultural' (promover la comprensión, respeto e intercambio lingüístico y cultural), NO el criterio democrático. El criterio 'democrática' se refiere a un sistema de vida fundado en el mejoramiento constante del pueblo."
+      },
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "¿Cuál es la función del criterio 'humanista' de la educación según el Artículo 16 de la LGE?",
+        opciones: [
+          { letra: "A", texto: "Defender la soberanía nacional y garantizar la continuidad histórica y cultural de México." },
+          { letra: "B", texto: "Fomentar el aprecio por la dignidad humana y rechazar actitudes que favorezcan los privilegios de grupo." },
+          { letra: "C", texto: "Desarrollar el pensamiento lógico-matemático y las habilidades tecnológicas del estudiante." }
+        ],
+        correcta: "B",
+        feedback: "El criterio 'humanista' del Art. 16 apunta al aprecio por la dignidad humana y al rechazo de privilegios de cualquier tipo. Este criterio es diferente del 'nacional' (soberanía) y del 'cognitivo' (habilidades matemáticas/tecnológicas)."
+      },
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "Según el Artículo 17 de la LGE, ¿qué exige la orientación integral de la Nueva Escuela Mexicana a los docentes?",
+        opciones: [
+          { letra: "A", texto: "Que se especialicen exclusivamente en un dominio disciplinar para impartir contenidos con mayor profundidad." },
+          { letra: "B", texto: "Que dominen los procesos de enseñanza-aprendizaje acordes con una visión holística del estudiante." },
+          { letra: "C", texto: "Que apliquen únicamente los métodos de evaluación estandarizados aprobados por la autoridad educativa." }
+        ],
+        correcta: "B",
+        feedback: "El Art. 17 establece que la orientación integral no se limita a la memorización académica, sino a la formación para la vida vinculando la escuela con la comunidad. Esto exige la adecuada formación de los docentes en procesos de enseñanza-aprendizaje con visión holística."
+      },
+      {
+        tipo: "🎯 Cuestionamiento Directo",
+        enunciado: "¿Cuál de las siguientes opciones describe correctamente la obligación irrenunciable de los padres de familia según el Artículo 129 de la LGE?",
+        opciones: [
+          { letra: "A", texto: "Gestionar recursos económicos para apoyar las actividades extracurriculares de la institución educativa." },
+          { letra: "B", texto: "Revisar constantemente el progreso, desempeño y conducta de sus hijos, y colaborar con la institución educativa." },
+          { letra: "C", texto: "Elegir libremente la institución educativa que consideren más conveniente para el desarrollo de sus hijos." }
+        ],
+        correcta: "B",
+        feedback: "El Art. 129 establece las obligaciones de los padres: hacer que sus hijos reciban educación obligatoria, revisar su progreso y conducta, colaborar con la institución, informar sobre cambios de conducta y acudir a los llamados para la revisión del desempeño."
+      },
+
+      /* ═══════════════════════════════════════════════
+         COMPLETAMIENTO — Preguntas 11 a 17
+      ═══════════════════════════════════════════════ */
+
+      {
+        tipo: "✏️ Completamiento",
+        enunciado: "La característica 'laica' de la educación, establecida en el Artículo 7 de la LGE, significa que la educación…",
+        opciones: [
+          { letra: "A", texto: "…debe impartirse sin ningún costo para las familias, garantizando el acceso universal a los servicios." },
+          { letra: "B", texto: "…se mantiene por completo ajena a cualquier doctrina religiosa en los planteles educativos." },
+          { letra: "C", texto: "…se adapta a las necesidades específicas de cada estudiante mediante ajustes curriculares especiales." }
+        ],
+        correcta: "B",
+        feedback: "La laicidad es una de las cinco características irrenunciables del Art. 7. Significa que la educación impartida por el Estado se mantiene completamente al margen de cualquier doctrina, credo o institución religiosa, garantizando la libertad de conciencia."
+      },
+      {
+        tipo: "✏️ Completamiento",
+        enunciado: "El dominio socioemocional del aprendizaje integral (Art. 18) busca que los estudiantes desarrollen…",
+        opciones: [
+          { letra: "A", texto: "…pensamiento lógico-matemático, literacidad y conocimiento tecnológico para la apropiación científica." },
+          { letra: "B", texto: "…habilidades motrices, activación física y apreciación artística vinculada con la salud." },
+          { letra: "C", texto: "…imaginación, creatividad, empatía, resiliencia, trabajo en red y gestión emocional." }
+        ],
+        correcta: "C",
+        feedback: "El Art. 18 establece cuatro dominios del aprendizaje integral: Cognitivo (lógico-matemático, literacidad), Humanístico y Cívico (filosofía, pensamiento crítico), Socioemocional (imaginación, empatía, resiliencia, gestión emocional) y Físico y Artístico (habilidades motrices, arte, deporte)."
+      },
+      {
+        tipo: "✏️ Completamiento",
+        enunciado: "La educación 'equitativa', según el Artículo 16 de la LGE, se caracteriza porque…",
+        opciones: [
+          { letra: "A", texto: "…fomenta la convivencia armónica entre personas de diferentes orígenes culturales y lingüísticos." },
+          { letra: "B", texto: "…combate las desigualdades y ofrece educación pertinente para todos, considerando sus contextos y necesidades." },
+          { letra: "C", texto: "…impulsa el mejoramiento permanente del pensamiento crítico y la preparación para la vida democrática." }
+        ],
+        correcta: "B",
+        feedback: "El criterio 'equitativa' del Art. 16 tiene como propósito combatir las desigualdades socioeducativas y ofrecer una educación pertinente para todos los estudiantes, considerando sus distintos contextos. Es distinto de 'intercultural' (convivencia armónica) y 'de excelencia' (pensamiento crítico)."
+      },
+      {
+        tipo: "✏️ Completamiento",
+        enunciado: "Según los Artículos 8 y 9 de la LGE, el compromiso del Estado con la equidad incluye el establecimiento gradual de escuelas con horario completo porque…",
+        opciones: [
+          { letra: "A", texto: "…permite aplicar más evaluaciones estandarizadas para medir el avance académico de los alumnos." },
+          { letra: "B", texto: "…las jornadas de 6 a 8 horas generan mayor aprovechamiento del tiempo para el aprendizaje de los educandos." },
+          { letra: "C", texto: "…libera a los padres de familia de sus responsabilidades educativas durante el horario laboral." }
+        ],
+        correcta: "B",
+        feedback: "Los Arts. 8 y 9 establecen acciones prioritarias del Estado para garantizar equidad y excelencia. El 'tiempo extendido' se refiere al establecimiento gradual de escuelas con jornadas de 6 a 8 horas para maximizar el aprovechamiento del tiempo de aprendizaje de los educandos."
+      },
+      {
+        tipo: "✏️ Completamiento",
+        enunciado: "La Participación Social, como pilar de la LGE (Art. 126), busca propiciar el máximo logro de aprendizaje de los educandos porque…",
+        opciones: [
+          { letra: "A", texto: "…las autoridades asumen directamente la gestión escolar sin intermediación de los actores locales." },
+          { letra: "B", texto: "…fomenta la participación activa de los actores sociales y fortalece los lazos entre la escuela y la comunidad." },
+          { letra: "C", texto: "…el Estado centraliza la toma de decisiones educativas para garantizar estándares nacionales uniformes." }
+        ],
+        correcta: "B",
+        feedback: "El Art. 126 establece que la Participación Social (padres, maestros, autoridades, comunidad y estudiantes) tiene como objetivo propiciar el máximo logro de aprendizaje, el desarrollo del pensamiento crítico y el fortalecimiento de los lazos entre escuela y comunidad."
+      },
+      {
+        tipo: "✏️ Completamiento",
+        enunciado: "El derecho de los padres de familia establecido en el Artículo 128 de la LGE incluye la posibilidad de…",
+        opciones: [
+          { letra: "A", texto: "…determinar los contenidos curriculares que se impartirán en el plantel educativo de sus hijos." },
+          { letra: "B", texto: "…opinar y manifestar inconformidades sobre el plantel, además de conocer al personal docente y directivo." },
+          { letra: "C", texto: "…contratar servicios educativos privados complementarios pagados por el Estado dentro del plantel." }
+        ],
+        correcta: "B",
+        feedback: "El Art. 128 reconoce a los padres los siguientes derechos: obtener inscripción, participar activamente con autoridades, conocer al personal docente y directivo, conocer planes, programas y resultados de evaluaciones, y opinar y manifestar inconformidades sobre el plantel."
+      },
+      {
+        tipo: "✏️ Completamiento",
+        enunciado: "La escuela concebida como un centro de aprendizaje comunitario dentro de la Nueva Escuela Mexicana (Art. 12) significa que…",
+        opciones: [
+          { letra: "A", texto: "…la escuela se convierte en un espacio exclusivo para la instrucción académica formal, separado de la comunidad." },
+          { letra: "B", texto: "…la escuela debe ser un espacio seguro, libre de violencias, que se vincula activamente con su entorno comunitario." },
+          { letra: "C", texto: "…la comunidad financia directamente las actividades escolares, eliminando la responsabilidad estatal del presupuesto." }
+        ],
+        correcta: "B",
+        feedback: "El Art. 12 de la LGE establece que la NEM concibe a la escuela como un centro de aprendizaje comunitario: un espacio seguro, libre de violencias y abierto a la comunidad. Esto implica la conexión activa con el entorno social y cultural de los estudiantes."
+      },
+
+      /* ═══════════════════════════════════════════════
+         ORDENAMIENTO — Preguntas 18 a 21
+      ═══════════════════════════════════════════════ */
+
+      {
+        tipo: "🔢 Ordenamiento",
+        enunciado: `Ordene los cuatro pilares fundamentales de la Ley General de Educación, del más básico (raíz/cimiento) al más específico (ramas), según la estructura del árbol presentada en la Guía de Estudio:
+          <br><br>
+          <strong>1.</strong> La Orientación Integral: el enfoque holístico dentro del aula (Ramas).<br>
+          <strong>2.</strong> La Participación Social: el ecosistema comunitario que nutre el aprendizaje (Entorno).<br>
+          <strong>3.</strong> El Derecho a la Educación: el cimiento innegociable y constitucional (Raíces).<br>
+          <strong>4.</strong> La Nueva Escuela Mexicana: la filosofía y el vehículo del Estado (Tronco).`,
+        opciones: [
+          { letra: "A", texto: "1 → 4 → 3 → 2 (Orientación, NEM, Derecho, Participación)" },
+          { letra: "B", texto: "3 → 4 → 1 → 2 (Derecho, NEM, Orientación, Participación)" },
+          { letra: "C", texto: "2 → 3 → 1 → 4 (Participación, Derecho, Orientación, NEM)" }
+        ],
+        correcta: "B",
+        feedback: "La metáfora del árbol en la Guía es clara: las Raíces son el Derecho a la Educación (cimiento), el Tronco es la Nueva Escuela Mexicana (vehículo del Estado), las Ramas son la Orientación Integral (enfoque holístico) y el Entorno es la Participación Social (ecosistema comunitario)."
+      },
+      {
+        tipo: "🔢 Ordenamiento",
+        enunciado: `Ordene los pasos del proceso que debe seguir un padre de familia para cumplir con sus obligaciones del Artículo 129 de la LGE ante un cambio de conducta de su hijo:
+          <br><br>
+          <strong>1.</strong> Informar a las autoridades escolares sobre los cambios detectados en la conducta del educando.<br>
+          <strong>2.</strong> Revisar constantemente el progreso, desempeño y conducta del hijo.<br>
+          <strong>3.</strong> Acudir al llamado de la institución para la revisión conjunta del desempeño.<br>
+          <strong>4.</strong> Colaborar con las instituciones educativas en sus actividades.`,
+        opciones: [
+          { letra: "A", texto: "1 → 2 → 3 → 4 (Informar, Revisar, Acudir, Colaborar)" },
+          { letra: "B", texto: "4 → 3 → 1 → 2 (Colaborar, Acudir, Informar, Revisar)" },
+          { letra: "C", texto: "2 → 1 → 3 → 4 (Revisar, Informar, Acudir, Colaborar)" }
+        ],
+        correcta: "C",
+        feedback: "El orden lógico de la corresponsabilidad paterna es: primero se revisa el progreso/conducta del hijo, luego se informa a las autoridades sobre los cambios detectados, después se acude al llamado de la institución, y finalmente se colabora de forma continua con las actividades del plantel."
+      },
+      {
+        tipo: "🔢 Ordenamiento",
+        enunciado: `Ordene los cuatro dominios del aprendizaje integral (Art. 18 LGE) de lo más abstracto/cognitivo a lo más físico/expresivo:
+          <br><br>
+          <strong>1.</strong> Dominio Físico y Artístico: habilidades motrices, deporte y apreciación artística.<br>
+          <strong>2.</strong> Dominio Cognitivo: pensamiento lógico-matemático, literacidad y apropiación científica.<br>
+          <strong>3.</strong> Dominio Humanístico y Cívico: filosofía, pensamiento crítico y valores ciudadanos.<br>
+          <strong>4.</strong> Dominio Socioemocional: creatividad, empatía, resiliencia y gestión emocional.`,
+        opciones: [
+          { letra: "A", texto: "1 → 4 → 3 → 2 (Físico, Socioemocional, Humanístico, Cognitivo)" },
+          { letra: "B", texto: "4 → 2 → 3 → 1 (Socioemocional, Cognitivo, Humanístico, Físico)" },
+          { letra: "C", texto: "2 → 3 → 4 → 1 (Cognitivo, Humanístico, Socioemocional, Físico)" }
+        ],
+        correcta: "C",
+        feedback: "De lo más abstracto a lo más concreto/expresivo: el Dominio Cognitivo trabaja el pensamiento formal, el Humanístico y Cívico el pensamiento filosófico e histórico, el Socioemocional las capacidades relacionales y emocionales, y el Físico y Artístico las habilidades corporales y expresivas."
+      },
+      {
+        tipo: "🔢 Ordenamiento",
+        enunciado: `Ordene las cinco características de la educación del Artículo 7 de la LGE, según aparecen en la lógica del 'árbol del sistema educativo' (de la más estructural a la más valórica):
+          <br><br>
+          <strong>1.</strong> Laica: ajena a cualquier doctrina religiosa.<br>
+          <strong>2.</strong> Universal: corresponde a todas las personas sin discriminación.<br>
+          <strong>3.</strong> Inclusiva: elimina barreras al aprendizaje y a la participación.<br>
+          <strong>4.</strong> Gratuita: prohíbe cualquier contraprestación o pago.<br>
+          <strong>5.</strong> Pública: impartida y administrada por el Estado.`,
+        opciones: [
+          { letra: "A", texto: "2 → 5 → 4 → 3 → 1 (Universal, Pública, Gratuita, Inclusiva, Laica)" },
+          { letra: "B", texto: "1 → 3 → 5 → 2 → 4 (Laica, Inclusiva, Pública, Universal, Gratuita)" },
+          { letra: "C", texto: "5 → 4 → 2 → 1 → 3 (Pública, Gratuita, Universal, Laica, Inclusiva)" }
+        ],
+        correcta: "A",
+        feedback: "De lo más estructural (Universal = todas las personas) a lo más valórico: Universal (quién accede), Pública (quién imparte), Gratuita (condiciones económicas), Inclusiva (eliminación de barreras) y Laica (separación de creencias). Esta es la lógica del Art. 7."
+      },
+
+      /* ═══════════════════════════════════════════════
+         RELACIÓN DE ELEMENTOS — Preguntas 22 a 25
+      ═══════════════════════════════════════════════ */
+
+      {
+        tipo: "🔗 Relación de Elementos",
+        enunciado: `Seleccione la opción que relacione correctamente el Pilar de la LGE con su descripción y artículo de referencia:
+          <br><br>
+          <table class="tabla-relacion">
+            <tr><th>Pilar</th><th>Descripción</th></tr>
+            <tr><td>1. Derecho a la Educación</td><td>a) La filosofía y el vehículo operativo del Estado (Arts. 11-14).</td></tr>
+            <tr><td>2. Nueva Escuela Mexicana</td><td>b) El ecosistema comunitario que nutre el aprendizaje (Art. 126).</td></tr>
+            <tr><td>3. Participación Social</td><td>c) El cimiento innegociable y constitucional (Art. 7).</td></tr>
+          </table>`,
+        opciones: [
+          { letra: "A", texto: "1a, 2b, 3c" },
+          { letra: "B", texto: "1c, 2a, 3b" },
+          { letra: "C", texto: "1b, 2c, 3a" }
+        ],
+        correcta: "B",
+        feedback: "El Derecho a la Educación es el cimiento constitucional (Art. 7) → c. La Nueva Escuela Mexicana es la filosofía y el vehículo del Estado (Arts. 11-14) → a. La Participación Social es el ecosistema comunitario (Art. 126) → b."
+      },
+      {
+        tipo: "🔗 Relación de Elementos",
+        enunciado: `Seleccione la opción que relacione correctamente el criterio de educación del Artículo 16 con su definición:
+          <br><br>
+          <table class="tabla-relacion">
+            <tr><th>Criterio</th><th>Definición</th></tr>
+            <tr><td>1. Democrática</td><td>a) Combate desigualdades y ofrece educación pertinente para todos.</td></tr>
+            <tr><td>2. Equitativa</td><td>b) Promueve convivencia armónica entre personas y comunidades.</td></tr>
+            <tr><td>3. Intercultural</td><td>c) Sistema de vida fundado en el mejoramiento constante del pueblo.</td></tr>
+          </table>`,
+        opciones: [
+          { letra: "A", texto: "1c, 2a, 3b" },
+          { letra: "B", texto: "1a, 2c, 3b" },
+          { letra: "C", texto: "1b, 2a, 3c" }
+        ],
+        correcta: "A",
+        feedback: "Democrática = sistema de vida de mejoramiento constante (c). Equitativa = combate desigualdades y educación pertinente (a). Intercultural = convivencia armónica entre personas y comunidades (b). Estos son los 8 criterios del Art. 16."
+      },
+      {
+        tipo: "🔗 Relación de Elementos",
+        enunciado: `Seleccione la opción que relacione correctamente el dominio del aprendizaje integral (Art. 18 LGE) con uno de sus contenidos específicos:
+          <br><br>
+          <table class="tabla-relacion">
+            <tr><th>Dominio</th><th>Contenido específico</th></tr>
+            <tr><td>1. Cognitivo</td><td>a) Desarrollo de la empatía, resiliencia y gestión emocional.</td></tr>
+            <tr><td>2. Humanístico y Cívico</td><td>b) Pensamiento lógico-matemático y apropiación científica.</td></tr>
+            <tr><td>3. Socioemocional</td><td>c) Valores para la responsabilidad ciudadana: solidaridad, justicia e igualdad.</td></tr>
+          </table>`,
+        opciones: [
+          { letra: "A", texto: "1b, 2c, 3a" },
+          { letra: "B", texto: "1a, 2b, 3c" },
+          { letra: "C", texto: "1c, 2a, 3b" }
+        ],
+        correcta: "A",
+        feedback: "Cognitivo → pensamiento lógico-matemático y apropiación científica (b). Humanístico y Cívico → valores ciudadanos: solidaridad, justicia, igualdad (c). Socioemocional → empatía, resiliencia y gestión emocional (a)."
+      },
+      {
+        tipo: "🔗 Relación de Elementos",
+        enunciado: `Seleccione la opción que relacione correctamente el fin de la educación (Art. 15 LGE) con su descripción:
+          <br><br>
+          <table class="tabla-relacion">
+            <tr><th>Fin de la Educación</th><th>Descripción</th></tr>
+            <tr><td>1. Dignidad Humana</td><td>a) Desarrollo sostenible y mitigación del cambio climático.</td></tr>
+            <tr><td>2. Respeto a la Naturaleza</td><td>b) Formación humanista y respeto irrestricto a los derechos de todos.</td></tr>
+            <tr><td>3. Amor a la Patria</td><td>c) Aprecio por la cultura, historia y símbolos patrios.</td></tr>
+          </table>`,
+        opciones: [
+          { letra: "A", texto: "1b, 2a, 3c" },
+          { letra: "B", texto: "1a, 2c, 3b" },
+          { letra: "C", texto: "1c, 2b, 3a" }
+        ],
+        correcta: "A",
+        feedback: "Dignidad Humana → formación humanista y respeto a los derechos de todos (b). Respeto a la Naturaleza → desarrollo sostenible y mitigación del cambio climático (a). Amor a la Patria → aprecio por la cultura, historia y símbolos patrios (c)."
+      }
+
+    ]; // ← Fin del banco de 25 preguntas
+
+    /* ============================================================
+       VARIABLES DE ESTADO
+    ============================================================ */
+    let preguntaActual = 0;
+    let respuestas   = new Array(preguntas.length).fill(null);
+    let respondidas  = new Array(preguntas.length).fill(false);
+
+    /* ============================================================
+       TEMPORIZADOR DE 45 MINUTOS
+    ============================================================ */
+    const TIEMPO_TOTAL  = 45 * 60;   // 2700 segundos
+    let segundosRestantes = TIEMPO_TOTAL;
+    let intervaloTimer    = null;
+
+    /** Formatea segundos como MM:SS */
+    function formatearTiempo(seg) {
+      const m = Math.floor(seg / 60);
+      const s = seg % 60;
+      return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    }
+
+    /** Inicia el contador y actualiza el DOM cada segundo */
+    function iniciarTimer() {
+      segundosRestantes = TIEMPO_TOTAL;
+      if (intervaloTimer) clearInterval(intervaloTimer);
+
+      // Mostrar la barra sticky del timer
+      const bar = document.getElementById('timer-bar');
+      bar.style.display = 'flex';
+
+      // Resetear estado visual
+      const displayEl = document.getElementById('timer-display');
+      displayEl.className = 'timer-display';
+      document.getElementById('timer-agotado').style.display = 'none';
+      document.getElementById('timer-texto').textContent = formatearTiempo(TIEMPO_TOTAL);
+      document.getElementById('timer-prog').style.width = '100%';
+      document.getElementById('timer-prog').style.background =
+        'linear-gradient(90deg, var(--azul-claro), var(--azul-medio))';
+
+      intervaloTimer = setInterval(() => {
+        segundosRestantes--;
+        const textoEl   = document.getElementById('timer-texto');
+        const progEl    = document.getElementById('timer-prog');
+        const pct = (segundosRestantes / TIEMPO_TOTAL) * 100;
+
+        textoEl.textContent = formatearTiempo(Math.max(0, segundosRestantes));
+        progEl.style.width  = Math.max(0, pct) + '%';
+
+        // Cambio de color según urgencia
+        if (segundosRestantes <= 5 * 60 && segundosRestantes > 0) {
+          displayEl.className = 'timer-display urgente';
+          progEl.style.background = 'linear-gradient(90deg,#e05252,#b52a2a)';
+        } else if (segundosRestantes <= 10 * 60) {
+          displayEl.className = 'timer-display advertencia';
+          progEl.style.background = 'linear-gradient(90deg,#e08a2a,#b55e00)';
+        }
+
+        // Tiempo agotado
+        if (segundosRestantes <= 0) {
+          clearInterval(intervaloTimer);
+          textoEl.textContent = '00:00';
+          progEl.style.width  = '0%';
+          document.getElementById('timer-agotado').style.display = 'inline';
+          displayEl.className = 'timer-display urgente';
+          document.getElementById('modal-tiempo').classList.add('activo');
+        }
+      }, 1000);
+    }
+
+    /** Detiene el contador al finalizar */
+    function detenerTimer() {
+      if (intervaloTimer) { clearInterval(intervaloTimer); intervaloTimer = null; }
+    }
+
+    /** Cierra el modal de tiempo agotado y muestra resultados */
+    function cerrarModalYResultados() {
+      document.getElementById('modal-tiempo').classList.remove('activo');
+      mostrarResultados();
+    }
+
+    /* ============================================================
+       INICIAR SIMULADOR
+    ============================================================ */
+    function iniciarSimulador() {
+      document.getElementById('pantalla-inicio').style.display = 'none';
+      document.getElementById('pantalla-simulador').style.display = 'block';
+      respuestas  = new Array(preguntas.length).fill(null);
+      respondidas = new Array(preguntas.length).fill(false);
+      preguntaActual = 0;
+      iniciarTimer();
+      renderizarPregunta();
+    }
+
+    /* ============================================================
+       RENDERIZAR LA PREGUNTA ACTIVA
+       Construye el HTML de la tarjeta y lo inyecta en el DOM
+    ============================================================ */
+    function renderizarPregunta() {
+      const p            = preguntas[preguntaActual];
+      const yaRespondida = respondidas[preguntaActual];
+      const respGuardada = respuestas[preguntaActual];
+
+      // Actualizar barra de progreso de preguntas
+      const pct = ((preguntaActual + 1) / preguntas.length) * 100;
+      document.getElementById('barra-relleno').style.width = pct + '%';
+      document.getElementById('progreso-num').textContent =
+        (preguntaActual + 1) + ' / ' + preguntas.length;
+
+      // Construir HTML de las opciones
+      let opcionesHTML = '';
+      p.opciones.forEach(op => {
+        let cls = '', dis = '';
+        if (yaRespondida) {
+          dis = 'disabled';
+          if (op.letra === p.correcta)                            cls = 'correcta';
+          else if (op.letra === respGuardada)                     cls = 'incorrecta';
+        }
+        opcionesHTML += `
+          <li>
+            <button class="opcion-btn ${cls}" onclick="seleccionarRespuesta('${op.letra}')" ${dis}>
+              <span class="opcion-letra">${op.letra}</span>
+              <span>${op.texto}</span>
+            </button>
+          </li>`;
+      });
+
+      // Preparar retroalimentación
+      let retroClass = '', retroHTML = '', retroVisible = '';
+      if (yaRespondida) {
+        retroVisible = 'visible';
+        if (respGuardada === p.correcta) {
+          retroClass = 'correcto';
+          retroHTML  = `<strong>✅ ¡Correcto!</strong> ${p.feedback}`;
+        } else {
+          retroClass = 'incorrecto';
+          retroHTML  = `<strong>❌ Incorrecto.</strong> La respuesta correcta es la opción <strong>${p.correcta}</strong>. ${p.feedback}`;
+        }
+      }
+
+      // Inyectar la tarjeta completa
+      document.getElementById('contenedor-pregunta').innerHTML = `
+        <div class="tarjeta-pregunta">
+          <span class="tipo-reactivo">${p.tipo}</span>
+          <p class="num-pregunta">Pregunta ${preguntaActual + 1} de ${preguntas.length}</p>
+          <p class="enunciado-pregunta">${p.enunciado}</p>
+          <ul class="opciones-lista">${opcionesHTML}</ul>
+          <div class="retroalimentacion ${retroClass} ${retroVisible}">${retroHTML}</div>
+        </div>`;
+
+      // Estado de los botones de navegación
+      document.getElementById('btn-anterior').disabled = (preguntaActual === 0);
+      actualizarBotonSiguiente();
+    }
+
+    /** Actualiza el texto y estado del botón Siguiente */
+    function actualizarBotonSiguiente() {
+      const btn     = document.getElementById('btn-siguiente');
+      const esUlti  = (preguntaActual === preguntas.length - 1);
+      btn.textContent = esUlti ? '📊 Ver resultados' : 'Siguiente →';
+      btn.disabled    = esUlti && !respondidas[preguntaActual];
+    }
+
+    /* ============================================================
+       SELECCIONAR UNA RESPUESTA
+    ============================================================ */
+    function seleccionarRespuesta(letra) {
+      if (respondidas[preguntaActual]) return;
+      respuestas[preguntaActual]  = letra;
+      respondidas[preguntaActual] = true;
+      renderizarPregunta();
+    }
+
+    /* ============================================================
+       NAVEGACIÓN — SIGUIENTE / ANTERIOR
+    ============================================================ */
+    function preguntaSiguiente() {
+      if (preguntaActual < preguntas.length - 1) {
+        preguntaActual++;
+        renderizarPregunta();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        mostrarResultados();
+      }
+    }
+
+    function preguntaAnterior() {
+      if (preguntaActual > 0) {
+        preguntaActual--;
+        renderizarPregunta();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    /* ============================================================
+       MOSTRAR RESULTADOS — contenido dinámico generado por JS
+    ============================================================ */
+    function mostrarResultados() {
+      detenerTimer();   // detener el contador al terminar
+
+      // Calcular aciertos
+      let correctas = 0;
+      respuestas.forEach((r, i) => { if (r === preguntas[i].correcta) correctas++; });
+
+      const incorrectas = preguntas.length - correctas;
+      const porcentaje  = Math.round((correctas / preguntas.length) * 100);
+
+      // Mensaje según desempeño
+      let titulo, desc;
+      if      (porcentaje >= 90) { titulo = '🏆 ¡Excelente dominio de la LGE!';   desc = 'Conoces a fondo los pilares y artículos clave de la Ley General de Educación. ¡Estás listo para el instrumento!'; }
+      else if (porcentaje >= 70) { titulo = '👍 ¡Buen trabajo!';                   desc = 'Tienes una comprensión sólida de la LGE. Repasa los artículos donde tuviste errores para reforzar.'; }
+      else if (porcentaje >= 50) { titulo = '📚 En proceso de consolidación';      desc = 'Vas por buen camino. Revisa los pilares, los criterios del Art. 16 y los fines del Art. 15 con más detalle.'; }
+      else                       { titulo = '💪 ¡Sigue estudiando!';               desc = 'No te desanimes. Vuelve a revisar la Guía Visual de la LGE y practica de nuevo. ¡Tú puedes!'; }
+
+      // Actualizar DOM con resultados — ejemplo de contenido dinámico con JavaScript
+      document.getElementById('score-num').textContent        = correctas;
+      document.getElementById('resultado-titulo').textContent = titulo;
+      document.getElementById('resultado-desc').textContent   = desc;
+      document.getElementById('res-correctas').textContent    = correctas;
+      document.getElementById('res-incorrectas').textContent  = incorrectas;
+      document.getElementById('res-porcentaje').textContent   = porcentaje + '%';
+
+      // Cambiar pantallas
+      document.getElementById('pantalla-simulador').style.display  = 'none';
+      document.getElementById('pantalla-resultados').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ============================================================
+       REINICIAR EL SIMULADOR
+    ============================================================ */
+    function reiniciarSimulador() {
+      respuestas   = new Array(preguntas.length).fill(null);
+      respondidas  = new Array(preguntas.length).fill(false);
+      preguntaActual = 0;
+      document.getElementById('pantalla-resultados').style.display = 'none';
+      document.getElementById('pantalla-simulador').style.display  = 'block';
+      iniciarTimer();
+      renderizarPregunta();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+  </script>
+</body>
+</html>

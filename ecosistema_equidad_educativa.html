@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ecosistema de Equidad Educativa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --terra: #C1623F;
+    --terra-dark: #9E4A2C;
+    --terra-light: #E8957A;
+    --sage: #7A9E7E;
+    --sage-light: #A8C4AB;
+    --cream: #F5EFE6;
+    --sand: #E8DDD0;
+    --bark: #6B4C3B;
+    --bark-light: #8B6655;
+    --gold: #C9A96E;
+    --white: #FDFAF7;
+    --text-dark: #2C1F17;
+    --text-mid: #5A3E33;
+    --text-light: #8B7266;
+    --shadow: 0 8px 32px rgba(44,31,23,0.12);
+    --shadow-sm: 0 2px 12px rgba(44,31,23,0.08);
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-dark);
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity .4s ease;
+    overflow: hidden;
+  }
+  .screen.active {
+    opacity: 1; pointer-events: all;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--terra), var(--gold));
+    transition: width .4s ease; z-index: 100;
+  }
+
+  /* ── NAV DOTS ── */
+  #nav-dots {
+    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 100;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--sand); border: 2px solid var(--bark-light);
+    cursor: pointer; transition: all .3s;
+  }
+  .dot.active { background: var(--terra); border-color: var(--terra); transform: scale(1.3); }
+
+  /* ── NAV ARROWS ── */
+  .nav-arrow {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--white); border: 2px solid var(--sand);
+    box-shadow: var(--shadow-sm);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 100; font-size: 18px; color: var(--bark);
+    transition: all .25s; user-select: none;
+  }
+  .nav-arrow:hover { background: var(--terra); color: #fff; border-color: var(--terra); }
+  #prev-btn { left: 10px; }
+  #next-btn { right: 10px; }
+  .nav-arrow.hidden { opacity: 0; pointer-events: none; }
+
+  /* ══════════════════════════════════════════
+     SCREEN 0 – PORTADA
+  ══════════════════════════════════════════ */
+  #s0 {
+    background: linear-gradient(135deg, #2C1F17 0%, #6B4C3B 50%, #9E4A2C 100%);
+    justify-content: center; align-items: center; text-align: center;
+    padding: 40px 24px;
+  }
+  #s0::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 30%, rgba(201,169,110,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(122,158,126,0.15) 0%, transparent 50%);
+  }
+  .cover-badge {
+    display: inline-block; background: rgba(201,169,110,0.25);
+    border: 1px solid rgba(201,169,110,0.5); color: var(--gold);
+    padding: 6px 20px; border-radius: 40px; font-size: 11px;
+    letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px;
+    position: relative;
+  }
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px); font-weight: 900;
+    color: #fff; line-height: 1.15; margin-bottom: 12px; position: relative;
+  }
+  .cover-title span { color: var(--terra-light); }
+  .cover-sub {
+    font-size: clamp(13px, 2vw, 17px); color: rgba(255,255,255,0.65);
+    margin-bottom: 32px; position: relative; max-width: 500px;
+  }
+  .cover-author {
+    position: relative; display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    padding: 10px 24px; border-radius: 40px; color: rgba(255,255,255,0.8);
+    font-size: 13px; margin-bottom: 40px;
+  }
+  .cover-author span { color: var(--gold); font-weight: 600; }
+  .btn-start {
+    position: relative;
+    background: linear-gradient(135deg, var(--terra), var(--terra-dark));
+    color: #fff; border: none; padding: 14px 40px; border-radius: 40px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; box-shadow: 0 8px 24px rgba(193,98,63,0.4);
+    transition: all .3s; letter-spacing: .5px;
+  }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(193,98,63,0.5); }
+  .cover-pills {
+    position: relative; display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; margin-top: 28px;
+  }
+  .pill {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.7); padding: 5px 14px; border-radius: 20px; font-size: 11px;
+  }
+
+  /* ══════════════════════════════════════════
+     SCREEN 1 – INTRODUCCIÓN
+  ══════════════════════════════════════════ */
+  #s1 { background: var(--white); }
+  .screen-header {
+    background: linear-gradient(135deg, var(--bark) 0%, var(--terra-dark) 100%);
+    padding: 22px 32px; display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0;
+  }
+  .screen-header .screen-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); display: flex; align-items: center;
+    justify-content: center; color: #fff; font-weight: 700; font-size: 14px;
+    flex-shrink: 0;
+  }
+  .screen-header h2 {
+    font-family: 'Playfair Display', serif;
+    color: #fff; font-size: clamp(16px, 3vw, 22px); font-weight: 700;
+  }
+  .screen-body {
+    flex: 1; overflow: hidden; display: flex; flex-direction: column;
+    padding: 24px 32px; gap: 16px;
+  }
+  .intro-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex: 1;
+  }
+  .intro-card {
+    background: var(--cream); border-radius: 16px;
+    border-left: 4px solid var(--terra);
+    padding: 20px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .intro-card.green { border-left-color: var(--sage); }
+  .intro-card.gold { border-left-color: var(--gold); }
+  .intro-card.full {
+    grid-column: 1/-1; background: linear-gradient(135deg, var(--bark) 0%, var(--bark-light) 100%);
+    color: #fff; border: none; text-align: center; justify-content: center;
+  }
+  .intro-card .ic-icon { font-size: 28px; margin-bottom: 4px; }
+  .intro-card .ic-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--text-dark); }
+  .intro-card.full .ic-title { color: #fff; font-size: 16px; }
+  .intro-card .ic-text { font-size: 12.5px; color: var(--text-mid); line-height: 1.5; }
+  .intro-card.full .ic-text { color: rgba(255,255,255,0.8); font-size: 13px; }
+  .quote-box {
+    background: linear-gradient(135deg, var(--terra), var(--terra-dark));
+    border-radius: 14px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .quote-box .qmark { font-family: 'Playfair Display', serif; font-size: 48px; color: rgba(255,255,255,0.3); line-height: 1; }
+  .quote-box p { color: #fff; font-size: 13px; line-height: 1.6; font-style: italic; }
+
+  /* ══════════════════════════════════════════
+     SCREEN 2 – LOS 5 PILARES (overview)
+  ══════════════════════════════════════════ */
+  #s2 { background: var(--cream); }
+  .pillars-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; flex: 1;
+  }
+  .pillar-card {
+    border-radius: 16px; padding: 16px 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    text-align: center; cursor: pointer;
+    transition: transform .3s, box-shadow .3s;
+    border: 2px solid transparent;
+  }
+  .pillar-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .pc-1 { background: linear-gradient(160deg,#FBF0EB,#F5DDD4); border-color: var(--terra-light); }
+  .pc-2 { background: linear-gradient(160deg,#EDF4EE,#D4E8D6); border-color: var(--sage-light); }
+  .pc-3 { background: linear-gradient(160deg,#F9F3E8,#F0E4C8); border-color: var(--gold); }
+  .pc-4 { background: linear-gradient(160deg,#EBF0F8,#D0DDEF); border-color: #89A8C8; }
+  .pc-5 { background: linear-gradient(160deg,#F5EEFA,#E4D4F0); border-color: #B89AC8; }
+  .pc-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px; color: #fff;
+  }
+  .pc-1 .pc-num { background: var(--terra); }
+  .pc-2 .pc-num { background: var(--sage); }
+  .pc-3 .pc-num { background: var(--gold); }
+  .pc-4 .pc-num { background: #6A8EB0; }
+  .pc-5 .pc-num { background: #9370B0; }
+  .pc-icon { font-size: 26px; }
+  .pc-title { font-family: 'Playfair Display', serif; font-size: 12.5px; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
+  .pc-sub { font-size: 10.5px; color: var(--text-mid); line-height: 1.4; }
+  .pillars-intro { text-align: center; margin-bottom: 4px; }
+  .pillars-intro h3 { font-family:'Playfair Display',serif; font-size: clamp(15px,2.5vw,20px); color: var(--bark); margin-bottom: 4px; }
+  .pillars-intro p { font-size: 12px; color: var(--text-light); }
+
+  /* ══════════════════════════════════════════
+     SCREENS 3-7 – PILARES DETALLE
+  ══════════════════════════════════════════ */
+  .pillar-screen { background: var(--white); }
+  .pillar-header {
+    padding: 20px 28px; display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+  }
+  .ph-num {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900;
+    color: #fff; flex-shrink: 0;
+  }
+  .ph-title { font-family: 'Playfair Display', serif; font-size: clamp(16px,3vw,24px); font-weight: 900; }
+  .ph-sub { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+  .pillar-body {
+    flex: 1; overflow: hidden; display: grid;
+    padding: 0 28px 20px; gap: 14px;
+  }
+  /* pillar 1 */
+  #s3 .pillar-header { background: linear-gradient(135deg,#FBF0EB,#F5DDD4); }
+  #s3 .ph-num { background: var(--terra); }
+  #s3 .ph-title { color: var(--terra-dark); }
+  #s3 .pillar-body { grid-template-columns: 1.2fr 1fr; grid-template-rows: auto auto; }
+  /* pillar 2 */
+  #s4 .pillar-header { background: linear-gradient(135deg,#EDF4EE,#D4E8D6); }
+  #s4 .ph-num { background: var(--sage); }
+  #s4 .ph-title { color: #3D7042; }
+  #s4 .pillar-body { grid-template-columns: 1fr 1fr; }
+  /* pillar 3 */
+  #s5 .pillar-header { background: linear-gradient(135deg,#F9F3E8,#F0E4C8); }
+  #s5 .ph-num { background: var(--gold); }
+  #s5 .ph-title { color: #8B6A2A; }
+  #s5 .pillar-body { grid-template-columns: 1fr 1fr; }
+  /* pillar 4 */
+  #s6 .pillar-header { background: linear-gradient(135deg,#EBF0F8,#D0DDEF); }
+  #s6 .ph-num { background: #6A8EB0; }
+  #s6 .ph-title { color: #2C5070; }
+  #s6 .pillar-body { grid-template-columns: 1fr 1fr; }
+  /* pillar 5 */
+  #s7 .pillar-header { background: linear-gradient(135deg,#F5EEFA,#E4D4F0); }
+  #s7 .ph-num { background: #9370B0; }
+  #s7 .ph-title { color: #5A3080; }
+  #s7 .pillar-body { grid-template-columns: 1fr 1fr; }
+
+  .detail-card {
+    background: var(--cream); border-radius: 14px; padding: 16px 18px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .dc-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-light); font-weight: 600;
+  }
+  .dc-title {
+    font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--text-dark);
+  }
+  .dc-body { font-size: 12px; color: var(--text-mid); line-height: 1.6; }
+  .detail-card.accent { background: linear-gradient(135deg,var(--terra),var(--terra-dark)); }
+  .detail-card.accent .dc-label, .detail-card.accent .dc-title, .detail-card.accent .dc-body { color: #fff; }
+  .detail-card.accent2 { background: linear-gradient(135deg,var(--sage),#3D7042); }
+  .detail-card.accent2 .dc-label, .detail-card.accent2 .dc-title, .detail-card.accent2 .dc-body { color: #fff; }
+  .detail-card.accent3 { background: linear-gradient(135deg,var(--gold),#A07830); }
+  .detail-card.accent3 .dc-label, .detail-card.accent3 .dc-title, .detail-card.accent3 .dc-body { color: #fff; }
+  .detail-card.accent4 { background: linear-gradient(135deg,#6A8EB0,#2C5070); }
+  .detail-card.accent4 .dc-label, .detail-card.accent4 .dc-title, .detail-card.accent4 .dc-body { color: #fff; }
+  .detail-card.accent5 { background: linear-gradient(135deg,#9370B0,#5A3080); }
+  .detail-card.accent5 .dc-label, .detail-card.accent5 .dc-title, .detail-card.accent5 .dc-body { color: #fff; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tag {
+    background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4);
+    color: #fff; padding: 3px 10px; border-radius: 20px; font-size: 10.5px;
+  }
+  .tag.dark {
+    background: rgba(44,31,23,0.08); border-color: rgba(44,31,23,0.15);
+    color: var(--text-mid);
+  }
+  .list-items { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .list-items li {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--text-mid); line-height: 1.5;
+  }
+  .list-items li .dot-mark {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--terra);
+    flex-shrink: 0; margin-top: 5px;
+  }
+  .list-items.sage li .dot-mark { background: var(--sage); }
+  .list-items.gold li .dot-mark { background: var(--gold); }
+  .list-items.blue li .dot-mark { background: #6A8EB0; }
+  .list-items.purple li .dot-mark { background: #9370B0; }
+  .span-full { grid-column: 1 / -1; }
+  .balance-box {
+    display: flex; gap: 12px; align-items: stretch;
+  }
+  .balance-side {
+    flex: 1; border-radius: 12px; padding: 14px 16px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .balance-side .bs-icon { font-size: 28px; }
+  .balance-side .bs-title { font-family:'Playfair Display',serif; font-size: 13px; font-weight: 700; }
+  .balance-side .bs-sub { font-size: 11px; color: var(--text-mid); }
+  .balance-vs {
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display',serif; font-size: 18px; font-weight: 900;
+    color: var(--terra); flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════════════
+     SCREEN 8 – SÍNTESIS
+  ══════════════════════════════════════════ */
+  #s8 { background: var(--cream); }
+  .synthesis-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; flex: 1;
+  }
+  .syn-card {
+    border-radius: 16px; padding: 16px 14px;
+    display: flex; flex-direction: column; gap: 8px; text-align: center;
+  }
+  .syn-card .syn-icon { font-size: 28px; }
+  .syn-card .syn-key { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; }
+  .syn-card .syn-val { font-size: 11px; color: var(--text-mid); line-height: 1.5; }
+  .sc-1 { background: linear-gradient(160deg,#FBF0EB,#F5DDD4); }
+  .sc-2 { background: linear-gradient(160deg,#EDF4EE,#D4E8D6); }
+  .sc-3 { background: linear-gradient(160deg,#F9F3E8,#F0E4C8); }
+  .sc-4 { background: linear-gradient(160deg,#EBF0F8,#D0DDEF); }
+  .sc-5 { background: linear-gradient(160deg,#F5EEFA,#E4D4F0); }
+
+  /* ══════════════════════════════════════════
+     SCREEN 9 – AUTOEVALUACIÓN
+  ══════════════════════════════════════════ */
+  #s9 { background: var(--white); }
+  .quiz-container {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 20px 32px; overflow: hidden;
+  }
+  .quiz-progress {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .quiz-progress-text { font-size: 12px; color: var(--text-light); }
+  .quiz-progress-bar {
+    flex: 1; height: 6px; background: var(--sand); border-radius: 3px; overflow: hidden;
+  }
+  .quiz-progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--terra), var(--gold));
+    border-radius: 3px; transition: width .4s;
+  }
+  .quiz-score-badge {
+    background: var(--cream); border: 1px solid var(--sand); border-radius: 20px;
+    padding: 3px 14px; font-size: 12px; font-weight: 600; color: var(--bark);
+  }
+  .question-area { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(14px, 2.5vw, 18px); font-weight: 700; color: var(--text-dark);
+    line-height: 1.4; padding: 16px 20px;
+    background: var(--cream); border-radius: 14px;
+    border-left: 4px solid var(--terra);
+    flex-shrink: 0;
+  }
+  .options-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .opt-btn {
+    background: var(--cream); border: 2px solid var(--sand);
+    border-radius: 12px; padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 12.5px;
+    color: var(--text-dark); text-align: left; cursor: pointer;
+    transition: all .25s; line-height: 1.4;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--terra); background: #FBF0EB; }
+  .opt-btn.correct { background: #D4F0D8; border-color: #4CAF72; color: #1A5C2A; }
+  .opt-btn.wrong { background: #F5D5D0; border-color: #C0392B; color: #7A1C14; }
+  .opt-btn:disabled { cursor: default; }
+  .feedback-box {
+    border-radius: 12px; padding: 12px 16px;
+    font-size: 12.5px; line-height: 1.5; flex-shrink: 0;
+  }
+  .feedback-box.correct-fb { background: #D4F0D8; color: #1A5C2A; border: 1px solid #4CAF72; }
+  .feedback-box.wrong-fb { background: #F5D5D0; color: #7A1C14; border: 1px solid #C0392B; }
+  .feedback-box.hidden { display: none; }
+  .quiz-nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; flex-shrink: 0; }
+  .q-btn {
+    background: var(--terra); color: #fff; border: none; padding: 10px 24px;
+    border-radius: 20px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: all .25s;
+  }
+  .q-btn:hover { background: var(--terra-dark); }
+  .q-btn.secondary { background: var(--cream); color: var(--text-mid); border: 1px solid var(--sand); }
+  .q-btn.secondary:hover { background: var(--sand); }
+
+  /* Result screen within quiz */
+  .quiz-result {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 16px; text-align: center;
+  }
+  .result-circle {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--terra), var(--gold));
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 8px 32px rgba(193,98,63,0.3);
+  }
+  .result-circle .rc-score { font-family:'Playfair Display',serif; font-size: 32px; font-weight: 900; color: #fff; }
+  .result-circle .rc-total { font-size: 13px; color: rgba(255,255,255,0.8); }
+  .result-msg { font-family:'Playfair Display',serif; font-size: 20px; font-weight: 700; color: var(--bark); }
+  .result-sub { font-size: 13px; color: var(--text-light); max-width: 380px; line-height: 1.6; }
+
+  /* ══════════════════════════════════════════
+     SCREEN 10 – RESUMEN FINAL
+  ══════════════════════════════════════════ */
+  #s10 { background: linear-gradient(135deg, #2C1F17 0%, #5A3E33 60%, #9E4A2C 100%); }
+  .final-header {
+    padding: 24px 32px; text-align: center;
+    flex-shrink: 0;
+  }
+  .final-header h2 { font-family:'Playfair Display',serif; font-size: clamp(20px,3vw,28px); font-weight: 900; color: #fff; }
+  .final-header p { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+  .final-grid {
+    flex: 1; overflow: hidden; padding: 0 28px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+  }
+  .final-card {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px; padding: 14px 12px;
+    display: flex; flex-direction: column; gap: 6px; text-align: center;
+  }
+  .final-card .fc-icon { font-size: 24px; }
+  .final-card .fc-title { font-family:'Playfair Display',serif; font-size: 12px; font-weight: 700; color: var(--gold); }
+  .final-card .fc-body { font-size: 11px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+  .final-cta {
+    padding: 18px 32px; text-align: center; flex-shrink: 0;
+  }
+  .final-cta p { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 10px; }
+  .final-closing {
+    background: rgba(201,169,110,0.15); border: 1px solid rgba(201,169,110,0.3);
+    border-radius: 12px; padding: 12px 20px; margin: 0 28px 14px;
+    font-size: 12px; color: rgba(255,255,255,0.75); text-align: center;
+    font-style: italic; flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════════════
+     FOOTER
+  ══════════════════════════════════════════ */
+  .screen-footer {
+    padding: 8px 28px; text-align: center;
+    font-size: 10px; color: var(--text-light); flex-shrink: 0;
+    border-top: 1px solid var(--sand);
+  }
+  .screen-footer.dark {
+    color: rgba(255,255,255,0.3); border-top-color: rgba(255,255,255,0.1);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .pillars-grid, .synthesis-grid, .final-grid { grid-template-columns: repeat(3, 1fr); }
+    .intro-grid { grid-template-columns: 1fr; }
+    .pillar-body { grid-template-columns: 1fr !important; }
+    .options-grid { grid-template-columns: 1fr; }
+    .screen-body, .pillar-body { padding: 14px; }
+    .screen-header { padding: 16px 18px; }
+    #s0 { padding: 24px 18px; }
+    #prev-btn { left: 4px; }
+    #next-btn { right: 4px; }
+  }
+  @media (max-width: 500px) {
+    .pillars-grid, .synthesis-grid, .final-grid { grid-template-columns: 1fr 1fr; }
+    .balance-box { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar" style="width:10%"></div>
+
+<button class="nav-arrow hidden" id="prev-btn" onclick="navigate(-1)">&#8592;</button>
+<button class="nav-arrow" id="next-btn" onclick="navigate(1)">&#8594;</button>
+
+<div id="nav-dots"></div>
+
+<!-- ══════════════════ SCREEN 0: PORTADA ══════════════════ -->
+<div class="screen active" id="s0">
+  <div class="cover-badge">📚 Guía de Estudio Visual</div>
+  <h1 class="cover-title">Una Comunidad<br>Educativa <span>Promotora</span><br>de Equidad</h1>
+  <p class="cover-sub">Conceptos Clave y Estrategias para construir ecosistemas educativos justos y afectivos</p>
+  <div class="cover-author">✍️ Autor: <span>Prof. Francisco De Jesús Luna Benitez</span></div>
+  <button class="btn-start" onclick="navigate(1)">Comenzar Guía ➜</button>
+  <div class="cover-pills">
+    <span class="pill">🌱 Vínculos Afectivos</span>
+    <span class="pill">⚖️ Autoestima</span>
+    <span class="pill">🔓 Equidad de Género</span>
+    <span class="pill">🤝 Colaboración</span>
+    <span class="pill">🔄 Responsabilidad Compartida</span>
+  </div>
+</div>
+
+<!-- ══════════════════ SCREEN 1: INTRODUCCIÓN ══════════════════ -->
+<div class="screen" id="s1">
+  <div class="screen-header">
+    <div class="screen-num">📖</div>
+    <h2>Introducción al Ecosistema de Equidad Educativa</h2>
+  </div>
+  <div class="screen-body">
+    <div class="intro-grid">
+      <div class="intro-card">
+        <div class="ic-icon">🎯</div>
+        <div class="ic-title">Idea Principal</div>
+        <div class="ic-text">Una comunidad educativa promotora de equidad es aquella que consolida lazos afectivos de confianza profunda entre todos sus integrantes: estudiantes, docentes y familias.</div>
+      </div>
+      <div class="intro-card green">
+        <div class="ic-icon">🌍</div>
+        <div class="ic-title">¿Por qué importa?</div>
+        <div class="ic-text">La inequidad está fuertemente introyectada en lo personal y social. Es imperativo promover sistemáticamente el análisis de las actitudes que la sostienen para transformarlas.</div>
+      </div>
+      <div class="intro-card gold">
+        <div class="ic-icon">🏫</div>
+        <div class="ic-title">Actores Clave</div>
+        <div class="ic-text">La escuela, la familia y la comunidad son co-responsables. Las madres, padres y tutores son los modelos más influyentes en el equilibrio afectivo y autoestima de cada estudiante.</div>
+      </div>
+      <div class="intro-card">
+        <div class="ic-icon">🌱</div>
+        <div class="ic-title">El Compromiso</div>
+        <div class="ic-text">Se busca generar un compromiso moral protector y de cohesión social para favorecer la formación integral de la comunidad educativa.</div>
+      </div>
+      <div class="intro-card full">
+        <div class="ic-icon">✨</div>
+        <div class="ic-title">Meta Final</div>
+        <div class="ic-text">Personas con seguridad en sí mismas, creativas, asertivas, solidarias y con resiliencia para afrontar y salir fortalecidas de la adversidad.</div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════ SCREEN 2: 5 PILARES ══════════════════ -->
+<div class="screen" id="s2">
+  <div class="screen-header" style="background:linear-gradient(135deg,#3D2B22,#6B4C3B)">
+    <div class="screen-num">🏛️</div>
+    <h2>Los 5 Pilares del Ecosistema de Equidad</h2>
+  </div>
+  <div class="screen-body">
+    <div class="pillars-intro">
+      <h3>El Ecosistema se sostiene sobre cinco pilares fundamentales</h3>
+      <p>Cada pilar es esencial e interdependiente. Haz clic en cualquiera para explorar los detalles.</p>
+    </div>
+    <div class="pillars-grid">
+      <div class="pillar-card pc-1" onclick="goTo(3)">
+        <div class="pc-num">1</div>
+        <div class="pc-icon">🌱</div>
+        <div class="pc-title">Vínculos Afectivos y Confianza</div>
+        <div class="pc-sub">La raíz de la comunidad educativa</div>
+      </div>
+      <div class="pillar-card pc-2" onclick="goTo(4)">
+        <div class="pc-num">2</div>
+        <div class="pc-icon">⚖️</div>
+        <div class="pc-title">Autoestima: El Equilibrio Vital</div>
+        <div class="pc-sub">Amor propio + Respeto por los demás</div>
+      </div>
+      <div class="pillar-card pc-3" onclick="goTo(5)">
+        <div class="pc-num">3</div>
+        <div class="pc-icon">🔓</div>
+        <div class="pc-title">Superación de Formas de Dominación</div>
+        <div class="pc-sub">Desafíos de género y equidad</div>
+      </div>
+      <div class="pillar-card pc-4" onclick="goTo(6)">
+        <div class="pc-num">4</div>
+        <div class="pc-icon">🤝</div>
+        <div class="pc-title">Colaboración Estratégica Escuela-Familia</div>
+        <div class="pc-sub">Alianza permanente por el estudiante</div>
+      </div>
+      <div class="pillar-card pc-5" onclick="goTo(7)">
+        <div class="pc-num">5</div>
+        <div class="pc-icon">🔄</div>
+        <div class="pc-title">Responsabilidad Compartida</div>
+        <div class="pc-sub">El nuevo paradigma educativo</div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════ SCREEN 3: PILAR 1 ══════════════════ -->
+<div class="screen pillar-screen" id="s3">
+  <div class="pillar-header">
+    <div class="ph-num">1</div>
+    <div>
+      <div class="ph-title">🌱 Vínculos Afectivos: La Raíz de la Comunidad</div>
+      <div class="ph-sub">Pilar 1 del Ecosistema de Equidad</div>
+    </div>
+  </div>
+  <div class="pillar-body">
+    <div class="detail-card accent" style="grid-row:1/3">
+      <div class="dc-label">Concepto Central</div>
+      <div class="dc-title">El Fundamento de Todo</div>
+      <div class="dc-body">Una comunidad promueve la equidad cuando consolida lazos que generan confianza profunda en sus integrantes. Sin esta base afectiva, el resto del ecosistema no puede florecer.</div>
+      <div class="tag-row">
+        <span class="tag">Confianza</span>
+        <span class="tag">Lazos Afectivos</span>
+        <span class="tag">Comunidad</span>
+      </div>
+    </div>
+    <div class="detail-card">
+      <div class="dc-label">El Proceso</div>
+      <div class="dc-title">¿Cómo se construye?</div>
+      <ul class="list-items">
+        <li><span class="dot-mark"></span>Secuencias planificadas de actividades</li>
+        <li><span class="dot-mark"></span>Diálogo abierto y sistemático</li>
+        <li><span class="dot-mark"></span>Participación amplia de todos los integrantes</li>
+        <li><span class="dot-mark"></span>Consolidación progresiva de lazos afectivos</li>
+      </ul>
+    </div>
+    <div class="detail-card">
+      <div class="dc-label">Los Resultados</div>
+      <div class="dc-title">¿Qué personas se forman?</div>
+      <ul class="list-items">
+        <li><span class="dot-mark"></span>Seguras y confiadas en sí mismas</li>
+        <li><span class="dot-mark"></span>Creativas y asertivas</li>
+        <li><span class="dot-mark"></span>Solidarias con los demás</li>
+        <li><span class="dot-mark"></span>Con resiliencia ante la adversidad</li>
+      </ul>
+    </div>
+  </div>
+  <div class="screen-footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════ SCREEN 4: PILAR 2 ══════════════════ -->
+<div class="screen pillar-screen" id="s4">
+  <div class="pillar-header">
+    <div class="ph-num">2</div>
+    <div>
+      <div class="ph-title">⚖️ Autoestima: La Balanza Perfecta</div>
+      <div class="ph-sub">Pilar 2 del Ecosistema de Equidad</div>
+    </div>
+  </div>
+  <div class="pillar-body">
+    <div class="detail-card" style="grid-column:1/-1">
+      <div class="dc-label">Concepto Central</div>
+      <div class="dc-title">El Equilibrio Vital de la Persona</div>
+      <div class="dc-body">La autoestima sana es el equilibrio entre el amor propio (sin caer en el narcisismo) y el respeto genuino por los demás. Sin esta balanza, se deteriora la inteligencia emocional y las relaciones se vuelven negativas y destructivas.</div>
+    </div>
+    <div class="detail-card">
+      <div class="dc-label">Los Dos Platillos</div>
+      <div class="dc-title">La Balanza de la Autoestima</div>
+      <div class="balance-box">
+        <div class="balance-side" style="background:#FBF0EB">
+          <div class="bs-icon">❤️</div>
+          <div class="bs-title">Amor Propio</div>
+          <div class="bs-sub">Sin narcisismo ni soberbia</div>
+        </div>
+        <div class="balance-vs">⚖️</div>
+        <div class="balance-side" style="background:#EDF4EE">
+          <div class="bs-icon">🤲</div>
+          <div class="bs-title">Respeto por los Demás</div>
+          <div class="bs-sub">Empatía y consideración</div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-card accent2">
+      <div class="dc-label">Consecuencia del Equilibrio</div>
+      <div class="dc-title">Inteligencia Emocional</div>
+      <div class="dc-body">Equilibrar y dirigir las emociones es indispensable para generar relaciones positivas y edificantes en la sociedad. La comunidad educativa tiene el rol de cultivar esta habilidad.</div>
+      <div class="tag-row">
+        <span class="tag">Emociones</span>
+        <span class="tag">Relaciones Positivas</span>
+        <span class="tag">Sociedad</span>
+      </div>
+    </div>
+  </div>
+  <div class="screen-footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════ SCREEN 5: PILAR 3 ══════════════════ -->
+<div class="screen pillar-screen" id="s5">
+  <div class="pillar-header">
+    <div class="ph-num">3</div>
+    <div>
+      <div class="ph-title">🔓 Desafíos de Género: Rompiendo Formas de Dominación</div>
+      <div class="ph-sub">Pilar 3 del Ecosistema de Equidad</div>
+    </div>
+  </div>
+  <div class="pillar-body">
+    <div class="detail-card" style="background:#F5DDD4; border-left: 4px solid #C0392B;">
+      <div class="dc-label" style="color:#7A1C14">⚠️ El Lastre Social: Obstáculos</div>
+      <div class="dc-title" style="color:#7A1C14">Formas de Dominación a Superar</div>
+      <ul class="list-items" style="--c:#7A1C14">
+        <li style="color:#7A1C14"><span class="dot-mark" style="background:#C0392B"></span>Relaciones de violencia y sumisión de la mujer</li>
+        <li style="color:#7A1C14"><span class="dot-mark" style="background:#C0392B"></span>Sometimiento normalizado en la vida cotidiana de los hogares</li>
+        <li style="color:#7A1C14"><span class="dot-mark" style="background:#C0392B"></span>Inequidad introyectada personal y socialmente</li>
+      </ul>
+    </div>
+    <div class="detail-card" style="background:#D4F0D8; border-left: 4px solid #4CAF72;">
+      <div class="dc-label" style="color:#1A5C2A">✅ Caminos de Esperanza y Acción</div>
+      <div class="dc-title" style="color:#1A5C2A">Hacia la Equidad Real</div>
+      <ul class="list-items" style="--c:#1A5C2A">
+        <li style="color:#1A5C2A"><span class="dot-mark" style="background:#4CAF72"></span>Modalidades de respeto mutuo y amistad</li>
+        <li style="color:#1A5C2A"><span class="dot-mark" style="background:#4CAF72"></span>Colaboración equitativa en casa y cuidado del otro</li>
+        <li style="color:#1A5C2A"><span class="dot-mark" style="background:#4CAF72"></span>Ternura explícita reconocida en hombres y mujeres</li>
+      </ul>
+    </div>
+    <div class="detail-card accent3 span-full">
+      <div class="dc-label">Imperativo Pedagógico</div>
+      <div class="dc-title">¿Qué debe hacer la escuela?</div>
+      <div class="dc-body">Es imperativo promover sistemáticamente el análisis de las actitudes que sostienen la inequidad. La escuela debe ser el espacio donde se deconstruyan los patrones de dominación y se construyan nuevas formas de relación basadas en el respeto mutuo.</div>
+    </div>
+  </div>
+  <div class="screen-footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════ SCREEN 6: PILAR 4 ══════════════════ -->
+<div class="screen pillar-screen" id="s6">
+  <div class="pillar-header">
+    <div class="ph-num">4</div>
+    <div>
+      <div class="ph-title">🤝 Colaboración Estratégica Escuela–Familia</div>
+      <div class="ph-sub">Pilar 4 del Ecosistema de Equidad</div>
+    </div>
+  </div>
+  <div class="pillar-body">
+    <div class="detail-card accent4">
+      <div class="dc-label">Premisa Fundamental</div>
+      <div class="dc-title">El Poder de los Modelos Familiares</div>
+      <div class="dc-body">Las madres, padres y tutores son los modelos más influyentes para lograr el equilibrio afectivo y la autoestima de cada estudiante. Su rol no puede ser sustituido.</div>
+      <div class="tag-row">
+        <span class="tag">Madres</span>
+        <span class="tag">Padres</span>
+        <span class="tag">Tutores</span>
+        <span class="tag">Modelos</span>
+      </div>
+    </div>
+    <div class="detail-card">
+      <div class="dc-label">Estrategia de Vinculación</div>
+      <div class="dc-title">¿Cómo se vincula la escuela con la familia?</div>
+      <ul class="list-items blue">
+        <li><span class="dot-mark" style="background:#6A8EB0"></span>Vincularse con asertividad y de manera afectuosa</li>
+        <li><span class="dot-mark" style="background:#6A8EB0"></span>Crear y ampliar canales de diálogo sistemático durante todo el año escolar</li>
+        <li><span class="dot-mark" style="background:#6A8EB0"></span>Establecer una alianza permanente centrada en el estudiante</li>
+      </ul>
+    </div>
+    <div class="detail-card" style="background:#EBF0F8; border-left:4px solid #6A8EB0; grid-column:1/-1">
+      <div class="dc-label">El Gran Objetivo</div>
+      <div class="dc-title">🎯 Meta de la Colaboración</div>
+      <div class="dc-body">Generar formas armónicas de <strong>entendimiento y empatía</strong> entre la escuela y el hogar, de modo que ambas instituciones trabajen sinérgicamente en la formación integral de cada estudiante.</div>
+    </div>
+  </div>
+  <div class="screen-footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════ SCREEN 7: PILAR 5 ══════════════════ -->
+<div class="screen pillar-screen" id="s7">
+  <div class="pillar-header">
+    <div class="ph-num">5</div>
+    <div>
+      <div class="ph-title">🔄 El Nuevo Paradigma: Responsabilidad Compartida</div>
+      <div class="ph-sub">Pilar 5 del Ecosistema de Equidad</div>
+    </div>
+  </div>
+  <div class="pillar-body">
+    <div class="detail-card" style="background:#F0E8F8; border-left:4px solid #C0392B;">
+      <div class="dc-label" style="color:#7A1C14">📜 El Pasado: División Obsoleta</div>
+      <div class="dc-title" style="color:#7A1C14">El Modelo Que Se Abandona</div>
+      <ul class="list-items">
+        <li style="color:#5A3030"><span class="dot-mark" style="background:#C0392B"></span><strong>Familia:</strong> exclusiva responsable de la socialización primaria</li>
+        <li style="color:#5A3030"><span class="dot-mark" style="background:#C0392B"></span><strong>Escuela:</strong> exclusiva responsable de la enseñanza de conocimientos</li>
+      </ul>
+    </div>
+    <div class="detail-card accent5">
+      <div class="dc-label">🔮 El Presente: Fronteras Desdibujadas</div>
+      <div class="dc-title">El Nuevo Modelo Integrado</div>
+      <ul class="list-items">
+        <li style="color:rgba(255,255,255,0.9)"><span class="dot-mark" style="background:rgba(255,255,255,0.6)"></span>La escuela asume aspectos vitales de la socialización</li>
+        <li style="color:rgba(255,255,255,0.9)"><span class="dot-mark" style="background:rgba(255,255,255,0.6)"></span>La familia, los medios y la tecnología son entornos primordiales de aprendizaje</li>
+        <li style="color:rgba(255,255,255,0.9)"><span class="dot-mark" style="background:rgba(255,255,255,0.6)"></span>Ambas instituciones comparten el objetivo de formación ética, cívica y académica</li>
+      </ul>
+    </div>
+    <div class="detail-card" style="background:linear-gradient(135deg,#2C1F17,#5A3E33); grid-column:1/-1">
+      <div class="dc-label" style="color:var(--gold)">🌟 La Visión Compartida</div>
+      <div class="dc-title" style="color:#fff">Misión Unificada de las Nuevas Generaciones</div>
+      <div class="dc-body" style="color:rgba(255,255,255,0.8)">Ambas instituciones comparten el objetivo común de la <strong style="color:var(--gold)">formación académica, cívica y ética</strong> de las nuevas generaciones. La división de tareas quedó atrás; la formación integral es una responsabilidad compartida.</div>
+    </div>
+  </div>
+  <div class="screen-footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════ SCREEN 8: SÍNTESIS ══════════════════ -->
+<div class="screen" id="s8">
+  <div class="screen-header" style="background:linear-gradient(135deg,#3D2B22,#7A9E7E)">
+    <div class="screen-num">📋</div>
+    <h2>Guía Rápida: Síntesis del Ecosistema</h2>
+  </div>
+  <div class="screen-body">
+    <div class="pillars-intro">
+      <h3>Los 5 conceptos clave que debes recordar</h3>
+      <p>Una síntesis integral del Ecosistema de Equidad Educativa</p>
+    </div>
+    <div class="synthesis-grid">
+      <div class="syn-card sc-1">
+        <div class="syn-icon">🌱</div>
+        <div class="syn-key" style="color:var(--terra-dark)">Confianza Afectiva</div>
+        <div class="syn-val">La equidad nace de lazos que fomentan resiliencia y seguridad personal en la comunidad.</div>
+      </div>
+      <div class="syn-card sc-2">
+        <div class="syn-icon">⚖️</div>
+        <div class="syn-key" style="color:#3D7042">Equilibrio Personal</div>
+        <div class="syn-val">Autoestima = amor propio sano sumado al respeto genuino por el otro.</div>
+      </div>
+      <div class="syn-card sc-3">
+        <div class="syn-icon">🔓</div>
+        <div class="syn-key" style="color:#8B6A2A">Erradicar la Dominación</div>
+        <div class="syn-val">Sustituir la sumisión en el hogar por ternura, apoyo mutuo y colaboración equitativa.</div>
+      </div>
+      <div class="syn-card sc-4">
+        <div class="syn-icon">🤝</div>
+        <div class="syn-key" style="color:#2C5070">Alianza Permanente</div>
+        <div class="syn-val">La familia es el modelo afectivo principal; requiere diálogo escolar constante durante todo el año.</div>
+      </div>
+      <div class="syn-card sc-5">
+        <div class="syn-icon">🔄</div>
+        <div class="syn-key" style="color:#5A3080">Misión Unificada</div>
+        <div class="syn-val">La división de tareas quedó atrás; la formación ética es una responsabilidad compartida.</div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════ SCREEN 9: AUTOEVALUACIÓN ══════════════════ -->
+<div class="screen" id="s9">
+  <div class="screen-header" style="background:linear-gradient(135deg,var(--bark),var(--terra))">
+    <div class="screen-num">🧪</div>
+    <h2>Autoevaluación — Pon a prueba tu comprensión</h2>
+  </div>
+  <div class="quiz-container">
+    <div class="quiz-progress">
+      <span class="quiz-progress-text" id="q-counter">Pregunta 1 de 6</span>
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="q-fill" style="width:0%"></div></div>
+      <span class="quiz-score-badge" id="q-score">✅ 0 correctas</span>
+    </div>
+    <div class="question-area" id="quiz-area">
+      <!-- Rendered by JS -->
+    </div>
+    <div class="quiz-nav" id="quiz-nav"></div>
+  </div>
+  <div class="screen-footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<!-- ══════════════════ SCREEN 10: RESUMEN FINAL ══════════════════ -->
+<div class="screen" id="s10">
+  <div class="final-header">
+    <h2>🌟 Conclusión: Hacia una Comunidad Educativa más Justa</h2>
+    <p>Basado en el documento de Prof. Francisco De Jesús Luna Benitez</p>
+  </div>
+  <div class="final-grid">
+    <div class="final-card">
+      <div class="fc-icon">🌱</div>
+      <div class="fc-title">Pilar 1</div>
+      <div class="fc-body">Los vínculos afectivos son la raíz. Sin confianza, no hay comunidad.</div>
+    </div>
+    <div class="final-card">
+      <div class="fc-icon">⚖️</div>
+      <div class="fc-title">Pilar 2</div>
+      <div class="fc-body">La autoestima equilibrada es la llave de la inteligencia emocional.</div>
+    </div>
+    <div class="final-card">
+      <div class="fc-icon">🔓</div>
+      <div class="fc-title">Pilar 3</div>
+      <div class="fc-body">Analizar y superar las formas de dominación de género es urgente.</div>
+    </div>
+    <div class="final-card">
+      <div class="fc-icon">🤝</div>
+      <div class="fc-title">Pilar 4</div>
+      <div class="fc-body">La colaboración escuela-familia es estratégica e insustituible.</div>
+    </div>
+    <div class="final-card">
+      <div class="fc-icon">🔄</div>
+      <div class="fc-title">Pilar 5</div>
+      <div class="fc-body">La responsabilidad de formar es compartida entre todos los actores.</div>
+    </div>
+  </div>
+  <div class="final-closing">
+    "Se suscita la generación de un compromiso moral protector y de cohesión social para favorecer la formación de la comunidad educativa."
+  </div>
+  <div class="final-cta">
+    <button class="btn-start" onclick="goTo(0)" style="font-size:13px;padding:11px 28px">🔁 Reiniciar Guía</button>
+    <p>Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</p>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const TOTAL = 11;
+let current = 0;
+
+const QUESTIONS = [
+  {
+    q: "¿Cuál es el resultado principal de fortalecer los vínculos afectivos en una comunidad educativa?",
+    opts: [
+      "Mejores calificaciones en exámenes nacionales",
+      "Personas con seguridad, creatividad, asertividad y resiliencia",
+      "Mayor número de horas de clase",
+      "Reducción de costos escolares"
+    ],
+    ans: 1,
+    fb: "✅ ¡Correcto! El Pilar 1 señala que los vínculos afectivos generan personas con seguridad en sí mismas, creativas, asertivas, solidarias y con resiliencia para afrontar la adversidad."
+  },
+  {
+    q: "Según el Pilar 2, ¿qué sucede si no se mantiene el equilibrio entre amor propio y respeto por los demás?",
+    opts: [
+      "Se fortalece la autoestima del estudiante",
+      "Mejora la dinámica del grupo",
+      "Se deteriora la inteligencia emocional",
+      "Aumenta la participación en clase"
+    ],
+    ans: 2,
+    fb: "✅ ¡Exacto! Sin la balanza entre amor propio (sin narcisismo) y respeto por los demás, se deteriora la inteligencia emocional y las relaciones se vuelven negativas."
+  },
+  {
+    q: "¿Cuál de los siguientes es un 'Camino de Esperanza' para superar las formas de dominación de género?",
+    opts: [
+      "Normalizar el sometimiento en el hogar",
+      "Fomentar relaciones de autoridad unilateral",
+      "Colaboración equitativa en casa y ternura explícita",
+      "Separar los roles de hombres y mujeres en la escuela"
+    ],
+    ans: 2,
+    fb: "✅ ¡Muy bien! Los caminos de acción incluyen: respeto mutuo, colaboración equitativa en casa, cuidado del otro y ternura explícita reconocida en hombres y mujeres."
+  },
+  {
+    q: "¿Quiénes son los modelos más influyentes para lograr el equilibrio afectivo y la autoestima de cada estudiante?",
+    opts: [
+      "Los directivos escolares",
+      "Los amigos del estudiante",
+      "Los medios de comunicación",
+      "Las madres, padres y tutores"
+    ],
+    ans: 3,
+    fb: "✅ ¡Correcto! El Pilar 4 establece que las madres, padres y tutores son los modelos más influyentes para el equilibrio afectivo y la autoestima de cada estudiante."
+  },
+  {
+    q: "¿Qué representa el 'nuevo paradigma' del Pilar 5 sobre la Responsabilidad Compartida?",
+    opts: [
+      "La familia ya no tiene rol en la educación",
+      "Solo la escuela es responsable del aprendizaje",
+      "Familia y escuela comparten la formación académica, cívica y ética",
+      "Los medios digitales sustituyen a la escuela"
+    ],
+    ans: 2,
+    fb: "✅ ¡Perfecto! El nuevo paradigma establece que familia y escuela comparten el objetivo común de la formación académica, cívica y ética de las nuevas generaciones."
+  },
+  {
+    q: "¿Cuántos pilares sostienen el Ecosistema de Equidad Educativa descrito en el documento?",
+    opts: ["3 pilares", "4 pilares", "5 pilares", "6 pilares"],
+    ans: 2,
+    fb: "✅ ¡Así es! El ecosistema se sostiene sobre 5 pilares: Vínculos Afectivos, Autoestima, Superación de Dominación, Colaboración Escuela-Familia y Responsabilidad Compartida."
+  }
+];
+
+let qIdx = 0, score = 0, answered = false;
+
+// ── NAVIGATION ────────────────────────────────────────────
+function navigate(dir) {
+  const next = Math.max(0, Math.min(TOTAL - 1, current + dir));
+  if (next === current) return;
+  goTo(next);
+}
+
+function goTo(next) {
+  if (next === current) return;
+  const screens = document.querySelectorAll('.screen');
+  screens[current].classList.remove('active');
+  screens[next].classList.add('active');
+  current = next;
+  updateUI();
+}
+
+function updateUI() {
+  const pct = ((current) / (TOTAL - 1)) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('prev-btn').classList.toggle('hidden', current === 0);
+  document.getElementById('next-btn').classList.toggle('hidden', current === TOTAL - 1);
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  if (current === 9) renderQuestion();
+}
+
+// ── DOTS ──────────────────────────────────────────────────
+const dotsEl = document.getElementById('nav-dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+// ── QUIZ ──────────────────────────────────────────────────
+function renderQuestion() {
+  const area = document.getElementById('quiz-area');
+  const nav = document.getElementById('quiz-nav');
+  if (qIdx >= QUESTIONS.length) { showResult(); return; }
+  const q = QUESTIONS[qIdx];
+  answered = false;
+  document.getElementById('q-counter').textContent = `Pregunta ${qIdx + 1} de ${QUESTIONS.length}`;
+  document.getElementById('q-fill').style.width = (qIdx / QUESTIONS.length * 100) + '%';
+  area.innerHTML = `
+    <div class="q-text">${q.q}</div>
+    <div class="options-grid">
+      ${q.opts.map((o, i) => `<button class="opt-btn" onclick="selectOpt(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="feedback-box hidden" id="fb-box"></div>
+  `;
+  nav.innerHTML = `<button class="q-btn secondary" onclick="goTo(8)">↩ Volver a Síntesis</button>`;
+}
+
+function selectOpt(idx) {
+  if (answered) return;
+  answered = true;
+  const q = QUESTIONS[qIdx];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.ans) b.classList.add('correct');
+    else if (i === idx) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-box');
+  if (idx === q.ans) { score++; fb.className = 'feedback-box correct-fb'; }
+  else { fb.className = 'feedback-box wrong-fb'; }
+  fb.textContent = idx === q.ans ? q.fb : '❌ No es correcto. ' + q.fb.replace('✅ ','').replace('¡Correcto! ','').replace('¡Exacto! ','').replace('¡Muy bien! ','').replace('¡Perfecto! ','').replace('¡Así es! ','');
+  document.getElementById('q-score').textContent = `✅ ${score} correctas`;
+  document.getElementById('quiz-nav').innerHTML = `
+    <button class="q-btn secondary" onclick="goTo(8)">↩ Síntesis</button>
+    <button class="q-btn" onclick="nextQuestion()">Siguiente ➜</button>
+  `;
+}
+
+function nextQuestion() {
+  qIdx++;
+  renderQuestion();
+  document.getElementById('q-fill').style.width = (qIdx / QUESTIONS.length * 100) + '%';
+}
+
+function showResult() {
+  const area = document.getElementById('quiz-area');
+  const pct = Math.round(score / QUESTIONS.length * 100);
+  let msg = pct === 100 ? '¡Excelente dominio del tema! 🌟' :
+            pct >= 80  ? '¡Muy buen desempeño! 👏' :
+            pct >= 60  ? 'Buen avance, sigue repasando 📚' :
+                         'Te recomendamos repasar los pilares 🔄';
+  let sub = pct === 100 ? 'Comprendes perfectamente el Ecosistema de Equidad Educativa.' :
+            pct >= 60  ? 'Revisa las secciones de los pilares para reforzar los conceptos.' :
+                         'Navega de nuevo por cada uno de los 5 pilares y vuelve a intentarlo.';
+  area.innerHTML = `
+    <div class="quiz-result">
+      <div class="result-circle">
+        <span class="rc-score">${score}</span>
+        <span class="rc-total">de ${QUESTIONS.length}</span>
+      </div>
+      <div class="result-msg">${msg}</div>
+      <div class="result-sub">${sub}</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+        <button class="q-btn secondary" onclick="resetQuiz()">🔁 Reintentar</button>
+        <button class="q-btn" onclick="goTo(10)">Ver Conclusión ➜</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('quiz-nav').innerHTML = '';
+  document.getElementById('q-fill').style.width = '100%';
+}
+
+function resetQuiz() {
+  qIdx = 0; score = 0; answered = false;
+  document.getElementById('q-score').textContent = '✅ 0 correctas';
+  renderQuestion();
+}
+
+// ── INIT ──────────────────────────────────────────────────
+updateUI();
+</script>
+</body>
+</html>

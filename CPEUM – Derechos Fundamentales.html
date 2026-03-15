@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Guía Interactiva – Derechos Fundamentales CPEUM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;500;600;700&display=swap');
+
+  :root {
+    --green:   #006847;
+    --green2:  #00a36c;
+    --red:     #c0392b;
+    --red2:    #e74c3c;
+    --gold:    #d4a017;
+    --cream:   #fdf8ee;
+    --white:   #ffffff;
+    --gray1:   #f4f6f9;
+    --gray2:   #e8ecf1;
+    --gray3:   #8a9ab0;
+    --dark:    #1a2536;
+    --shadow:  0 4px 24px rgba(0,0,0,.12);
+    --radius:  14px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    font-family: 'Nunito', sans-serif;
+    background: var(--gray1);
+    color: var(--dark);
+  }
+
+  /* ── WRAPPER ── */
+  #app {
+    width: 100%; height: 100vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    flex-shrink: 0;
+    background: var(--green);
+    color: #fff;
+    padding: 0 1.2rem;
+    height: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0,0,0,.25);
+    z-index: 100;
+  }
+  #topbar .logo { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; letter-spacing:.5px; }
+  #topbar .progress-wrap { display:flex; align-items:center; gap:.5rem; font-size:.75rem; }
+  .progress-bar { width:100px; height:6px; background:rgba(255,255,255,.3); border-radius:3px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--gold); border-radius:3px; transition:width .4s ease; }
+
+  /* ── CONTENT AREA ── */
+  #content-area {
+    flex: 1; overflow: hidden; position: relative;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: absolute; inset: 0;
+    display: none; flex-direction: column;
+    opacity: 0; transform: translateX(40px);
+    transition: opacity .35s ease, transform .35s ease;
+    overflow: hidden;
+  }
+  .screen.active {
+    display: flex; opacity: 1; transform: translateX(0);
+  }
+  .screen.exit {
+    display: flex; opacity: 0; transform: translateX(-40px);
+  }
+
+  /* ── BOTTOM NAV ── */
+  #bottomnav {
+    flex-shrink: 0;
+    background: #fff;
+    border-top: 1px solid var(--gray2);
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1rem;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.07);
+    z-index: 100;
+  }
+  .nav-btn {
+    padding: .45rem 1.1rem;
+    border: none; border-radius: 30px; cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: .82rem;
+    transition: background .2s, transform .15s;
+  }
+  .nav-btn:active { transform: scale(.96); }
+  .nav-btn.prev { background: var(--gray2); color: var(--dark); }
+  .nav-btn.next { background: var(--green); color: #fff; }
+  .nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .screen-dots { display: flex; gap: 5px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gray2); transition: background .2s, transform .2s; cursor: pointer; }
+  .dot.active { background: var(--green); transform: scale(1.4); }
+
+  /* ── SCREEN INNER SCROLL ── */
+  .screen-body {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding: .8rem 1rem 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray2) transparent;
+  }
+  .screen-body::-webkit-scrollbar { width: 4px; }
+  .screen-body::-webkit-scrollbar-thumb { background: var(--gray2); border-radius: 2px; }
+
+  /* ── SCREEN HEADER STRIP ── */
+  .screen-header {
+    flex-shrink: 0;
+    padding: .7rem 1rem .5rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray2);
+  }
+  .screen-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; font-weight: 700;
+    color: var(--green);
+    display: flex; align-items: center; gap: .45rem;
+  }
+  .screen-subtitle { font-size: .75rem; color: var(--gray3); margin-top: 2px; }
+
+  /* ══════════════════════
+     PORTADA
+  ══════════════════════ */
+  #s0 { background: linear-gradient(150deg, var(--green) 0%, #003d2b 100%); }
+  .cover-inner {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 1.5rem 1.2rem;
+    gap: .7rem;
+  }
+  .cover-badge {
+    background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3);
+    border-radius: 30px; padding: .3rem .9rem;
+    font-size: .7rem; font-weight: 700; color: #fff; letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .cover-eagle { font-size: 3.5rem; line-height: 1; filter: drop-shadow(0 4px 12px rgba(0,0,0,.4)); }
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 4vw, 2rem); font-weight: 900;
+    color: #fff; line-height: 1.2;
+  }
+  .cover-title span { color: var(--gold); }
+  .cover-sub { font-size: .82rem; color: rgba(255,255,255,.75); max-width: 360px; line-height: 1.5; }
+  .cover-articles { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; margin: .3rem 0; }
+  .art-pill {
+    background: rgba(255,255,255,.18); border-radius: 20px;
+    padding: .25rem .75rem; font-size: .72rem; font-weight: 700;
+    color: #fff; border: 1px solid rgba(255,255,255,.25);
+  }
+  .cover-author {
+    background: rgba(212,160,23,.25); border: 1px solid var(--gold);
+    border-radius: 12px; padding: .5rem 1.1rem;
+    font-size: .78rem; color: var(--gold); font-weight: 700;
+    margin-top: .3rem;
+  }
+  .start-btn {
+    margin-top: .5rem;
+    background: var(--gold); color: var(--dark);
+    border: none; border-radius: 30px;
+    padding: .65rem 2rem; font-family: 'Nunito',sans-serif;
+    font-weight: 800; font-size: .92rem; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(212,160,23,.45);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(212,160,23,.55); }
+
+  /* ══════════════════════
+     CARDS & COMPONENTS
+  ══════════════════════ */
+  .card {
+    background: var(--white); border-radius: var(--radius);
+    padding: .9rem 1rem; margin-bottom: .7rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    border-left: 4px solid var(--green);
+  }
+  .card.red { border-left-color: var(--red); }
+  .card.gold { border-left-color: var(--gold); }
+  .card.blue { border-left-color: #3b82f6; }
+  .card h3 { font-size: .87rem; font-weight: 700; color: var(--dark); margin-bottom: .4rem; }
+  .card p { font-size: .79rem; color: #555; line-height: 1.55; }
+  .card ul { padding-left: 1.1rem; }
+  .card ul li { font-size: .78rem; color: #555; margin-bottom: .3rem; line-height: 1.45; }
+
+  .highlight-box {
+    background: linear-gradient(135deg, #e8f5ee, #d4eddf);
+    border: 1.5px solid var(--green2);
+    border-radius: 12px; padding: .8rem 1rem;
+    margin-bottom: .7rem;
+  }
+  .highlight-box.red-box { background: linear-gradient(135deg,#fdecea,#fbd3cf); border-color: var(--red2); }
+  .highlight-box.gold-box { background: linear-gradient(135deg,#fdf3d9,#fae7b0); border-color: var(--gold); }
+  .highlight-box h4 { font-size: .82rem; font-weight: 800; color: var(--green); margin-bottom: .35rem; display:flex;gap:.35rem;align-items:center; }
+  .highlight-box.red-box h4 { color: var(--red); }
+  .highlight-box.gold-box h4 { color: #8a6800; }
+  .highlight-box p, .highlight-box li { font-size: .77rem; color: #444; line-height: 1.5; }
+  .highlight-box ul { padding-left: 1.1rem; }
+  .highlight-box ul li { margin-bottom: .25rem; }
+
+  .section-label {
+    font-size: .65rem; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--green);
+    margin-bottom: .5rem; display: block;
+  }
+  .section-label.red { color: var(--red); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-bottom: .7rem; }
+  .mini-card {
+    background: var(--white); border-radius: 12px; padding: .7rem .75rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06); text-align: center;
+  }
+  .mini-card .ico { font-size: 1.5rem; margin-bottom: .25rem; }
+  .mini-card .lbl { font-size: .7rem; font-weight: 700; color: var(--dark); }
+  .mini-card .sub { font-size: .65rem; color: var(--gray3); margin-top: 2px; }
+
+  /* ── TABS ── */
+  .tabs-wrap { margin-bottom: .7rem; }
+  .tab-buttons { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: .6rem; }
+  .tab-btn {
+    padding: .3rem .7rem; border-radius: 20px; border: 1.5px solid var(--gray2);
+    background: var(--white); font-family:'Nunito',sans-serif;
+    font-size: .71rem; font-weight: 700; color: var(--gray3); cursor: pointer;
+    transition: all .2s;
+  }
+  .tab-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* ── ACCORDION ── */
+  .accordion { margin-bottom: .5rem; }
+  .acc-head {
+    background: var(--white); border: 1px solid var(--gray2);
+    border-radius: 10px; padding: .65rem .9rem;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; font-size: .81rem; font-weight: 700; color: var(--dark);
+    transition: background .2s;
+    margin-bottom: 2px;
+  }
+  .acc-head:hover { background: #f0faf5; }
+  .acc-head.open { background: #e8f5ee; color: var(--green); border-color: var(--green2); border-radius: 10px 10px 0 0; }
+  .acc-arrow { transition: transform .25s; font-size: .85rem; }
+  .acc-head.open .acc-arrow { transform: rotate(180deg); }
+  .acc-body {
+    max-height: 0; overflow: hidden;
+    border: 1px solid var(--green2); border-top: none;
+    border-radius: 0 0 10px 10px;
+    background: #f7fdfb;
+    transition: max-height .3s ease;
+    margin-bottom: 4px;
+  }
+  .acc-body.open { max-height: 600px; }
+  .acc-body-inner { padding: .7rem .9rem; font-size: .77rem; color: #444; line-height: 1.55; }
+  .acc-body-inner ul { padding-left: 1.1rem; }
+  .acc-body-inner li { margin-bottom: .3rem; }
+
+  /* ── QUIZ ── */
+  .quiz-progress { font-size: .73rem; color: var(--gray3); margin-bottom: .6rem; text-align:right; }
+  .question-card {
+    background: var(--white); border-radius: var(--radius);
+    padding: 1rem; box-shadow: var(--shadow); margin-bottom: .7rem;
+  }
+  .question-text { font-size: .85rem; font-weight: 700; color: var(--dark); margin-bottom: .8rem; line-height: 1.4; }
+  .options { display: flex; flex-direction: column; gap: .45rem; }
+  .option-btn {
+    padding: .55rem .85rem; border: 1.5px solid var(--gray2);
+    border-radius: 10px; background: var(--white);
+    font-family: 'Nunito',sans-serif; font-size: .78rem;
+    font-weight: 600; color: var(--dark); cursor: pointer;
+    text-align: left; transition: all .2s;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--green2); background: #f0faf5; }
+  .option-btn.correct { background: #d4f7e5; border-color: var(--green2); color: var(--green); }
+  .option-btn.wrong { background: #fde8e6; border-color: var(--red2); color: var(--red); }
+  .option-btn:disabled { cursor: default; }
+  .feedback {
+    font-size: .77rem; font-weight: 700; padding: .5rem .8rem;
+    border-radius: 8px; margin-top: .4rem; display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #d4f7e5; color: var(--green); }
+  .feedback.fail { background: #fde8e6; color: var(--red); }
+
+  .next-q-btn {
+    margin-top: .6rem; padding: .5rem 1.4rem;
+    background: var(--green); color: #fff; border: none;
+    border-radius: 30px; font-family:'Nunito',sans-serif;
+    font-size: .8rem; font-weight: 700; cursor: pointer;
+    display: none;
+  }
+  .next-q-btn.show { display: inline-block; }
+
+  .score-panel {
+    background: linear-gradient(135deg,var(--green),#004d35);
+    border-radius: var(--radius); padding: 1.2rem; text-align:center; color:#fff;
+  }
+  .score-num { font-family:'Playfair Display',serif; font-size: 2.5rem; font-weight:900; color:var(--gold); }
+  .score-label { font-size: .85rem; margin-top: .2rem; }
+  .score-msg { font-size: .78rem; opacity:.85; margin-top: .4rem; }
+  .retry-btn {
+    margin-top: .8rem; padding: .5rem 1.5rem;
+    background: var(--gold); color: var(--dark);
+    border: none; border-radius: 30px;
+    font-family:'Nunito',sans-serif; font-weight:800;
+    font-size: .82rem; cursor:pointer;
+  }
+
+  /* ── RESUMEN FINAL ── */
+  .summary-grid { display: grid; grid-template-columns:1fr 1fr; gap:.55rem; margin-bottom:.7rem; }
+  .sum-item {
+    background: var(--white); border-radius:12px; padding:.65rem .75rem;
+    box-shadow:0 2px 8px rgba(0,0,0,.06); border-top: 3px solid var(--green);
+  }
+  .sum-item.red { border-top-color: var(--red); }
+  .sum-item.gold { border-top-color: var(--gold); }
+  .sum-item.blue { border-top-color: #3b82f6; }
+  .sum-item h4 { font-size:.75rem; font-weight:800; color:var(--dark); margin-bottom:.35rem; display:flex;gap:.3rem;align-items:center; }
+  .sum-item ul { padding-left: 1rem; }
+  .sum-item li { font-size:.69rem; color:#555; margin-bottom:.22rem; line-height:1.4; }
+
+  .final-quote {
+    background: linear-gradient(135deg,var(--green),#005038);
+    border-radius: var(--radius); padding:1rem;
+    color:#fff; font-family:'Playfair Display',serif;
+    font-size:.88rem; font-style:italic; text-align:center;
+    line-height:1.5; margin-bottom:.7rem;
+  }
+
+  /* ── FOOTER ── */
+  #footer {
+    flex-shrink:0;
+    background: var(--dark); color: rgba(255,255,255,.6);
+    font-size: .62rem; text-align:center; padding:.3rem .5rem;
+    letter-spacing: .3px;
+  }
+
+  /* ── INTRO screen ── */
+  .intro-hero {
+    background: linear-gradient(135deg,#e8f5ee,#d4eddf);
+    border-radius: var(--radius); padding: .9rem 1rem;
+    margin-bottom: .7rem; display:flex; align-items:center; gap:.8rem;
+  }
+  .intro-hero .ico { font-size:2.2rem; flex-shrink:0; }
+  .intro-hero p { font-size:.78rem; color:#333; line-height:1.5; }
+
+  /* RESPONSIVE */
+  @media (max-width: 400px) {
+    .grid2, .summary-grid { grid-template-columns:1fr; }
+    .cover-title { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="logo">⚖️ CPEUM – Derechos Fundamentales</div>
+    <div class="progress-wrap">
+      <span id="prog-label">1/8</span>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:12.5%"></div></div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content-area">
+
+    <!-- ══ S0: PORTADA ══ -->
+    <div class="screen active" id="s0">
+      <div class="cover-inner">
+        <div class="cover-badge">📘 Guía de Estudio Interactiva</div>
+        <div class="cover-eagle">🦅</div>
+        <div class="cover-title">Derechos <span>Fundamentales</span><br>de los Mexicanos</div>
+        <div class="cover-sub">Artículos 2°, 3°, 4° y 5° de la Constitución Política de los Estados Unidos Mexicanos</div>
+        <div class="cover-articles">
+          <span class="art-pill">Art. 2° Pueblos Indígenas</span>
+          <span class="art-pill">Art. 3° Educación</span>
+          <span class="art-pill">Art. 4° Derechos Sociales</span>
+          <span class="art-pill">Art. 5° Trabajo</span>
+        </div>
+        <div class="cover-author">✏️ Prof. Francisco De Jesús Luna Benitez</div>
+        <button class="start-btn" onclick="goTo(1)">Comenzar Estudio →</button>
+      </div>
+    </div>
+
+    <!-- ══ S1: INTRODUCCIÓN ══ -->
+    <div class="screen" id="s1">
+      <div class="screen-header">
+        <div class="screen-title">📖 Introducción</div>
+        <div class="screen-subtitle">¿De qué trata este material?</div>
+      </div>
+      <div class="screen-body">
+
+        <div class="intro-hero">
+          <div class="ico">🏛️</div>
+          <p>La <strong>Constitución Política de los Estados Unidos Mexicanos</strong> es la ley suprema del país. Sus artículos 2°, 3°, 4° y 5° reconocen derechos fundamentales que el Estado debe garantizar a todas las personas.</p>
+        </div>
+
+        <span class="section-label">¿Qué aprenderás?</span>
+        <div class="grid2">
+          <div class="mini-card"><div class="ico">🌿</div><div class="lbl">Art. 2°</div><div class="sub">Derechos indígenas y afromexicanos</div></div>
+          <div class="mini-card"><div class="ico">📚</div><div class="lbl">Art. 3°</div><div class="sub">Derecho a la educación</div></div>
+          <div class="mini-card"><div class="ico">🤝</div><div class="lbl">Art. 4°</div><div class="sub">Derechos sociales y humanos</div></div>
+          <div class="mini-card"><div class="ico">💼</div><div class="lbl">Art. 5°</div><div class="sub">Libertad de trabajo y profesión</div></div>
+        </div>
+
+        <div class="highlight-box gold-box">
+          <h4>⚠️ Dato clave</h4>
+          <p>La <strong>última reforma</strong> a estos artículos fue publicada en el DOF el <strong>03 de marzo de 2026</strong>. Esto refleja que la Constitución es un documento vivo, en constante actualización.</p>
+        </div>
+
+        <div class="card">
+          <h3>🎯 Objetivo de aprendizaje</h3>
+          <p>Al terminar esta guía podrás identificar, explicar y relacionar los derechos fundamentales que reconoce la Constitución en materia de educación, salud, trabajo, vivienda y cultura, entre otros.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ S2: ARTÍCULO 2 ══ -->
+    <div class="screen" id="s2">
+      <div class="screen-header">
+        <div class="screen-title">🌿 Artículo 2° – Pueblos Indígenas y Afromexicanos</div>
+        <div class="screen-subtitle">Apartado D – Derechos de mujeres y jóvenes</div>
+      </div>
+      <div class="screen-body">
+
+        <div class="highlight-box">
+          <h4>📜 ¿Qué dice el Artículo 2°?</h4>
+          <p>La Constitución reconoce que México es una nación <strong>pluricultural</strong>. El Apartado D garantiza derechos específicos para las <strong>mujeres indígenas y afromexicanas</strong>, así como para la <strong>niñez, adolescencia y juventud</strong> indígena y afromexicana.</p>
+        </div>
+
+        <span class="section-label">Derechos de la Mujer Indígena y Afromexicana</span>
+        <div class="card">
+          <h3>👩 Participación efectiva e igualitaria</h3>
+          <ul>
+            <li>Participar en los procesos de <strong>desarrollo integral</strong> de sus pueblos y comunidades.</li>
+            <li>Intervenir en la <strong>toma de decisiones</strong> de carácter público.</li>
+            <li>Acceder a la educación, salud, propiedad y posesión de la tierra.</li>
+          </ul>
+        </div>
+
+        <span class="section-label">Derechos de la Juventud Indígena</span>
+        <div class="card gold">
+          <h3>🧒 Atención integral en sus propias lenguas</h3>
+          <ul>
+            <li>Acceso a educación, salud, tecnología, arte, cultura y deporte.</li>
+            <li>Vida libre de discriminación, exclusión y violencia de género.</li>
+            <li>Políticas para prevenir y atender las adicciones con respeto a sus identidades culturales.</li>
+          </ul>
+        </div>
+
+        <div class="highlight-box red-box">
+          <h4>🔴 Obligaciones del Estado</h4>
+          <ul>
+            <li>Eliminar la discriminación, racismo, exclusión e invisibilidad.</li>
+            <li>La ley general debe asegurar la <strong>implementación</strong> de estos derechos.</li>
+            <li>Las entidades federativas establecerán bases para la efectiva observancia del artículo.</li>
+          </ul>
+        </div>
+
+        <div class="card blue">
+          <h3>📅 Reformas importantes</h3>
+          <p>El Apartado D fue <strong>adicionado el 30-09-2024</strong>. El artículo fue reformado originalmente el 14-08-2001.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ S3: ARTÍCULO 3 ══ -->
+    <div class="screen" id="s3">
+      <div class="screen-header">
+        <div class="screen-title">📚 Artículo 3° – Derecho a la Educación</div>
+        <div class="screen-subtitle">Características y fracciones principales</div>
+      </div>
+      <div class="screen-body">
+
+        <div class="highlight-box">
+          <h4>📜 Principio fundamental</h4>
+          <p>Toda persona tiene derecho a la educación. El Estado impartirá y garantizará la educación inicial, preescolar, primaria, secundaria, media superior y superior. La impartida por el Estado será <strong>obligatoria, universal, inclusiva, pública, gratuita y laica</strong>.</p>
+        </div>
+
+        <span class="section-label">Características de la Educación (Fracción II)</span>
+        <div class="tabs-wrap">
+          <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('edu','laica')">⛪ Laica</button>
+            <button class="tab-btn" onclick="showTab('edu','demo')">🗳️ Democrática</button>
+            <button class="tab-btn" onclick="showTab('edu','nac')">🇲🇽 Nacional</button>
+            <button class="tab-btn" onclick="showTab('edu','equi')">⚖️ Equitativa</button>
+            <button class="tab-btn" onclick="showTab('edu','incl')">♿ Inclusiva</button>
+            <button class="tab-btn" onclick="showTab('edu','excel')">⭐ Excelente</button>
+          </div>
+          <div id="edu-laica" class="tab-pane active">
+            <div class="card"><h3>⛪ Educación Laica</h3><p>Garantizada por el Artículo 24, se mantendrá completamente ajena a cualquier doctrina religiosa. La educación pública no promueve ni practica ninguna religión.</p></div>
+          </div>
+          <div id="edu-demo" class="tab-pane">
+            <div class="card"><h3>🗳️ Educación Democrática</h3><p>Considera la democracia no solo como una estructura jurídica y política, sino como un <strong>sistema de vida</strong> fundado en el mejoramiento económico, social y cultural del pueblo.</p></div>
+          </div>
+          <div id="edu-nac" class="tab-pane">
+            <div class="card"><h3>🇲🇽 Educación Nacional</h3><p>Atenderá, sin hostilidades ni exclusivismos, la comprensión de nuestros problemas, el aprovechamiento de nuestros recursos y la defensa de nuestra independencia política y económica.</p></div>
+          </div>
+          <div id="edu-equi" class="tab-pane">
+            <div class="card"><h3>⚖️ Educación Equitativa</h3><p>El Estado implementará medidas para combatir las desigualdades socioeconómicas, regionales y de género. En pueblos y comunidades indígenas se impartirá educación <strong>plurilingüe e intercultural</strong>.</p></div>
+          </div>
+          <div id="edu-incl" class="tab-pane">
+            <div class="card"><h3>♿ Educación Inclusiva</h3><p>Toma en cuenta las diversas capacidades, circunstancias y necesidades de los educandos. Se realizarán ajustes razonables para eliminar las barreras para el aprendizaje y la participación.</p></div>
+          </div>
+          <div id="edu-excel" class="tab-pane">
+            <div class="card"><h3>⭐ Educación de Excelencia</h3><p>Entendida como el mejoramiento integral constante que promueve el máximo logro de aprendizaje, desarrollando el <strong>pensamiento crítico</strong> y el fortalecimiento de los lazos entre escuela y comunidad.</p></div>
+          </div>
+        </div>
+
+        <div class="highlight-box gold-box">
+          <h4>👨‍🏫 El papel de los docentes</h4>
+          <p>Las maestras y los maestros son <strong>agentes fundamentales</strong> del proceso educativo. Tendrán derecho a un sistema integral de formación, capacitación y actualización, retroalimentado por evaluaciones diagnósticas.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ S4: ARTÍCULO 3 FRACCIONES ══ -->
+    <div class="screen" id="s4">
+      <div class="screen-header">
+        <div class="screen-title">📚 Art. 3° – Fracciones Clave</div>
+        <div class="screen-subtitle">IV, V, VI, VII, VIII y X</div>
+      </div>
+      <div class="screen-body">
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">📌 Fracción IV – Educación Gratuita <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>Toda la educación que el Estado imparta será <strong>gratuita</strong>. Esto aplica desde el nivel inicial hasta el superior.</p></div></div>
+        </div>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">🔬 Fracción V – Ciencia e Innovación <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>Toda persona tiene derecho a gozar de los beneficios del desarrollo de la ciencia y la innovación tecnológica. El Estado apoyará la investigación científica, humanística y tecnológica, y garantizará el <strong>acceso abierto</strong> a la información que derive de ella.</p></div></div>
+        </div>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">🏫 Fracción VI – Educación Particular <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>Los particulares podrán impartir educación en todos sus tipos y modalidades. El Estado otorgará y retirará el reconocimiento de validez oficial. Deberán: a) seguir los mismos fines y criterios; b) obtener autorización expresa del poder público.</p></div></div>
+        </div>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">🎓 Fracción VII – Autonomía Universitaria <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><ul><li>Las universidades autónomas se gobiernan a sí mismas.</li><li>Realizarán sus fines de educar, investigar y difundir la cultura.</li><li>Respetarán la libertad de cátedra e investigación.</li><li>Determinarán sus planes y programas de estudio.</li><li>Las relaciones laborales se rigen por el Apartado A del Art. 123.</li></ul></div></div>
+        </div>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">📋 Fracción VIII – Coordinación del Congreso <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>El Congreso de la Unión expedirá las leyes necesarias para distribuir la función social educativa entre la Federación, las entidades federativas y los Municipios, y señalará las sanciones aplicables a quienes infrinjan las disposiciones.</p></div></div>
+        </div>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">🏛️ Fracción X – Obligatoriedad de la Educación Superior <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>La obligatoriedad de la educación superior corresponde al Estado. Las autoridades federal y locales establecerán políticas para fomentar la <strong>inclusión, permanencia y continuidad</strong> de las personas que cumplan con los requisitos dispuestos por las instituciones públicas.</p></div></div>
+        </div>
+
+        <div class="highlight-box gold-box" style="margin-top:.4rem">
+          <h4>🏫 Infraestructura educativa</h4>
+          <p>Los planteles educativos son espacios fundamentales para la enseñanza. El Estado garantizará materiales didácticos, infraestructura y entorno idóneos para los fines de la educación.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ S5: ARTÍCULO 4 ══ -->
+    <div class="screen" id="s5">
+      <div class="screen-header">
+        <div class="screen-title">🤝 Artículo 4° – Derechos Sociales</div>
+        <div class="screen-subtitle">Igualdad, familia y múltiples derechos humanos</div>
+      </div>
+      <div class="screen-body">
+
+        <div class="highlight-box">
+          <h4>⚖️ Principio de Igualdad</h4>
+          <p>La mujer y el hombre son iguales ante la ley. El Estado garantizará el goce y ejercicio del derecho a la <strong>igualdad sustantiva</strong> de las mujeres. Toda persona puede decidir libre, responsable e informadamente sobre el número y espaciamiento de sus hijos.</p>
+        </div>
+
+        <span class="section-label">Catálogo de derechos reconocidos</span>
+
+        <div class="grid2">
+          <div class="mini-card"><div class="ico">🌽</div><div class="lbl">Alimentación</div><div class="sub">Nutritiva, suficiente y de calidad</div></div>
+          <div class="mini-card"><div class="ico">🏥</div><div class="lbl">Salud</div><div class="sub">Acceso a servicios de salud</div></div>
+          <div class="mini-card"><div class="ico">🌿</div><div class="lbl">Medio Ambiente</div><div class="sub">Sano para el desarrollo</div></div>
+          <div class="mini-card"><div class="ico">💧</div><div class="lbl">Agua</div><div class="sub">Acceso, disposición y saneamiento</div></div>
+          <div class="mini-card"><div class="ico">🏠</div><div class="lbl">Vivienda</div><div class="sub">Adecuada para toda persona</div></div>
+          <div class="mini-card"><div class="ico">📋</div><div class="lbl">Identidad</div><div class="sub">Registro de nacimiento</div></div>
+          <div class="mini-card"><div class="ico">🎭</div><div class="lbl">Cultura</div><div class="sub">Acceso a bienes culturales</div></div>
+          <div class="mini-card"><div class="ico">⚽</div><div class="lbl">Deporte</div><div class="sub">Cultura física y práctica deportiva</div></div>
+        </div>
+
+        <div class="card red">
+          <h3>🌽 El Maíz: Identidad Nacional</h3>
+          <p>México es centro de origen y diversidad del maíz. Su cultivo debe ser libre de modificaciones genéticas que superen las barreras naturales. Se debe proteger la <strong>soberanía alimentaria</strong>, la biodiversidad y el manejo agroecológico. <em>(Reformado DOF 17-03-2025)</em></p>
+        </div>
+
+        <div class="card gold">
+          <h3>👴 Pensiones No Contributivas</h3>
+          <ul>
+            <li>Personas adultas mayores de <strong>65 años</strong>: pensión no contributiva de adultos mayores.</li>
+            <li>Personas con discapacidad permanente <strong>menores de 65 años</strong>: pensión no contributiva por discapacidad.</li>
+            <li>El Estado garantizará rehabilitación y habilitación a personas con discapacidad permanente.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ S6: ARTÍCULO 4 (CONTINUACIÓN) + ART. 5 ══ -->
+    <div class="screen" id="s6">
+      <div class="screen-header">
+        <div class="screen-title">🤝 Art. 4° (cont.) y 💼 Art. 5°</div>
+        <div class="screen-subtitle">Derechos de la niñez, juventud y libertad de trabajo</div>
+      </div>
+      <div class="screen-body">
+
+        <span class="section-label">Artículo 4° – Derechos adicionales</span>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">👶 Interés Superior de la Niñez <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>En todas las decisiones del Estado se velará el <strong>interés superior de la niñez</strong>. Los niños tienen derecho a la alimentación, salud, educación y sano esparcimiento. Los ascendientes, tutores y custodios están obligados a preservar y exigir estos derechos.</p></div></div>
+        </div>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">🎓 Becas Escolares <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>El Estado establecerá un sistema de becas para estudiantes de todos los niveles del sistema de educación pública, con <strong>prioridad</strong> a quienes pertenezcan a familias en condición de pobreza, para garantizar con equidad el derecho a la educación.</p></div></div>
+        </div>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">🚗 Movilidad <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>Toda persona tiene derecho a la movilidad en condiciones de <strong>seguridad vial, accesibilidad, eficiencia, sostenibilidad, calidad, inclusión e igualdad</strong>. (Adicionado DOF 18-12-2020)</p></div></div>
+        </div>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">🕊️ Vida Libre de Violencias <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>Toda persona tiene derecho a vivir una vida libre de violencias. El Estado tiene deberes reforzados de protección con mujeres, adolescentes, niñas y niños. (Adicionado DOF 15-11-2024)</p></div></div>
+        </div>
+
+        <div class="accordion">
+          <div class="acc-head" onclick="toggleAcc(this)">🐾 Bienestar Animal <span class="acc-arrow">▼</span></div>
+          <div class="acc-body"><div class="acc-body-inner"><p>Queda <strong>prohibido el maltrato a los animales</strong>. El Estado mexicano debe garantizar la protección, el trato adecuado, la conservación y el cuidado de los animales. (Adicionado DOF 02-12-2024)</p></div></div>
+        </div>
+
+        <div class="highlight-box red-box" style="margin-top:.5rem">
+          <h4>💼 Artículo 5° – Libertad de Trabajo</h4>
+          <ul>
+            <li>A ninguna persona se le puede impedir dedicarse a la profesión, industria o comercio lícito que le acomode.</li>
+            <li>Solo puede limitarse por <strong>determinación judicial</strong> o resolución gubernativa cuando se afecten derechos de terceros o de la sociedad.</li>
+            <li>Nadie puede ser privado del producto de su trabajo, <strong>sino por resolución judicial</strong>.</li>
+            <li>La ley determinará en cada entidad las profesiones que necesitan título para su ejercicio.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ S7: AUTOEVALUACIÓN ══ -->
+    <div class="screen" id="s7">
+      <div class="screen-header">
+        <div class="screen-title">✏️ Autoevaluación</div>
+        <div class="screen-subtitle">Pon a prueba lo que aprendiste</div>
+      </div>
+      <div class="screen-body">
+        <div id="quiz-container"></div>
+      </div>
+    </div>
+
+    <!-- ══ S8: RESUMEN FINAL ══ -->
+    <div class="screen" id="s8">
+      <div class="screen-header">
+        <div class="screen-title">📋 Resumen Final</div>
+        <div class="screen-subtitle">Síntesis de los artículos estudiados</div>
+      </div>
+      <div class="screen-body">
+
+        <div class="final-quote">"La Constitución no es un simple documento; es el pacto que une a la sociedad y protege los derechos de todos los mexicanos."</div>
+
+        <div class="summary-grid">
+          <div class="sum-item">
+            <h4>🌿 Art. 2°</h4>
+            <ul>
+              <li>Nación pluricultural</li>
+              <li>Derechos de mujeres indígenas y afromexicanas</li>
+              <li>Derechos de jóvenes indígenas</li>
+              <li>Eliminación del racismo y discriminación</li>
+            </ul>
+          </div>
+          <div class="sum-item red">
+            <h4>📚 Art. 3°</h4>
+            <ul>
+              <li>Educación: derecho universal</li>
+              <li>Obligatoria, gratuita, laica, inclusiva</li>
+              <li>8 características (fracciones)</li>
+              <li>Autonomía universitaria</li>
+              <li>Docentes: agentes fundamentales</li>
+            </ul>
+          </div>
+          <div class="sum-item gold">
+            <h4>🤝 Art. 4°</h4>
+            <ul>
+              <li>Igualdad mujer-hombre</li>
+              <li>Alimentación, salud, agua, vivienda</li>
+              <li>Medio ambiente sano</li>
+              <li>Derechos de la niñez</li>
+              <li>Pensiones, becas, movilidad</li>
+              <li>Vida libre de violencias</li>
+            </ul>
+          </div>
+          <div class="sum-item blue">
+            <h4>💼 Art. 5°</h4>
+            <ul>
+              <li>Libertad de trabajo</li>
+              <li>Limitación solo por autoridad</li>
+              <li>Nadie privado de su trabajo sin resolución judicial</li>
+              <li>Títulos profesionales</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <h4>🔑 Ideas más importantes</h4>
+          <ul>
+            <li>El Estado tiene la <strong>obligación</strong> de garantizar todos estos derechos.</li>
+            <li>La Constitución es un documento <strong>vivo</strong>: se actualiza constantemente.</li>
+            <li>Los derechos no se otorgan; se <strong>reconocen</strong> porque son inherentes a las personas.</li>
+            <li>Conocer la Constitución nos permite <strong>exigir</strong> el cumplimiento de nuestros derechos.</li>
+          </ul>
+        </div>
+
+        <div class="card gold" style="text-align:center">
+          <h3>🎉 ¡Felicidades!</h3>
+          <p>Has completado la guía de estudio. Repasa las secciones que necesites y realiza la autoevaluación para medir tu aprendizaje.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /content-area -->
+
+  <!-- BOTTOM NAV -->
+  <div id="bottomnav">
+    <button class="nav-btn prev" id="btnPrev" onclick="navigate(-1)" disabled>← Anterior</button>
+    <div class="screen-dots" id="dots"></div>
+    <button class="nav-btn next" id="btnNext" onclick="navigate(1)">Siguiente →</button>
+  </div>
+
+  <!-- FOOTER -->
+  <div id="footer">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez &nbsp;|&nbsp; CPEUM – Última Reforma DOF 03-03-2026</div>
+
+</div><!-- /app -->
+
+<script>
+/* ── STATE ── */
+const TOTAL = 9; // screens 0..8
+let current = 0;
+
+/* ── QUIZ DATA ── */
+const quizData = [
+  {
+    q: "¿Cuál es la principal característica que el Artículo 3° exige para la educación pública impartida por el Estado?",
+    opts: ["Religiosa y gratuita","Obligatoria, universal, inclusiva, pública, gratuita y laica","Solo obligatoria y gratuita","Privada y de excelencia"],
+    ans: 1,
+    fb: "✅ Correcto. La educación del Estado debe ser obligatoria, universal, inclusiva, pública, gratuita y LAICA."
+  },
+  {
+    q: "Según el Artículo 4°, ¿a qué edad corresponde la pensión no contributiva de adultos mayores?",
+    opts: ["60 años","55 años","65 años","70 años"],
+    ans: 2,
+    fb: "✅ Correcto. Las personas adultas mayores de 65 años tienen derecho a esta pensión no contributiva."
+  },
+  {
+    q: "¿En qué artículo se establece la libertad de trabajo y profesión?",
+    opts: ["Artículo 2°","Artículo 3°","Artículo 4°","Artículo 5°"],
+    ans: 3,
+    fb: "✅ Correcto. El Artículo 5° protege la libertad de que toda persona pueda dedicarse al trabajo o profesión lícita que prefiera."
+  },
+  {
+    q: "¿Quiénes son considerados 'agentes fundamentales del proceso educativo' según el Artículo 3°?",
+    opts: ["Los directivos escolares","Las maestras y los maestros","Los padres de familia","El Ejecutivo Federal"],
+    ans: 1,
+    fb: "✅ Correcto. El Artículo 3° reconoce expresamente a las maestras y maestros como agentes fundamentales."
+  },
+  {
+    q: "Según el Artículo 2° (Apartado D), ¿qué tipo de educación se impartirá en pueblos y comunidades indígenas?",
+    opts: ["Solo en español","Bilingüe español-inglés","Plurilingüe e intercultural","Monolingüe en lengua indígena"],
+    ans: 2,
+    fb: "✅ Correcto. Se impartirá educación plurilingüe e intercultural basada en el respeto al patrimonio histórico y cultural."
+  }
+];
+
+let quizState = { idx: 0, score: 0, answered: false };
+
+/* ── NAVIGATION ── */
+function goTo(n) {
+  if (n < 0 || n >= TOTAL) return;
+  const prev = document.getElementById('s'+current);
+  prev.classList.add('exit');
+  setTimeout(()=>{ prev.classList.remove('active','exit'); }, 350);
+  current = n;
+  const next = document.getElementById('s'+current);
+  next.classList.add('active');
+  updateUI();
+  if (current === 7) initQuiz();
+}
+
+function navigate(dir) { goTo(current + dir); }
+
+function updateUI() {
+  document.getElementById('btnPrev').disabled = current === 0;
+  document.getElementById('btnNext').disabled = current === TOTAL-1;
+  document.getElementById('prog-label').textContent = (current+1)+'/'+TOTAL;
+  document.getElementById('prog-fill').style.width = ((current+1)/TOTAL*100)+'%';
+  const dots = document.getElementById('dots');
+  dots.querySelectorAll('.dot').forEach((d,i)=>{ d.classList.toggle('active', i===current); });
+}
+
+/* ── INIT DOTS ── */
+(function(){
+  const dots = document.getElementById('dots');
+  for(let i=0;i<TOTAL;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' active':'');
+    d.onclick = ()=>goTo(i);
+    dots.appendChild(d);
+  }
+})();
+
+/* ── TABS ── */
+function showTab(group, id) {
+  const container = document.querySelector('#s3 .tabs-wrap');
+  container.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.toggle('active', b.getAttribute('onclick').includes("'"+id+"'"));
+  });
+  container.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('edu-'+id).classList.add('active');
+}
+
+/* ── ACCORDION ── */
+function toggleAcc(head) {
+  const body = head.nextElementSibling;
+  const isOpen = head.classList.contains('open');
+  // close all in same parent
+  const parent = head.closest('.screen-body');
+  if(parent){
+    parent.querySelectorAll('.acc-head.open').forEach(h=>{
+      h.classList.remove('open');
+      h.nextElementSibling.classList.remove('open');
+    });
+  }
+  if(!isOpen){ head.classList.add('open'); body.classList.add('open'); }
+}
+
+/* ── QUIZ ── */
+function initQuiz() {
+  quizState = { idx: 0, score: 0, answered: false };
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const c = document.getElementById('quiz-container');
+  const q = quizData[quizState.idx];
+  if (!q) { renderScore(); return; }
+  c.innerHTML = `
+    <div class="quiz-progress">Pregunta ${quizState.idx+1} de ${quizData.length} &nbsp;|&nbsp; Puntaje: ${quizState.score}</div>
+    <div class="question-card">
+      <div class="question-text">${quizState.idx+1}. ${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,i)=>`<button class="option-btn" onclick="answerQ(${i})">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+      <button class="next-q-btn" id="nqb" onclick="nextQuestion()">Siguiente pregunta →</button>
+    </div>`;
+}
+
+function answerQ(i) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = quizData[quizState.idx];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b=>b.disabled=true);
+  if (i === q.ans) {
+    btns[i].classList.add('correct');
+    quizState.score++;
+    document.getElementById('fb').textContent = q.fb;
+    document.getElementById('fb').className = 'feedback ok show';
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    document.getElementById('fb').textContent = '❌ Incorrecto. ' + q.fb;
+    document.getElementById('fb').className = 'feedback fail show';
+  }
+  document.getElementById('nqb').classList.add('show');
+}
+
+function nextQuestion() {
+  quizState.idx++;
+  quizState.answered = false;
+  renderQuestion();
+}
+
+function renderScore() {
+  const pct = Math.round(quizState.score / quizData.length * 100);
+  const msg = pct===100 ? '🏆 ¡Excelente! Dominas el tema.' :
+              pct>=80  ? '👏 ¡Muy bien! Repasa un poco más.' :
+              pct>=60  ? '📖 Bien, pero hay áreas de oportunidad.' :
+                          '💪 Necesitas repasar el material.';
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="score-panel">
+      <div class="score-num">${quizState.score}/${quizData.length}</div>
+      <div class="score-label">Respuestas correctas</div>
+      <div class="score-msg">${pct}% de acierto &nbsp;|&nbsp; ${msg}</div>
+      <button class="retry-btn" onclick="initQuiz()">🔄 Intentar de nuevo</button>
+    </div>`;
+}
+</script>
+
+</body>
+</html>

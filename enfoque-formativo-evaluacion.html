@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Enfoque Formativo de la Evaluación</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #FF6EC7 0%, #FF1493 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 3rem;
+            color: #FF1493;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            color: #FF1493;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #FFD700;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            color: #FF6EC7;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .author-box {
+            background: linear-gradient(135deg, #FF6EC7 0%, #FF1493 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #555;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 5px solid #FF1493;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #FF1493;
+            transition: transform 0.3s ease;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+        }
+
+        .highlight {
+            background: #FFE4F0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #FF6EC7;
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        button {
+            background: #FF1493;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #C71585;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(199, 21, 133, 0.4);
+        }
+
+        .counter {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #FF1493;
+            z-index: 1000;
+        }
+
+        .component-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 1rem 0;
+            border-left: 5px solid #FFD700;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .evaluation-type {
+            background: linear-gradient(135deg, #00CED1 0%, #20B2AA 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .evaluation-type h3 {
+            color: white;
+        }
+
+        .regulation-box {
+            background: linear-gradient(135deg, #FFE4B5 0%, #FFD700 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .model-section {
+            background: linear-gradient(135deg, #87CEEB 0%, #4682B4 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+
+        .model-section h3 {
+            color: white;
+        }
+
+        .ambito-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .ambito-box {
+            background: linear-gradient(135deg, #E6E6FA 0%, #D8BFD8 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        strong {
+            color: #FF1493;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.4rem; }
+            p, li { font-size: 1rem; }
+            .container { padding: 1rem; }
+            .slide { padding: 2rem 1.5rem; }
+            .ambito-grid {
+                grid-template-columns: 1fr;
+            }
+            .controls {
+                bottom: 1rem;
+                right: 1rem;
+            }
+            button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="counter" id="counter">1 / 10</div>
+
+    <div class="container">
+        <!-- SLIDE 1: PORTADA -->
+        <div class="slide active" id="slide1">
+            <h1>El Enfoque Formativo de la Evaluación</h1>
+            <p class="subtitle">Serie: Herramientas para la Evaluación en Educación Básica</p>
+            
+            <div class="author-box">
+                <h3>Profesor: Francisco De Jesús Luna Benítez</h3>
+            </div>
+
+            <div class="highlight">
+                <p style="font-size: 1.3rem; text-align: center;">La evaluación como herramienta para <strong>mejorar el aprendizaje</strong> y fortalecer la enseñanza</p>
+            </div>
+
+            <div class="icon">✏️</div>
+        </div>
+
+        <!-- SLIDE 2: ¿QUÉ SIGNIFICA EVALUAR? -->
+        <div class="slide" id="slide2">
+            <h2>¿Qué significa evaluar?</h2>
+            
+            <div class="highlight">
+                <p style="font-size: 1.3rem;">Es el proceso que permite obtener <strong>evidencias</strong>, elaborar <strong>juicios</strong> y brindar <strong>retroalimentación</strong> sobre los logros de aprendizaje de los alumnos.</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">🎯</div>
+                    <h3>Centro de la evaluación</h3>
+                    <p>El centro de la evaluación son los <strong>aprendizajes</strong> y no los alumnos. Se evalúa el <strong>desempeño</strong> y no la persona.</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">📊</div>
+                    <h3>Toma de decisiones</h3>
+                    <p>Para tomar decisiones, demanda el uso de <strong>técnicas e instrumentos</strong> para recolectar información de corte cualitativo y cuantitativo.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: COMPONENTES DE LA EVALUACIÓN -->
+        <div class="slide" id="slide3">
+            <h2>Componentes de la Evaluación</h2>
+            
+            <div class="component-box">
+                <div class="icon">📏</div>
+                <h3>Medición</h3>
+                <p>Se define como la <strong>asignación de un valor</strong> a conocimientos, habilidades, valores o actitudes, logrados por los alumnos durante un periodo de corte.</p>
+            </div>
+
+            <div class="component-box">
+                <div class="icon">🔍</div>
+                <h3>Estimación</h3>
+                <p>Es la acción concreta de <strong>emitir un juicio</strong> de lo que ha aprendido un alumno, con base en evidencias cualitativas y cuantitativas.</p>
+            </div>
+
+            <div class="component-box">
+                <div class="icon">📝</div>
+                <h3>Calificación</h3>
+                <p>Se refiere sólo a la <strong>expresión cualitativa o cuantitativa</strong> del nivel de desempeño.</p>
+            </div>
+
+            <div class="component-box">
+                <div class="icon">🎓</div>
+                <h3>Acreditación</h3>
+                <p>Consiste en tomar la <strong>decisión</strong> respecto a la pertinencia de que un alumno acceda al grado o nivel siguiente en función de las evidencias de los aprendizajes.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: MOMENTOS Y TIPOS -->
+        <div class="slide" id="slide4">
+            <h2>Momentos y Tipos de Evaluación</h2>
+            
+            <div class="card">
+                <p>Los tres momentos de evaluación: <strong>inicial, de proceso y final</strong>; coinciden con los tipos de evaluación: <strong>diagnóstica, formativa y sumativa</strong>.</p>
+            </div>
+
+            <div class="evaluation-type">
+                <div class="icon" style="color: white;">🔍</div>
+                <h3>Diagnóstica</h3>
+                <p style="color: white;">Se realiza de manera previa a un proceso educativo, con la intención de <strong>explorar los conocimientos</strong> que ya poseen los alumnos.</p>
+            </div>
+
+            <div class="evaluation-type">
+                <div class="icon" style="color: white;">📈</div>
+                <h3>Formativa</h3>
+                <p style="color: white;">Se realiza para <strong>valorar el avance</strong> en los aprendizajes y mejorar la enseñanza y el aprendizaje. Su función es mejorar una intervención en un momento determinado.</p>
+                
+                <h3 style="margin-top: 1.5rem; color: white;">Su regulación puede ser:</h3>
+                <div class="grid">
+                    <div class="regulation-box">
+                        <p>Interactiva<br><small>Integradas al proceso de enseñanza</small></p>
+                    </div>
+                    <div class="regulation-box">
+                        <p>Retroactiva<br><small>Medición puntual al término de un proceso</small></p>
+                    </div>
+                    <div class="regulation-box">
+                        <p>Proactiva<br><small>Adaptaciones para un futuro cercano</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="evaluation-type">
+                <div class="icon" style="color: white;">✅</div>
+                <h3>Sumativa</h3>
+                <p style="color: white;">Promueve que se obtenga un <strong>juicio global</strong> del grado de avance en el logro de los aprendizajes esperados.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: ELEMENTOS DE LA EVALUACIÓN -->
+        <div class="slide" id="slide5">
+            <h2>Elementos de la Evaluación</h2>
+            
+            <div class="highlight">
+                <h3>¿Qué se evalúa?</h3>
+                <p>Los <strong>aprendizajes esperados</strong>, que constituyen la expresión concreta de las competencias y orientan a los docentes como referentes de observación, registro y seguimiento.</p>
+            </div>
+
+            <div class="highlight">
+                <h3>¿Para qué se evalúa?</h3>
+                <p>Evaluar para <strong>aprender</strong> y, en consecuencia, <strong>mejorar los procesos</strong> de enseñanza y de aprendizaje.</p>
+            </div>
+
+            <div class="highlight">
+                <h3>¿Quiénes evalúan?</h3>
+            </div>
+
+            <div class="grid">
+                <div class="box" style="text-align: center;">
+                    <div class="icon">🙋</div>
+                    <h3>Autoevaluación</h3>
+                    <p>La que el estudiante hace sobre su propio desempeño</p>
+                </div>
+                
+                <div class="box" style="text-align: center;">
+                    <div class="icon">👩‍🏫</div>
+                    <h3>Heteroevaluación</h3>
+                    <p>La que realiza el docente al grupo de alumnos</p>
+                </div>
+                
+                <div class="box" style="text-align: center;">
+                    <div class="icon">👥</div>
+                    <h3>Coevaluación</h3>
+                    <p>La que se hace entre pares</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: CUÁNDO Y CÓMO EVALUAR -->
+        <div class="slide" id="slide6">
+            <h2>¿Cuándo y Cómo Evaluar?</h2>
+            
+            <div class="highlight">
+                <h3>¿Cuándo se evalúa?</h3>
+                <p>Consiste en <strong>tres grandes fases</strong>: inicio (que implica el diseño), el proceso (que genera evaluaciones formativas), y el final (donde se aplican evaluaciones sumativas).</p>
+            </div>
+
+            <div class="card">
+                <h3>¿Cómo se evalúa?</h3>
+                <p>Es necesario evaluar usando distintas <strong>técnicas e instrumentos</strong> que pueden ser:</p>
+                
+                <ul>
+                    <li><strong>a) Informales:</strong> como la observación del trabajo, registros anecdóticos, diarios de clase, etc.</li>
+                    <li><strong>b) Semiformales:</strong> producción de textos amplios, la evaluación de portafolios, etc.</li>
+                    <li><strong>c) Formales:</strong> exámenes, mapas conceptuales, evaluación del desempeño, rúbricas, lista de verificación o cotejo y escalas.</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <h3>¿Cómo se emiten juicios?</h3>
+                <p>Para emitir un juicio del desempeño es necesario <strong>establecer criterios de evaluación</strong>: identificar los aprendizajes esperados y seleccionar las evidencias que permitan verificarlos.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: EL DOCENTE QUE EVALÚA -->
+        <div class="slide" id="slide7">
+            <h2>El Docente que Evalúa con Base en el Enfoque Formativo</h2>
+            
+            <div class="card">
+                <h3>Se espera que el docente:</h3>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <p><strong>a)</strong> Sea un <strong>mediador</strong> entre el conocimiento y el aprendizaje de sus alumnos</p>
+                </div>
+                
+                <div class="box">
+                    <p><strong>b)</strong> Sea un <strong>profesional reflexivo</strong> que examine su práctica, tome decisiones y solucione problemas</p>
+                </div>
+                
+                <div class="box">
+                    <p><strong>c)</strong> Analice críticamente sus propias ideas</p>
+                </div>
+                
+                <div class="box">
+                    <p><strong>d)</strong> Promueva <strong>aprendizajes significativos</strong></p>
+                </div>
+                
+                <div class="box">
+                    <p><strong>e)</strong> Preste <strong>ayuda pedagógica ajustada</strong> a las necesidades y competencias del alumnado</p>
+                </div>
+                
+                <div class="box">
+                    <p><strong>f)</strong> Establezca como meta educativa la <strong>autonomía y autodirección</strong> de sus alumnos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: MODELO DE SHEPPARD -->
+        <div class="slide" id="slide8">
+            <h2>Un Modelo de Evaluación con Enfoque Formativo</h2>
+            
+            <div class="card">
+                <p>Sheppard (2008) ha aportado el modelo más aceptado de la evaluación formativa:</p>
+            </div>
+
+            <div class="model-section">
+                <h3>1. Claridad en lo que se enseña: los aprendizajes esperados</h3>
+                <p style="color: white;">Los aprendizajes esperados definen lo que se espera de cada alumno, en términos de <strong>saber, saber hacer y saber ser</strong>; son los referentes para la planificación y evaluación.</p>
+            </div>
+
+            <div class="model-section">
+                <h3>2. Establecer y comunicar los criterios de evaluación</h3>
+                <p style="color: white;">El docente debe <strong>definir y compartir</strong> con sus alumnos los criterios de evaluación que utilizará, para lograr que sean participantes activos y reflexivos en su proceso de aprendizaje.</p>
+            </div>
+
+            <div class="model-section">
+                <h3>3. Identificar dónde están los alumnos y hasta dónde pueden llegar</h3>
+                <p style="color: white;">Las estrategias eficaces se basan en el <strong>conocimiento previo</strong> de los estudiantes. La <strong>zona de desarrollo próximo</strong> (Vygotsky) es la región entre lo que un alumno puede hacer independientemente y lo que puede hacer con ayuda.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: RETROALIMENTACIÓN Y AUTOEVALUACIÓN -->
+        <div class="slide" id="slide9">
+            <h2>Retroalimentación y Autoevaluación</h2>
+            
+            <div class="model-section">
+                <div class="icon" style="color: white;">🔄</div>
+                <h3>4. Retroalimentar a los alumnos</h3>
+                <p style="color: white;">La retroalimentación es eficaz cuando dirige su atención a las <strong>cualidades del desempeño</strong> del alumno en relación con criterios establecidos, y proporciona una <strong>guía de qué hacer para mejorar</strong>.</p>
+            </div>
+
+            <div class="model-section">
+                <div class="icon" style="color: white;">📊</div>
+                <h3>5. Supervisar el propio desempeño</h3>
+                <p style="color: white;">El proceso de <strong>autoevaluación</strong> se basa en que existan criterios de evaluación claros y explícitos para que los alumnos puedan pensar, aplicar y reflexionar. Este proceso de autoreflexión incrementa la <strong>responsabilidad y el compromiso</strong> de los alumnos ante su aprendizaje.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: ÉTICA Y HERRAMIENTAS -->
+        <div class="slide" id="slide10">
+            <h2>La Ética en la Evaluación</h2>
+            
+            <div class="card">
+                <h3>Un docente que evalúa debe ser un profesional ético que:</h3>
+                <ul>
+                    <li><strong>a)</strong> Trate a los alumnos de acuerdo con las <strong>orientaciones y valores</strong> que rigen su conducta</li>
+                    <li><strong>b)</strong> Reconozca las <strong>voces de todos</strong>, asegurando que los grupos vulnerados sean igualmente escuchados</li>
+                    <li><strong>c)</strong> Incorpore a los alumnos con su <strong>pleno consentimiento</strong></li>
+                    <li><strong>d)</strong> Logre que los <strong>resultados</strong> estén disponibles y sean legítimos para todos</li>
+                    <li><strong>e)</strong> Permita a <strong>otros docentes</strong> enterarse de lo que él hace</li>
+                </ul>
+            </div>
+
+            <h3 style="margin-top: 2rem;">Herramientas que Ayudan al Docente</h3>
+            
+            <div class="ambito-grid">
+                <div class="ambito-box">
+                    <div class="icon">👤</div>
+                    <h3>Ámbito Individual</h3>
+                    <p>Ser reflexivo, tener formación y estar actualizado</p>
+                </div>
+                
+                <div class="ambito-box">
+                    <div class="icon">👥</div>
+                    <h3>Ámbito Colectivo</h3>
+                    <p>Dialogar entre docentes para comunicar experiencias</p>
+                </div>
+                
+                <div class="ambito-box">
+                    <div class="icon">📋</div>
+                    <h3>Ámbito Material</h3>
+                    <p>Tener evidencias para tomar decisiones correctas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevSlide()">← Anterior</button>
+        <button onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 10;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => slide.classList.remove('active'));
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            else if (n < 1) currentSlide = 1;
+            else currentSlide = n;
+
+            document.getElementById('slide' + currentSlide).classList.add('active');
+            document.getElementById('counter').textContent = currentSlide + ' / ' + totalSlides;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(1);
+    </script>
+</body>
+</html>

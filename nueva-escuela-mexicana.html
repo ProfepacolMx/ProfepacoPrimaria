@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Principios Pedagógicos de la Nueva Escuela Mexicana</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #FF6EC7 0%, #FF1493 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 3rem;
+            color: #FF1493;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            color: #FF1493;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #FFD700;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            color: #FF6EC7;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .author-box {
+            background: linear-gradient(135deg, #FF6EC7 0%, #FF1493 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #555;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 5px solid #FF1493;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #FF1493;
+            transition: transform 0.3s ease;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+        }
+
+        .highlight {
+            background: #FFE4F0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #FF6EC7;
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        button {
+            background: #FF1493;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #C71585;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(199, 21, 133, 0.4);
+        }
+
+        .counter {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #FF1493;
+            z-index: 1000;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .principio-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .principio-box h3 {
+            color: white;
+        }
+
+        .principio-box p {
+            color: white;
+        }
+
+        .linea-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .linea-box h3 {
+            color: white;
+        }
+
+        .linea-box p {
+            color: white;
+        }
+
+        .orientacion-box {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .orientacion-box h3 {
+            color: white;
+        }
+
+        .orientacion-box p {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .slide {
+                padding: 2rem;
+            }
+            
+            .controls {
+                bottom: 1rem;
+                right: 1rem;
+            }
+            
+            button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="counter" id="counter">1 / 10</div>
+
+    <div class="container">
+        <!-- SLIDE 1: PORTADA -->
+        <div class="slide active" id="slide1">
+            <h1>Principios Pedagógicos de la Nueva Escuela Mexicana</h1>
+            <div class="subtitle">Una Reforma Educativa para la Transformación Social</div>
+            
+            <div class="author-box">
+                <div class="icon">🎓</div>
+                <h3>Nueva Escuela Mexicana (NEM)</h3>
+                <p style="color: white; margin-top: 1rem;">Educación integral, inclusiva y para toda la vida</p>
+            </div>
+
+            <div class="highlight" style="margin-top: 2rem;">
+                <p><strong>Una presentación interactiva sobre los fundamentos pedagógicos que transforman la educación en México</strong></p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: ¿QUÉ ES LA NEM? -->
+        <div class="slide" id="slide2">
+            <h2>¿Qué es la Nueva Escuela Mexicana?</h2>
+            
+            <div class="highlight">
+                <p>La NEM es una <strong>reforma educativa</strong> que busca integrar todos los niveles educativos desde los 0 hasta los 23 años, garantizando un aprendizaje inclusivo y continuo.</p>
+            </div>
+
+            <div class="card">
+                <h3>Problemas que Atiende</h3>
+                <ul>
+                    <li>Abandono escolar</li>
+                    <li>Desigualdad en el acceso a la educación</li>
+                    <li>Calidad deficiente en la enseñanza</li>
+                </ul>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">🎯</div>
+                    <h3>Enfoque Central</h3>
+                    <p>Formación integral del estudiante</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">📚</div>
+                    <h3>Visión</h3>
+                    <p>Educación para toda la vida</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">⚖️</div>
+                    <h3>Alcance</h3>
+                    <p>Equidad en todas las regiones del país</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: PRINCIPIOS FUNDAMENTALES (PARTE 1) -->
+        <div class="slide" id="slide3">
+            <h2>Principios Fundamentales de la NEM</h2>
+            <div class="subtitle">Parte 1: Identidad, Ciudadanía y Transformación</div>
+            
+            <div class="principio-box">
+                <div class="icon" style="color: white;">🇲🇽</div>
+                <h3>A. Identidad con México</h3>
+                <p>Fomenta el amor por la patria, la historia y la cultura, promoviendo valores nacionales y respeto por la diversidad.</p>
+            </div>
+
+            <div class="principio-box">
+                <div class="icon" style="color: white;">👥</div>
+                <h3>B. Responsabilidad Ciudadana</h3>
+                <p>Forma ciudadanos comprometidos con valores como la honestidad, respeto, justicia y solidaridad, promoviendo la cultura de paz.</p>
+            </div>
+
+            <div class="principio-box">
+                <div class="icon" style="color: white;">🌟</div>
+                <h3>C. Participación en la Transformación de la Sociedad</h3>
+                <p>Promueve la educación como herramienta de cambio social, fomentando pensamiento crítico, innovación y justicia social.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: PRINCIPIOS FUNDAMENTALES (PARTE 2) -->
+        <div class="slide" id="slide4">
+            <h2>Principios Fundamentales de la NEM</h2>
+            <div class="subtitle">Parte 2: Dignidad, Interculturalidad, Paz y Medio Ambiente</div>
+            
+            <div class="principio-box">
+                <div class="icon" style="color: white;">❤️</div>
+                <h3>D. Respeto a la Dignidad Humana</h3>
+                <p>Basada en el humanismo, garantiza igualdad de derechos y oportunidades, eliminando discriminación de género, etnicidad o condición social.</p>
+            </div>
+
+            <div class="principio-box">
+                <div class="icon" style="color: white;">🌍</div>
+                <h3>E. Promoción de la Interculturalidad</h3>
+                <p>Valora la diversidad cultural y lingüística, impulsando el diálogo intercultural con equidad y respeto.</p>
+            </div>
+
+            <div class="grid" style="margin-top: 1.5rem;">
+                <div class="box" style="border-top-color: #667eea;">
+                    <div class="icon">🕊️</div>
+                    <h3>F. Cultura de la Paz</h3>
+                    <p>Fomenta la resolución pacífica de conflictos, la convivencia armónica y la justicia social.</p>
+                </div>
+                
+                <div class="box" style="border-top-color: #667eea;">
+                    <div class="icon">🌱</div>
+                    <h3>G. Respeto y Cuidado del Medio Ambiente</h3>
+                    <p>Impulsa la conciencia ambiental, el desarrollo sostenible y la acción climática basada en la Agenda 2030 de la ONU.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: LÍNEAS DE ACCIÓN -->
+        <div class="slide" id="slide5">
+            <h2>Líneas de Acción para Implementar la NEM</h2>
+            
+            <div class="linea-box">
+                <div class="icon" style="color: white;">👨‍🏫</div>
+                <h3>A. Revalorización del Magisterio</h3>
+                <p>Mejora la formación docente, el desarrollo profesional y las condiciones laborales de los maestros.</p>
+            </div>
+
+            <div class="linea-box">
+                <div class="icon" style="color: white;">🏫</div>
+                <h3>B. Infraestructura Educativa</h3>
+                <p>Garantiza espacios seguros, con acceso a tecnología, recursos básicos y adaptaciones para la inclusión.</p>
+            </div>
+
+            <div class="linea-box">
+                <div class="icon" style="color: white;">🤝</div>
+                <h3>C. Gobernanza y Participación Social</h3>
+                <p>Impulsa la toma de decisiones compartida entre docentes, directivos, estudiantes y comunidad.</p>
+            </div>
+
+            <div class="linea-box">
+                <div class="icon" style="color: white;">📖</div>
+                <h3>D. Objetivos de Aprendizaje y Estrategias Didácticas</h3>
+                <p>Revisión de contenidos y metodologías pedagógicas para adecuarlas a la diversidad de los estudiantes.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: SISTEMA EDUCATIVO NACIONAL -->
+        <div class="slide" id="slide6">
+            <h2>La NEM y el Sistema Educativo Nacional</h2>
+            
+            <div class="highlight">
+                <h3>Alcance Integral</h3>
+                <p>La NEM abarca desde la <strong>educación inicial hasta la educación superior</strong>, incluyendo formación docente, educación para adultos y alfabetización.</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">👶</div>
+                    <h3>Educación Inicial</h3>
+                    <p>0-3 años</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🎒</div>
+                    <h3>Educación Básica</h3>
+                    <p>Preescolar, Primaria y Secundaria</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">📚</div>
+                    <h3>Educación Media Superior</h3>
+                    <p>Preparatoria y equivalentes</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🎓</div>
+                    <h3>Educación Superior</h3>
+                    <p>Universidad y posgrado</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">👨‍🏫</div>
+                    <h3>Formación Docente</h3>
+                    <p>Desarrollo profesional continuo</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">📝</div>
+                    <h3>Educación para Adultos</h3>
+                    <p>Alfabetización y capacitación</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: DERECHO A LA EDUCACIÓN -->
+        <div class="slide" id="slide7">
+            <h2>El Derecho a la Educación y sus Implicaciones Pedagógicas</h2>
+            
+            <div class="card">
+                <h3>Reforma Constitucional</h3>
+                <p>Establece el derecho a una educación <strong>integral e inclusiva</strong> para todos los sectores sociales.</p>
+            </div>
+
+            <div class="highlight">
+                <h3>Atención Prioritaria</h3>
+                <p>Especial atención a grupos en situación de vulnerabilidad, garantizando equidad y acceso universal a una educación de calidad.</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">🌈</div>
+                    <h3>Inclusión</h3>
+                    <p>Eliminación de barreras para el aprendizaje</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">⚖️</div>
+                    <h3>Equidad</h3>
+                    <p>Igualdad de oportunidades para todos</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🎯</div>
+                    <h3>Calidad</h3>
+                    <p>Educación pertinente y relevante</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🌟</div>
+                    <h3>Integralidad</h3>
+                    <p>Desarrollo pleno de capacidades</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: ORIENTACIONES PEDAGÓGICAS (PARTE 1) -->
+        <div class="slide" id="slide8">
+            <h2>Orientaciones Pedagógicas de la NEM</h2>
+            <div class="subtitle">Gestión y Práctica Educativa</div>
+            
+            <div class="orientacion-box">
+                <div class="icon" style="color: white;">🏛️</div>
+                <h3>A. Gestión Escolar Democrática</h3>
+                <p>Promueve la participación de todos los actores educativos en la toma de decisiones y mejora de la enseñanza.</p>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h3>Actores Clave en la Gestión Democrática</h3>
+                <div class="grid">
+                    <div class="box">
+                        <div class="icon">👨‍🏫</div>
+                        <p><strong>Docentes</strong></p>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="icon">👨‍💼</div>
+                        <p><strong>Directivos</strong></p>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="icon">👨‍👩‍👧‍👦</div>
+                        <p><strong>Familias</strong></p>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="icon">🎒</div>
+                        <p><strong>Estudiantes</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="orientacion-box" style="margin-top: 2rem;">
+                <div class="icon" style="color: white;">📚</div>
+                <h3>B. Práctica Educativa</h3>
+                <p>Los docentes deben adaptar sus métodos a la diversidad estudiantil, fomentar el aprendizaje colaborativo y promover la creatividad.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: ORIENTACIONES PEDAGÓGICAS (PARTE 2) -->
+        <div class="slide" id="slide9">
+            <h2>Evaluación Integral en la NEM</h2>
+            
+            <div class="orientacion-box">
+                <div class="icon" style="color: white;">📊</div>
+                <h3>C. Evaluación Integral</h3>
+                <p>La evaluación se concibe como una <strong>herramienta de mejora continua</strong>, tanto para estudiantes como para docentes y la gestión escolar.</p>
+            </div>
+
+            <div class="card">
+                <h3>Características de la Evaluación Integral</h3>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">🎯</div>
+                    <h3>Formativa</h3>
+                    <p>Orienta y mejora el proceso de aprendizaje</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🔄</div>
+                    <h3>Continua</h3>
+                    <p>Se realiza a lo largo de todo el proceso educativo</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">👥</div>
+                    <h3>Participativa</h3>
+                    <p>Involucra a estudiantes, docentes y comunidad</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🌟</div>
+                    <h3>Holística</h3>
+                    <p>Evalúa todas las dimensiones del desarrollo</p>
+                </div>
+            </div>
+
+            <div class="highlight" style="margin-top: 2rem;">
+                <p><strong>La evaluación no es un fin en sí mismo, sino un medio para mejorar la enseñanza y el aprendizaje.</strong></p>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: CONCLUSIÓN -->
+        <div class="slide" id="slide10">
+            <h2>La Nueva Escuela Mexicana: Una Visión Transformadora</h2>
+            
+            <div class="card">
+                <h3>Resumen de los Pilares Fundamentales</h3>
+            </div>
+
+            <div class="grid">
+                <div class="box" style="border-top-color: #667eea;">
+                    <div class="icon">🎯</div>
+                    <h3>Educación Integral</h3>
+                    <p>Formación completa del ser humano</p>
+                </div>
+                
+                <div class="box" style="border-top-color: #f5576c;">
+                    <div class="icon">🌈</div>
+                    <h3>Inclusión y Equidad</h3>
+                    <p>Oportunidades para todos los sectores</p>
+                </div>
+                
+                <div class="box" style="border-top-color: #4facfe;">
+                    <div class="icon">🤝</div>
+                    <h3>Participación Social</h3>
+                    <p>Comunidad educativa activa</p>
+                </div>
+                
+                <div class="box" style="border-top-color: #00f2fe;">
+                    <div class="icon">🌱</div>
+                    <h3>Desarrollo Sostenible</h3>
+                    <p>Responsabilidad ambiental y social</p>
+                </div>
+            </div>
+
+            <div class="highlight" style="margin-top: 2rem;">
+                <h3>Misión de la NEM</h3>
+                <p>Formar ciudadanos críticos, creativos y comprometidos con la transformación de México, capaces de construir una sociedad más justa, inclusiva y sostenible.</p>
+            </div>
+
+            <div class="author-box" style="margin-top: 2rem;">
+                <div class="icon">🎓</div>
+                <h3>Nueva Escuela Mexicana</h3>
+                <p style="color: white; margin-top: 1rem;">Educación de excelencia con equidad</p>
+                <p style="color: white; font-size: 1rem; margin-top: 0.5rem;">Por el derecho de todas y todos a aprender</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevSlide()">← Anterior</button>
+        <button onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 10;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => slide.classList.remove('active'));
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            else if (n < 1) currentSlide = 1;
+            else currentSlide = n;
+
+            document.getElementById('slide' + currentSlide).classList.add('active');
+            document.getElementById('counter').textContent = currentSlide + ' / ' + totalSlides;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(1);
+    </script>
+</body>
+</html>

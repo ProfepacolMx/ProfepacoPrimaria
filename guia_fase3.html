@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Estudio Interactiva – Fase 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rojo:   #C0392B;
+    --rojo2:  #E74C3C;
+    --azul:   #1A3A5C;
+    --azul2:  #2980B9;
+    --verde:  #1A7A4A;
+    --naranja:#E67E22;
+    --morado: #7D3C98;
+    --fondo:  #F4F6F8;
+    --blanco: #FFFFFF;
+    --gris:   #ECF0F1;
+    --texto:  #2C3E50;
+    --sombra: 0 4px 24px rgba(0,0,0,.10);
+    --radio:  14px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--azul) 0%, #0F2744 60%, var(--rojo) 100%);
+    color: #fff;
+    text-align: center;
+    padding: 48px 24px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content:'';
+    position:absolute; inset:0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  header .badge {
+    display:inline-block;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 50px;
+    padding: 6px 20px;
+    font-size: .78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    backdrop-filter: blur(6px);
+    animation: fadeDown .7s ease both;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    animation: fadeDown .8s .1s ease both;
+  }
+  header h1 span { color: #FFD166; }
+  header .credit {
+    font-size: .95rem;
+    font-weight: 300;
+    opacity: .85;
+    animation: fadeDown .9s .2s ease both;
+  }
+  header .credit strong { font-weight: 600; }
+
+  /* ── NAV PILLS ── */
+  nav {
+    background: var(--blanco);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+  .nav-inner {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 10px 16px;
+    scrollbar-width: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .nav-inner::-webkit-scrollbar { display:none; }
+  nav a {
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: .82rem;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 50px;
+    color: var(--texto);
+    transition: all .25s;
+    border: 1.5px solid transparent;
+  }
+  nav a:hover, nav a.activo {
+    background: var(--azul);
+    color: #fff;
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 16px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  /* ── SECTION WRAPPER ── */
+  .seccion {
+    animation: fadeUp .6s ease both;
+  }
+  .sec-titulo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .sec-icono {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .sec-titulo h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.15rem, 3vw, 1.5rem);
+    font-weight: 700;
+    color: var(--azul);
+  }
+
+  /* colores por sección */
+  .col-rojo   { background: #FDECEA; color: var(--rojo); }
+  .col-azul   { background: #E8F0FB; color: var(--azul2); }
+  .col-verde  { background: #E8F6EE; color: var(--verde); }
+  .col-naranja{ background: #FEF3E8; color: var(--naranja); }
+  .col-morado { background: #F4ECF7; color: var(--morado); }
+
+  /* ── CARD GRID ── */
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .g3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+  .card {
+    background: var(--blanco);
+    border-radius: var(--radio);
+    padding: 22px 20px;
+    box-shadow: var(--sombra);
+    border-top: 4px solid currentColor;
+    transition: transform .25s, box-shadow .25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,.14); }
+  .card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: currentColor;
+  }
+  .card p, .card ul { font-size: .9rem; line-height: 1.6; color: #4a5568; }
+  .card ul { padding-left: 18px; }
+  .card ul li { margin-bottom: 4px; }
+
+  /* ── ACORDEON ── */
+  .acordeon { display: flex; flex-direction: column; gap: 8px; }
+  .ac-item {
+    background: var(--blanco);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+  }
+  .ac-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--texto);
+    transition: background .2s;
+    text-align: left;
+    gap: 10px;
+  }
+  .ac-btn:hover { background: var(--gris); }
+  .ac-chevron {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: .75rem;
+    transition: transform .3s, background .3s;
+  }
+  .ac-item.abierto .ac-chevron { transform: rotate(180deg); }
+  .ac-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease, padding .3s;
+    padding: 0 20px;
+  }
+  .ac-item.abierto .ac-body { padding: 0 20px 18px; }
+  .ac-body p, .ac-body ul { font-size: .88rem; line-height: 1.7; color: #4a5568; }
+  .ac-body ul { padding-left: 18px; margin-top: 6px; }
+  .ac-body ul li { margin-bottom: 5px; }
+
+  /* ── TABLA COMPARATIVA ── */
+  .tabla-wrap { overflow-x: auto; border-radius: var(--radio); box-shadow: var(--sombra); }
+  table { width:100%; border-collapse: collapse; background: var(--blanco); font-size:.88rem; }
+  thead tr { background: var(--azul); color: #fff; }
+  thead th { padding: 12px 16px; text-align:left; font-weight:600; font-size:.85rem; }
+  tbody tr:nth-child(even) { background: #f7f9fc; }
+  tbody td { padding: 11px 16px; vertical-align:top; line-height:1.6; border-bottom: 1px solid #e2e8f0; }
+  .badge-g { display:inline-block; padding:2px 10px; border-radius:50px; font-size:.75rem; font-weight:600; }
+  .bg1 { background:#E8F0FB; color:var(--azul2); }
+  .bg2 { background:#E8F6EE; color:var(--verde); }
+
+  /* ── QUIZ ── */
+  .quiz-box {
+    background: var(--blanco);
+    border-radius: var(--radio);
+    padding: 28px 24px;
+    box-shadow: var(--sombra);
+  }
+  .pregunta { margin-bottom: 20px; }
+  .pregunta h4 { font-size:.95rem; font-weight:600; margin-bottom:12px; }
+  .opciones { display:flex; flex-direction:column; gap:8px; }
+  .opcion {
+    padding: 11px 16px;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    font-size: .88rem;
+    transition: all .2s;
+    background: #fff;
+  }
+  .opcion:hover { border-color: var(--azul2); background: #EBF5FB; }
+  .opcion.correcta { border-color: var(--verde); background: #E8F6EE; color: var(--verde); font-weight:600; }
+  .opcion.incorrecta { border-color: var(--rojo); background: #FDECEA; color: var(--rojo); }
+  .opcion.disabled { pointer-events:none; opacity:.7; }
+  .feedback {
+    margin-top:10px;
+    padding:10px 14px;
+    border-radius:10px;
+    font-size:.85rem;
+    font-weight:600;
+    display:none;
+  }
+  .fb-ok { background:#E8F6EE; color:var(--verde); display:block; }
+  .fb-mal { background:#FDECEA; color:var(--rojo); display:block; }
+
+  .quiz-nav {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:22px;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .btn {
+    padding:10px 22px;
+    border:none;
+    border-radius:50px;
+    cursor:pointer;
+    font-family:'DM Sans',sans-serif;
+    font-weight:600;
+    font-size:.88rem;
+    transition: all .22s;
+  }
+  .btn-prim { background:var(--azul); color:#fff; }
+  .btn-prim:hover { background:#0F2744; transform:scale(1.03); }
+  .btn-sec { background:var(--gris); color:var(--texto); }
+  .btn-sec:hover { background:#dde3ea; }
+  #progreso { font-size:.82rem; color:#888; }
+  #resultado-final {
+    display:none;
+    text-align:center;
+    padding:20px;
+  }
+  #resultado-final h3 { font-size:1.4rem; font-weight:700; margin-bottom:8px; }
+  #resultado-final p { font-size:.92rem; color:#555; }
+  .estrella { font-size:2rem; }
+
+  /* ── FLASHCARDS ── */
+  .flashcard-area { perspective: 800px; }
+  .fc-wrap {
+    position:relative;
+    width:100%;
+    max-width:480px;
+    height:180px;
+    margin:0 auto 18px;
+    cursor:pointer;
+  }
+  .fc-inner {
+    width:100%; height:100%;
+    position:relative;
+    transform-style: preserve-3d;
+    transition: transform .5s ease;
+  }
+  .fc-wrap.volteada .fc-inner { transform: rotateY(180deg); }
+  .fc-cara, .fc-reverso {
+    position:absolute; inset:0;
+    border-radius: var(--radio);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    text-align:center;
+    backface-visibility: hidden;
+    box-shadow: var(--sombra);
+  }
+  .fc-cara   { background: linear-gradient(135deg, var(--azul), var(--azul2)); color:#fff; font-weight:600; font-size:1rem; }
+  .fc-reverso{ background: linear-gradient(135deg, var(--verde), #27AE60); color:#fff; font-size:.9rem; line-height:1.6; transform: rotateY(180deg); }
+  .fc-hint { text-align:center; font-size:.8rem; color:#888; margin-bottom:10px; }
+  .fc-nav { display:flex; justify-content:center; align-items:center; gap:16px; flex-wrap:wrap; }
+  #fc-contador { font-size:.82rem; color:#888; min-width:60px; text-align:center; }
+
+  /* ── LÍNEA DE TIEMPO ── */
+  .timeline { position:relative; padding-left:36px; }
+  .timeline::before {
+    content:'';
+    position:absolute;
+    left:14px; top:4px; bottom:4px;
+    width:3px;
+    background: linear-gradient(to bottom, var(--azul2), var(--morado));
+    border-radius:4px;
+  }
+  .tl-item {
+    position:relative;
+    margin-bottom:22px;
+    background:var(--blanco);
+    border-radius:12px;
+    padding:16px 18px;
+    box-shadow: var(--sombra);
+  }
+  .tl-item::before {
+    content:'';
+    position:absolute;
+    left:-28px; top:18px;
+    width:16px; height:16px;
+    border-radius:50%;
+    background:var(--azul2);
+    border:3px solid var(--blanco);
+    box-shadow:0 0 0 3px var(--azul2);
+  }
+  .tl-tag {
+    display:inline-block;
+    font-size:.72rem;
+    font-weight:700;
+    padding:2px 10px;
+    border-radius:50px;
+    margin-bottom:6px;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+  }
+  .tl-item h4 { font-size:.92rem; font-weight:600; margin-bottom:4px; }
+  .tl-item p  { font-size:.84rem; color:#555; line-height:1.6; }
+
+  /* ── CHIPS DE CONCEPTOS ── */
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip {
+    padding:6px 14px;
+    border-radius:50px;
+    font-size:.8rem;
+    font-weight:600;
+    cursor:default;
+    transition: transform .2s;
+  }
+  .chip:hover { transform: scale(1.06); }
+
+  /* ── RESUMEN VISUAL ── */
+  .resumen-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+    gap:12px;
+  }
+  .res-item {
+    background:var(--blanco);
+    border-radius:12px;
+    padding:18px 12px;
+    text-align:center;
+    box-shadow:var(--sombra);
+    transition: transform .2s;
+  }
+  .res-item:hover { transform:scale(1.04); }
+  .res-num {
+    font-family:'Playfair Display',serif;
+    font-size:2rem;
+    font-weight:900;
+  }
+  .res-item p { font-size:.78rem; color:#666; margin-top:4px; line-height:1.4; }
+
+  /* ── ANIMACIONES ── */
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-18px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(22px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:600px){
+    header { padding:36px 16px 28px; }
+    main { padding:20px 12px 36px; gap:24px; }
+    .quiz-nav { justify-content:center; }
+    .fc-wrap { height:160px; }
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height:3px;
+    background:linear-gradient(90deg,var(--rojo),var(--azul2),var(--verde));
+    border-radius:4px;
+    opacity:.25;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="badge">📚 Educación Primaria · Plan de Estudio 2022</div>
+  <h1>Guía de Estudio Interactiva<br><span>Programa Sintético – Fase 3</span></h1>
+  <p class="credit">Prof. <strong>Francisco De Jesus Luna Benitez</strong></p>
+</header>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#s1">🏫 ¿Qué es Fase 3?</a>
+    <a href="#s2">📖 Campos Formativos</a>
+    <a href="#s3">🗝️ Conceptos Clave</a>
+    <a href="#s4">📊 Contenidos por Campo</a>
+    <a href="#s5">🔄 Prog. Analítico</a>
+    <a href="#s6">🃏 Flashcards</a>
+    <a href="#s7">✅ Repaso</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════════════
+     SECCIÓN 1 – ¿QUÉ ES LA FASE 3?
+════════════════════════════════════════ -->
+<section class="seccion" id="s1">
+  <div class="sec-titulo">
+    <div class="sec-icono col-rojo">🏫</div>
+    <h2>¿Qué es la Fase 3?</h2>
+  </div>
+
+  <div class="grid g2">
+    <div class="card" style="color:var(--rojo); border-top-color:var(--rojo);">
+      <h3>Definición</h3>
+      <p>La <strong>Fase 3</strong> corresponde a los grados <strong>1° y 2° de Primaria</strong> dentro del Plan de Estudio 2022 de la Nueva Escuela Mexicana. Organiza los aprendizajes en torno a <em>Campos Formativos</em> integrados, privilegiando el contexto y las experiencias de vida del estudiantado.</p>
+    </div>
+    <div class="card" style="color:var(--azul2); border-top-color:var(--azul2);">
+      <h3>Propósito central</h3>
+      <p>Garantizar que niñas y niños desarrollen capacidades comunicativas, de pensamiento matemático-científico, ético y artístico que les permitan comprender, transformar y convivir en su entorno natural y social.</p>
+    </div>
+    <div class="card" style="color:var(--verde); border-top-color:var(--verde);">
+      <h3>Principio pedagógico</h3>
+      <p>El aprendizaje <strong>parte de lo concreto</strong>: se vincula con las vivencias, contextos y situaciones reales de las niñas y los niños. Los contenidos se abordan desde <em>situaciones problemáticas significativas</em>.</p>
+    </div>
+    <div class="card" style="color:var(--naranja); border-top-color:var(--naranja);">
+      <h3>Rol del docente</h3>
+      <p>Diseñar situaciones de aprendizaje que activen conocimientos previos, promuevan la exploración y la reflexión, y consideren la <strong>diversidad lingüística, cultural y de capacidades</strong> del grupo.</p>
+    </div>
+  </div>
+
+  <!-- Resumen visual -->
+  <div class="resumen-grid" style="margin-top:16px;">
+    <div class="res-item"><span class="res-num" style="color:var(--rojo);">2</span><p>Grados escolares (1° y 2°)</p></div>
+    <div class="res-item"><span class="res-num" style="color:var(--azul2);">4</span><p>Campos Formativos</p></div>
+    <div class="res-item"><span class="res-num" style="color:var(--verde);">3</span><p>Tipos de lenguaje abordados</p></div>
+    <div class="res-item"><span class="res-num" style="color:var(--naranja);">3</span><p>Planos del Prog. Analítico</p></div>
+    <div class="res-item"><span class="res-num" style="color:var(--morado);">∞</span><p>Aprendizaje situado y contextual</p></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     SECCIÓN 2 – CAMPOS FORMATIVOS
+════════════════════════════════════════ -->
+<section class="seccion" id="s2">
+  <div class="sec-titulo">
+    <div class="sec-icono col-azul">📖</div>
+    <h2>Los Cuatro Campos Formativos</h2>
+  </div>
+
+  <!-- Timeline de campos -->
+  <div class="timeline">
+
+    <div class="tl-item">
+      <span class="tl-tag" style="background:#FDECEA;color:var(--rojo);">Campo 1</span>
+      <h4>📝 Lenguajes</h4>
+      <p>Comprende el <strong>lenguaje oral, escrito y artístico</strong>. La adquisición de la lectoescritura es un proceso gradual que requiere acompañamiento docente, familiar y comunitario. No se limita al aprendizaje de letras: implica comprender el funcionamiento del sistema de escritura alfabética. Los lenguajes artísticos (música, artes visuales, teatro, danza) son vías de expresión personal y comprensión del mundo.</p>
+    </div>
+
+    <div class="tl-item">
+      <span class="tl-tag" style="background:#E8F0FB;color:var(--azul2);">Campo 2</span>
+      <h4>🔬 Saberes y Pensamiento Científico</h4>
+      <p>Integra <strong>Matemáticas y Ciencias Naturales</strong>. Se desarrolla a partir de situaciones problemáticas de la vida cotidiana: ¿cuál es mayor?, ¿cuántos?, ¿cómo registramos? Las matemáticas son herramientas para construir conocimiento y comprender la relación de interdependencia entre seres humanos y la naturaleza.</p>
+    </div>
+
+    <div class="tl-item">
+      <span class="tl-tag" style="background:#F4ECF7;color:var(--morado);">Campo 3</span>
+      <h4>🌿 Ética, Naturaleza y Sociedades</h4>
+      <p>Niñas y niños se reconocen como <strong>seres vivos parte de la naturaleza</strong>. Desarrollan identidad, sentido de pertenencia, respeto a los derechos humanos y conciencia histórica-geográfica. Aprenden que México es un país pluricultural y que el presente es resultado de las decisiones del pasado.</p>
+    </div>
+
+    <div class="tl-item">
+      <span class="tl-tag" style="background:#FEF3E8;color:var(--naranja);">Campo 4</span>
+      <h4>❤️ De lo Humano y lo Comunitario</h4>
+      <p>Fomenta el <strong>autoconocimiento, autocuidado</strong>, salud integral, perspectiva de género y educación socioemocional. Incluye el conocimiento de la sexualidad como parte integral de los seres humanos. Promueve hábitos de actividad física, alimentación saludable y la construcción de una cultura de paz.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     SECCIÓN 3 – CONCEPTOS CLAVE (ACORDEÓN)
+════════════════════════════════════════ -->
+<section class="seccion" id="s3">
+  <div class="sec-titulo">
+    <div class="sec-icono col-verde">🗝️</div>
+    <h2>Conceptos Clave del Programa</h2>
+  </div>
+
+  <div class="acordeon">
+
+    <div class="ac-item">
+      <button class="ac-btn" onclick="toggleAcordeon(this)">
+        <span>📘 Sistema de escritura alfabética</span>
+        <span class="ac-chevron col-azul">▼</span>
+      </button>
+      <div class="ac-body">
+        <p>Las <strong>letras son elementos del sistema de escritura</strong>, no el sistema completo. Comprender su funcionamiento es un proceso de larga duración en el que el alumnado elabora y reelabora sus propias hipótesis.</p>
+        <ul>
+          <li>Conocer letras ≠ comprender el sistema.</li>
+          <li>Los estudiantes construyen hipótesis sobre la escritura de forma autónoma desde antes de ingresar a la escuela.</li>
+          <li>En contextos bilingües, la lengua materna debe ser la vía principal de alfabetización inicial.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ac-item">
+      <button class="ac-btn" onclick="toggleAcordeon(this)">
+        <span>🎨 Lenguajes artísticos</span>
+        <span class="ac-chevron col-morado">▼</span>
+      </button>
+      <div class="ac-body">
+        <p>La exploración y experimentación artística son vías fundamentales de aprendizaje. No se trata solo de técnica: se busca que el alumnado:</p>
+        <ul>
+          <li>Exprese sensaciones, emociones y sentimientos.</li>
+          <li>Desarrolle pensamiento creativo a través de formas, colores, texturas, sonidos y movimientos.</li>
+          <li>Aprecie y valore manifestaciones culturales de su comunidad y otros lugares.</li>
+          <li>Construya su identidad personal y colectiva.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ac-item">
+      <button class="ac-btn" onclick="toggleAcordeon(this)">
+        <span>🧮 Pensamiento matemático situado</span>
+        <span class="ac-chevron col-naranja">▼</span>
+      </button>
+      <div class="ac-body">
+        <p>Las matemáticas se abordan como <strong>herramienta de análisis de la realidad</strong>, no como algoritmos abstractos.</p>
+        <ul>
+          <li>Se parte de situaciones con sentido para niñas y niños.</li>
+          <li>Se promueve la expresión verbal y escrita de lo aprendido.</li>
+          <li>La estadística (organización e interpretación de datos) se trabaja con preguntas de interés del propio alumnado.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ac-item">
+      <button class="ac-btn" onclick="toggleAcordeon(this)">
+        <span>🌎 Identidad, diversidad e interculturalidad</span>
+        <span class="ac-chevron col-verde">▼</span>
+      </button>
+      <div class="ac-body">
+        <p>Reconocer que <strong>México es un país pluricultural</strong> con diversidad de historias, identidades y patrimonio es central en esta fase.</p>
+        <ul>
+          <li>Los estudiantes desarrollan sentido de pertenencia e identidad comunitaria.</li>
+          <li>Aprenden a respetar y valorar la diversidad cultural, lingüística y familiar.</li>
+          <li>Construyen bases de ciudadanía activa: participación, diálogo y cultura de paz.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ac-item">
+      <button class="ac-btn" onclick="toggleAcordeon(this)">
+        <span>🌱 Relación ser humano–naturaleza</span>
+        <span class="ac-chevron col-rojo">▼</span>
+      </button>
+      <div class="ac-body">
+        <p>Niñas y niños comprenden la <strong>interdependencia vital</strong> entre los seres humanos y la naturaleza.</p>
+        <ul>
+          <li>Se reconocen como seres vivos que forman parte de la naturaleza (agua, aire, suelo).</li>
+          <li>Identifican cómo las personas transforman la naturaleza a través del tiempo.</li>
+          <li>Asumen compromisos de bajo impacto ambiental y sustentabilidad.</li>
+          <li>Desarrollan actitudes de respeto, responsabilidad y cuidado del medio ambiente.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ac-item">
+      <button class="ac-btn" onclick="toggleAcordeon(this)">
+        <span>🏥 Autocuidado y salud integral</span>
+        <span class="ac-chevron col-verde">▼</span>
+      </button>
+      <div class="ac-body">
+        <p>El <strong>conocimiento del cuerpo y su cuidado</strong> es un eje transversal en Fase 3. Incluye:</p>
+        <ul>
+          <li>Hábitos de actividad física, alimentación saludable, descanso e hidratación.</li>
+          <li>Perspectiva de género e interculturalidad.</li>
+          <li>Educación de la sexualidad como parte afectiva, biológica, psicológica, social y cultural.</li>
+          <li>Autoconocimiento y autorregulación emocional.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chips de palabras clave -->
+  <div style="margin-top:20px;">
+    <p style="font-size:.82rem;color:#888;margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Palabras clave del programa</p>
+    <div class="chips">
+      <span class="chip" style="background:#FDECEA;color:var(--rojo);">Aprendizaje situado</span>
+      <span class="chip" style="background:#E8F0FB;color:var(--azul2);">Lectoescritura</span>
+      <span class="chip" style="background:#E8F6EE;color:var(--verde);">Interdependencia</span>
+      <span class="chip" style="background:#FEF3E8;color:var(--naranja);">Pensamiento matemático</span>
+      <span class="chip" style="background:#F4ECF7;color:var(--morado);">Lenguajes artísticos</span>
+      <span class="chip" style="background:#FDECEA;color:var(--rojo);">Diversidad cultural</span>
+      <span class="chip" style="background:#E8F0FB;color:var(--azul2);">Autonomía</span>
+      <span class="chip" style="background:#E8F6EE;color:var(--verde);">Autocuidado</span>
+      <span class="chip" style="background:#FEF3E8;color:var(--naranja);">Cultura de paz</span>
+      <span class="chip" style="background:#F4ECF7;color:var(--morado);">Codiseño</span>
+      <span class="chip" style="background:#FDECEA;color:var(--rojo);">Ciudadanía activa</span>
+      <span class="chip" style="background:#E8F0FB;color:var(--azul2);">Sustentabilidad</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     SECCIÓN 4 – CONTENIDOS POR CAMPO (TABLA)
+════════════════════════════════════════ -->
+<section class="seccion" id="s4">
+  <div class="sec-titulo">
+    <div class="sec-icono col-naranja">📊</div>
+    <h2>Contenidos y Procesos de Desarrollo</h2>
+  </div>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Campo Formativo</th>
+          <th>Contenido</th>
+          <th><span class="badge-g bg1">1er Grado</span></th>
+          <th><span class="badge-g bg2">2do Grado</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>📝 Lenguajes</strong></td>
+          <td>Adquisición de la lectoescritura</td>
+          <td>Formula hipótesis sobre la escritura; reconoce que las palabras representan nombres de personas, animales, plantas, cosas.</td>
+          <td>Comprende el funcionamiento del sistema de escritura alfabética; lee y escribe de forma convencional textos con sentido.</td>
+        </tr>
+        <tr>
+          <td><strong>🎨 Lenguajes artísticos</strong></td>
+          <td>Representación de formas de ser y estar a partir de la ficción</td>
+          <td>Lee textos con seres imaginarios y crea personajes ficticios usando formas, colores, texturas, gestos y sonidos.</td>
+          <td>Construye personajes combinando características reales; reconoce recursos artísticos como vestuario, maquillaje y máscaras.</td>
+        </tr>
+        <tr>
+          <td><strong>🔬 Saberes y Pens. Científico</strong></td>
+          <td>Organización e interpretación de datos</td>
+          <td>Elabora registros mediante pictogramas o tablas para responder preguntas de su interés.</td>
+          <td>Recolecta, organiza, representa e interpreta datos en tablas o pictogramas para responder preguntas de su interés.</td>
+        </tr>
+        <tr>
+          <td><strong>🌿 Ética, Naturaleza y Soc.</strong></td>
+          <td>Identidad, diversidad y pertenencia</td>
+          <td>Se reconoce como ser vivo parte de la naturaleza; describe su historia personal y familiar con nociones básicas de ubicación.</td>
+          <td>Reconoce la diversidad cultural y familiar de México; analiza cambios y permanencias de la vida cotidiana en su comunidad.</td>
+        </tr>
+        <tr>
+          <td><strong>❤️ De lo Humano y Comunitario</strong></td>
+          <td>Autocuidado y salud integral</td>
+          <td>Identifica prácticas de cuidado del cuerpo: alimentación, actividad física, descanso e higiene; reconoce emociones básicas.</td>
+          <td>Reflexiona colectivamente sobre prácticas favorables/desfavorables para la salud; plantea propuestas de mejora en su comunidad.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     SECCIÓN 5 – PROGRAMA ANALÍTICO
+════════════════════════════════════════ -->
+<section class="seccion" id="s5">
+  <div class="sec-titulo">
+    <div class="sec-icono col-morado">🔄</div>
+    <h2>El Programa Analítico</h2>
+  </div>
+
+  <div class="grid g2" style="margin-bottom:16px;">
+    <div class="card" style="color:var(--morado); border-top-color:var(--morado);">
+      <h3>¿Qué es?</h3>
+      <p>Es el <strong>segundo nivel de concreción del currículo</strong>. Lo construye y reconstruye permanentemente el colectivo docente para contextualizar los Programas Sintéticos a la realidad escolar, comunitaria y regional. No es un formato administrativo; es un documento vivo.</p>
+    </div>
+    <div class="card" style="color:var(--azul2); border-top-color:var(--azul2);">
+      <h3>¿Para qué sirve?</h3>
+      <ul>
+        <li>Organizar los contenidos a la situación específica del grupo.</li>
+        <li>Incorporar problemáticas y saberes locales.</li>
+        <li>Articular el Programa Sintético con la planeación didáctica del docente.</li>
+        <li>Dar sentido al proceso de <em>codiseño</em> colectivo.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Los 3 planos -->
+  <p style="font-weight:700;margin-bottom:12px;color:var(--azul);">🗂️ Los tres planos del Programa Analítico</p>
+  <div class="grid g3">
+    <div class="card" style="color:var(--rojo); border-top-color:var(--rojo);">
+      <h3>Plano 1 · Lectura de la Realidad</h3>
+      <p>Análisis diagnóstico de los aprendizajes y condiciones educativas del grupo. Reconoce voces, expectativas y capacidades del estudiantado en contextos sociales, culturales y ambientales.</p>
+    </div>
+    <div class="card" style="color:var(--verde); border-top-color:var(--verde);">
+      <h3>Plano 2 · Toma de Decisiones</h3>
+      <p>El colectivo docente decide qué contenidos incorporar, qué contextualizaciones hacer y cómo secuenciar los aprendizajes en función de las necesidades detectadas en el Plano 1.</p>
+    </div>
+    <div class="card" style="color:var(--morado); border-top-color:var(--morado);">
+      <h3>Plano 3 · Concreción</h3>
+      <p>Elaboración de la planeación didáctica del docente. Integra contenidos nacionales contextualizados + contenidos locales por codiseño, articulados con la temporalidad anual.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     SECCIÓN 6 – FLASHCARDS
+════════════════════════════════════════ -->
+<section class="seccion" id="s6">
+  <div class="sec-titulo">
+    <div class="sec-icono col-azul">🃏</div>
+    <h2>Tarjetas de Memoria</h2>
+  </div>
+
+  <div class="flashcard-area">
+    <p class="fc-hint">👆 Haz clic en la tarjeta para revelar la respuesta</p>
+    <div class="fc-wrap" id="fcWrap" onclick="voltearFlashcard()">
+      <div class="fc-inner" id="fcInner">
+        <div class="fc-cara" id="fcFrente">Cargando…</div>
+        <div class="fc-reverso" id="fcReverso"></div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn btn-sec" onclick="fcAnterior()">← Anterior</button>
+      <span id="fc-contador">1 / 8</span>
+      <button class="btn btn-prim" onclick="fcSiguiente()">Siguiente →</button>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     SECCIÓN 7 – QUIZ DE REPASO
+════════════════════════════════════════ -->
+<section class="seccion" id="s7">
+  <div class="sec-titulo">
+    <div class="sec-icono col-rojo">✅</div>
+    <h2>Repaso: Preguntas de Autoevaluación</h2>
+  </div>
+
+  <div class="quiz-box">
+    <div id="quiz-contenido">
+      <!-- Pregunta dinámica -->
+    </div>
+    <div class="quiz-nav">
+      <span id="progreso">Pregunta 1 de 8</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sec" id="btnAnterior" onclick="qAnterior()" style="display:none;">← Atrás</button>
+        <button class="btn btn-prim" id="btnSiguiente" onclick="qSiguiente()">Siguiente →</button>
+      </div>
+    </div>
+    <div id="resultado-final">
+      <div class="estrella" id="estrellas"></div>
+      <h3 id="msg-resultado"></h3>
+      <p id="desc-resultado"></p>
+      <br>
+      <button class="btn btn-prim" onclick="reiniciarQuiz()">🔄 Volver a intentar</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer style="text-align:center;padding:24px;font-size:.8rem;color:#aaa;background:var(--blanco);border-top:1px solid #e2e8f0;">
+  Guía de Estudio Interactiva · Programa Sintético Fase 3 · Prof. Francisco De Jesus Luna Benitez
+</footer>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+// ── ACORDEON ──
+function toggleAcordeon(btn) {
+  const item = btn.closest('.ac-item');
+  const body = item.querySelector('.ac-body');
+  const isOpen = item.classList.contains('abierto');
+
+  // cerrar todos
+  document.querySelectorAll('.ac-item.abierto').forEach(el => {
+    el.classList.remove('abierto');
+    el.querySelector('.ac-body').style.maxHeight = '0';
+  });
+
+  if (!isOpen) {
+    item.classList.add('abierto');
+    body.style.maxHeight = body.scrollHeight + 'px';
+  }
+}
+
+// ── NAV ACTIVO ──
+const secciones = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+  let actual = '';
+  secciones.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) actual = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('activo', a.getAttribute('href') === '#' + actual);
+  });
+}, { passive: true });
+
+// ── FLASHCARDS ──
+const tarjetas = [
+  { p:'¿A qué grados corresponde la Fase 3?', r:'A 1° y 2° grado de Educación Primaria según el Plan de Estudio 2022 de la Nueva Escuela Mexicana.' },
+  { p:'¿Cuántos Campos Formativos integran la Fase 3?', r:'Cuatro: Lenguajes; Saberes y Pensamiento Científico; Ética, Naturaleza y Sociedades; De lo Humano y lo Comunitario.' },
+  { p:'¿Qué diferencia hay entre aprender letras y aprender el sistema de escritura?', r:'Las letras son elementos del sistema, pero el sistema implica comprender cómo se relacionan y funcionan. Un niño puede conocer letras sin comprender el sistema.' },
+  { p:'¿Cuál es el rol de los lenguajes artísticos en la Fase 3?', r:'Son vías fundamentales de aprendizaje para expresar sensaciones, emociones, construir identidad y apreciar manifestaciones culturales propias y de otros.' },
+  { p:'¿Qué es el Programa Analítico?', r:'Es el segundo nivel de concreción del currículo. El colectivo docente lo construye para contextualizar los Programas Sintéticos a la realidad escolar y comunitaria.' },
+  { p:'¿Cuáles son los tres planos del Programa Analítico?', r:'1) Lectura de la realidad, 2) Toma de decisiones sobre contenidos, 3) Concreción en la planeación didáctica del docente.' },
+  { p:'¿Qué se entiende por "aprendizaje situado" en la Fase 3?', r:'Que el abordaje de contenidos parte de lo concreto, vinculado con las vivencias, contextos y situaciones reales de niñas y niños.' },
+  { p:'¿Por qué es importante la lengua materna en contextos de diversidad lingüística?', r:'Porque debe ser la principal vía para el aprendizaje de la lectura y la escritura, asegurando que el aprendizaje tenga significado real para el estudiante.' },
+];
+
+let fcActual = 0;
+
+function renderFlashcard() {
+  const t = tarjetas[fcActual];
+  document.getElementById('fcFrente').textContent = t.p;
+  document.getElementById('fcReverso').textContent = t.r;
+  document.getElementById('fc-contador').textContent = (fcActual + 1) + ' / ' + tarjetas.length;
+  document.getElementById('fcWrap').classList.remove('volteada');
+}
+
+function voltearFlashcard() {
+  document.getElementById('fcWrap').classList.toggle('volteada');
+}
+
+function fcSiguiente() {
+  fcActual = (fcActual + 1) % tarjetas.length;
+  renderFlashcard();
+}
+
+function fcAnterior() {
+  fcActual = (fcActual - 1 + tarjetas.length) % tarjetas.length;
+  renderFlashcard();
+}
+
+renderFlashcard();
+
+// ── QUIZ ──
+const preguntas = [
+  {
+    txt: '¿A qué nivel de concreción del currículo pertenece el Programa Analítico?',
+    ops: ['Primer nivel', 'Segundo nivel', 'Tercer nivel', 'Cuarto nivel'],
+    ok: 1,
+    exp: '✅ Correcto. El Programa Analítico es el segundo nivel de concreción, después del Programa Sintético (nacional).'
+  },
+  {
+    txt: '¿Qué abarca el Campo Formativo "Lenguajes"?',
+    ops: ['Solo lectura y escritura', 'Lenguaje oral, escrito y artístico', 'Matemáticas y lenguaje', 'Ciencias y comunicación'],
+    ok: 1,
+    exp: '✅ Incluye el lenguaje oral, escrito Y artístico (música, danza, teatro, artes visuales).'
+  },
+  {
+    txt: 'Según el Programa Sintético, ¿el aprendizaje de la lectoescritura ocurre únicamente en la escuela?',
+    ops: ['Sí, solo en el ámbito escolar', 'No, también se da fuera de la escuela desde antes de ingresar', 'Solo si los padres enseñan en casa', 'Depende del docente'],
+    ok: 1,
+    exp: '✅ Los niños construyen conocimientos sobre escritura de forma autónoma desde antes de ingresar a la escuela.'
+  },
+  {
+    txt: '¿Cuál es el enfoque del pensamiento matemático en la Fase 3?',
+    ops: ['Memorizar tablas y algoritmos', 'Aprender fórmulas abstractas', 'Resolver situaciones problemáticas de la vida cotidiana', 'Solo operaciones básicas'],
+    ok: 2,
+    exp: '✅ Las matemáticas se abordan desde situaciones problemáticas reales y significativas para los estudiantes.'
+  },
+  {
+    txt: '¿Qué reconocen los estudiantes en el Campo "Ética, Naturaleza y Sociedades"?',
+    ops: ['Solo reciclar y cuidar plantas', 'Que México es un país con una sola cultura', 'Que son seres vivos parte de la naturaleza y de un país pluricultural', 'La historia de otros países'],
+    ok: 2,
+    exp: '✅ Se reconocen como seres vivos parte de la naturaleza y comprenden la diversidad cultural de México.'
+  },
+  {
+    txt: '¿Cuántos planos integran el Programa Analítico?',
+    ops: ['2 planos', '3 planos', '4 planos', '5 planos'],
+    ok: 1,
+    exp: '✅ Tres planos: Lectura de la realidad, Toma de decisiones y Concreción del programa.'
+  },
+  {
+    txt: '¿Qué incluye el Campo "De lo Humano y lo Comunitario"?',
+    ops: ['Solo deportes y recreación', 'Autocuidado, salud integral, perspectiva de género y emociones', 'Historia y geografía nacional', 'Arte y literatura'],
+    ok: 1,
+    exp: '✅ Incluye autoconocimiento, autocuidado, salud, perspectiva de género y educación socioemocional.'
+  },
+  {
+    txt: 'En contextos de diversidad lingüística, ¿cuál debe ser la vía principal para enseñar lectura y escritura?',
+    ops: ['El español como lengua nacional', 'La lengua materna del estudiante', 'Una lengua extranjera', 'La lengua de señas siempre'],
+    ok: 1,
+    exp: '✅ La lengua materna debe ser la principal vía para la alfabetización inicial; la segunda lengua se aprende después.'
+  }
+];
+
+let qActual = 0;
+let respondidas = new Array(preguntas.length).fill(null);
+let puntaje = 0;
+
+function renderPregunta() {
+  const q = preguntas[qActual];
+  const yaResp = respondidas[qActual];
+
+  document.getElementById('progreso').textContent = 'Pregunta ' + (qActual + 1) + ' de ' + preguntas.length;
+  document.getElementById('btnAnterior').style.display = qActual > 0 ? 'inline-block' : 'none';
+
+  const esUltima = qActual === preguntas.length - 1;
+  document.getElementById('btnSiguiente').textContent = esUltima ? 'Ver resultado 🎯' : 'Siguiente →';
+
+  let html = '<div class="pregunta">';
+  html += '<h4>' + (qActual + 1) + '. ' + q.txt + '</h4>';
+  html += '<div class="opciones">';
+
+  q.ops.forEach((op, i) => {
+    let cls = 'opcion';
+    if (yaResp !== null) {
+      cls += ' disabled';
+      if (i === q.ok) cls += ' correcta';
+      else if (i === yaResp && i !== q.ok) cls += ' incorrecta';
+    }
+    html += '<div class="' + cls + '" onclick="responder(' + i + ')">' + op + '</div>';
+  });
+
+  html += '</div>';
+
+  if (yaResp !== null) {
+    const ok = yaResp === q.ok;
+    html += '<div class="feedback ' + (ok ? 'fb-ok' : 'fb-mal') + '">' + q.exp + '</div>';
+  }
+
+  html += '</div>';
+  document.getElementById('quiz-contenido').innerHTML = html;
+}
+
+function responder(idx) {
+  if (respondidas[qActual] !== null) return;
+  respondidas[qActual] = idx;
+  if (idx === preguntas[qActual].ok) puntaje++;
+  renderPregunta();
+}
+
+function qSiguiente() {
+  if (qActual < preguntas.length - 1) {
+    qActual++;
+    renderPregunta();
+  } else {
+    mostrarResultado();
+  }
+}
+
+function qAnterior() {
+  if (qActual > 0) { qActual--; renderPregunta(); }
+}
+
+function mostrarResultado() {
+  document.getElementById('quiz-contenido').style.display = 'none';
+  document.querySelector('.quiz-nav').style.display = 'none';
+  const rf = document.getElementById('resultado-final');
+  rf.style.display = 'block';
+
+  const pct = Math.round((puntaje / preguntas.length) * 100);
+  let estrellas = '⭐';
+  let msg = '¡Sigue practicando!';
+  let desc = 'Repasa los campos formativos y vuelve a intentarlo.';
+
+  if (pct >= 90) { estrellas = '🏆⭐⭐⭐'; msg = '¡Excelente dominio del tema!'; desc = 'Obtuviste ' + puntaje + ' de ' + preguntas.length + ' respuestas correctas (' + pct + '%). ¡Felicidades!'; }
+  else if (pct >= 70) { estrellas = '😊⭐⭐'; msg = '¡Muy bien!'; desc = 'Obtuviste ' + puntaje + ' de ' + preguntas.length + ' (' + pct + '%). Repasa los temas donde fallaste.'; }
+  else if (pct >= 50) { estrellas = '📚⭐'; msg = 'Vas por buen camino'; desc = 'Obtuviste ' + puntaje + ' de ' + preguntas.length + ' (' + pct + '%). Repasa los Campos Formativos y el Programa Analítico.'; }
+
+  document.getElementById('estrellas').textContent = estrellas;
+  document.getElementById('msg-resultado').textContent = msg;
+  document.getElementById('desc-resultado').textContent = desc;
+}
+
+function reiniciarQuiz() {
+  qActual = 0; puntaje = 0;
+  respondidas = new Array(preguntas.length).fill(null);
+  document.getElementById('quiz-contenido').style.display = 'block';
+  document.querySelector('.quiz-nav').style.display = 'flex';
+  document.getElementById('resultado-final').style.display = 'none';
+  renderPregunta();
+}
+
+renderPregunta();
+</script>
+</body>
+</html>

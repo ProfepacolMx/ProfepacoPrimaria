@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Normas Generales de Evaluación</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Open Sans',sans-serif;background:linear-gradient(135deg,#2c5364 0%,#203a43 50%,#0f2027 100%);color:#333;line-height:1.6}
+.container{max-width:1200px;margin:0 auto;padding:2rem}
+.slide{background:white;border-radius:20px;padding:3rem;margin:2rem 0;box-shadow:0 20px 60px rgba(0,0,0,0.3);display:none;animation:slideIn 0.5s ease}
+.slide.active{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+h1{font-family:'Merriweather',serif;font-size:2.8rem;color:#2c5364;margin-bottom:1rem;line-height:1.2}
+h2{font-family:'Merriweather',serif;font-size:2.5rem;color:#2c5364;margin-bottom:1.5rem;border-bottom:3px solid #4a90a4;padding-bottom:0.5rem}
+h3{font-family:'Merriweather',serif;font-size:1.8rem;color:#4a7c8e;margin:1.5rem 0 1rem 0}
+p{font-size:1.2rem;margin-bottom:1rem;color:#555}
+.subtitle{font-size:1.5rem;color:#4a90a4;margin-bottom:2rem;font-weight:600}
+.professor-box{background:linear-gradient(135deg,#5f72bd 0%,#4a5f9d 100%);color:white;padding:1.5rem;border-radius:15px;margin-bottom:2rem;text-align:center}
+.professor-box h3{color:white;font-size:1.3rem;margin:0}
+ul{margin:1rem 0;padding-left:2rem}
+li{font-size:1.2rem;margin-bottom:0.8rem;color:#555}
+.card{background:linear-gradient(135deg,#e8eef2 0%,#d1dde4 100%);padding:1.5rem;border-radius:10px;margin:1rem 0;border-left:5px solid #2c5364}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin:2rem 0}
+.box{background:white;padding:1.5rem;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,0.1);border-top:4px solid #4a90a4;transition:transform 0.3s ease}
+.box:hover{transform:translateY(-5px)}
+.highlight{background:#e3f2fd;padding:1.5rem;border-radius:10px;border-left:5px solid#4a7c8e;margin:1.5rem 0;font-size:1.2rem}
+.controls{position:fixed;bottom:2rem;right:2rem;display:flex;gap:1rem;z-index:1000}
+button{background:#2c5364;color:white;border:none;padding:1rem 2rem;font-size:1.2rem;border-radius:50px;cursor:pointer;box-shadow:0 5px 15px rgba(44,83,100,0.4);transition:all 0.3s ease;font-weight:600}
+button:hover{background:#1a3744;transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,55,68,0.4)}
+.counter{position:fixed;top:2rem;right:2rem;background:white;padding:1rem 2rem;border-radius:50px;box-shadow:0 5px 15px rgba(0,0,0,0.2);font-weight:700;font-size:1.2rem;color:#2c5364;z-index:1000}
+.icon{font-size:3rem;margin-bottom:1rem;text-align:center}
+.section-box{background:linear-gradient(135deg,#5f72bd 0%,#4a5f9d 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.section-box h3,.section-box p,.section-box li{color:white}
+.warning-box{background:linear-gradient(135deg,#e67e22 0%,#d35400 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.warning-box h3,.warning-box p,.warning-box li{color:white}
+.success-box{background:linear-gradient(135deg,#16a085 0%,#138d75 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.success-box h3,.success-box p,.success-box li{color:white}
+.info-box{background:linear-gradient(135deg,#3498db 0%,#2980b9 100%);color:white;padding:2rem;border-radius:15px;margin:1rem 0}
+.info-box h3,.info-box p,.info-box li{color:white}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0}
+th,td{padding:1rem;border:2px solid #4a90a4;text-align:left}
+th{background:#2c5364;color:white;font-weight:700}
+td{background:white}
+.nivel-box{background:#f8f9fa;padding:1.5rem;border-radius:10px;margin:1rem 0;border-left:5px solid #4a90a4}
+@media (max-width:768px){
+h1{font-size:2rem}
+h2{font-size:1.8rem}
+.slide{padding:2rem}
+.controls{bottom:1rem;right:1rem}
+button{padding:0.8rem 1.5rem;font-size:1rem}
+}
+</style>
+</head>
+<body>
+<div class="counter" id="counter">1 / 13</div>
+<div class="container">
+
+<div class="slide active" id="slide1">
+<div class="professor-box"><h3>👨‍🏫 Profesor: Francisco De Jesus Luna Benitez</h3></div>
+<h1>Normas Generales para la Evaluación del Aprendizaje</h1>
+<div class="subtitle"></div>
+<div class="highlight"><p><strong>Acreditación, Promoción, Regularización y Certificación de los Educandos en Educación Básica</strong></p></div>
+<div class="section-box" style="margin-top:2rem">
+<div class="icon">📋</div>
+<h3>Zona Escolar 07</h3>
+<p style="color:white;margin-top:1rem">Lineamientos oficiales para la evaluación en educación básica</p>
+</div>
+</div>
+
+<div class="slide" id="slide2">
+<h2>Criterios de Evaluación</h2>
+<div class="grid">
+<div class="box">
+<div class="icon">🎯</div>
+<h3>1. Evaluación Integral</h3>
+<p>La evaluación permite identificar avances en el proceso con el fin de definir y poner en marcha acciones para su mejoramiento. Habrá de tomar en cuenta la diversidad social, lingüística, cultural y de capacidades de los alumnos, en atención a los principios de <strong>equidad e inclusión</strong>.</p>
+</div>
+<div class="box">
+<div class="icon">📝</div>
+<h3>2. Parte de la Planeación</h3>
+<p>La evaluación debe formar parte de la <strong>planeación didáctica</strong> y sus resultados han de utilizarse para realimentar su práctica pedagógica.</p>
+</div>
+</div>
+<div class="grid">
+<div class="box">
+<div class="icon">👨‍👩‍👧‍👦</div>
+<h3>3. Derecho a Conocer</h3>
+<p>Los educandos y tutores tienen el <strong>derecho de conocer</strong> los criterios de evaluación, los procedimientos y los resultados obtenidos.</p>
+</div>
+<div class="box">
+<div class="icon">📊</div>
+<h3>4. Análisis de Resultados</h3>
+<p>Los resultados deben analizarse con estudiantes, madres y padres de familia o tutores, así como por las <strong>autoridades escolares y educativas</strong>.</p>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide3">
+<h2>Definiciones Clave (1/2)</h2>
+<div class="success-box">
+<h3>Acreditación</h3>
+<p>Juicio mediante el cual se establece que un alumno cuenta con los conocimientos y habilidades necesarias en un grado escolar o nivel educativo según se establece en el <strong>Acuerdo 12/10/17 (Aprendizajes Clave)</strong>.</p>
+</div>
+<div class="info-box">
+<h3>Calificación</h3>
+<p>Es el resultado de la evaluación del aprendizaje expresado en:</p>
+<ul>
+<li><strong>Educación preescolar:</strong> Observaciones y sugerencias</li>
+<li><strong>Educación primaria y secundaria:</strong> Escala numérica que se registra en la Boleta de Evaluación</li>
+</ul>
+</div>
+<div class="warning-box">
+<h3>Certificación</h3>
+<p>Acción por la que una autoridad educativa legalmente facultada, da testimonio, por medio de un <strong>documento oficial</strong>, que se acreditó total o parcialmente un grado escolar, nivel o tipo educativo.</p>
+</div>
+</div>
+
+<div class="slide" id="slide4">
+<h2>Definiciones Clave (2/2)</h2>
+<div class="section-box">
+<h3>Evaluación Formativa</h3>
+<p>Es un proceso en el cual <strong>docentes y educandos comparten metas de aprendizaje</strong> y evalúan de manera permanente sus avances a través de la obtención variada de evidencias.</p>
+</div>
+<div class="info-box">
+<h3>Promoción</h3>
+<p>Con base en la acreditación y certificación la autoridad educativa competente toma la decisión para que un alumno <strong>continúe con sus estudios</strong> en el grado, nivel o tipo educativo siguiente.</p>
+</div>
+<div class="success-box">
+<h3>Regularización</h3>
+<p>Proceso mediante el cual se establecen <strong>mecanismos de acreditación</strong> que permitan mejorar el historial académico de los alumnos de educación secundaria.</p>
+</div>
+</div>
+
+<div class="slide" id="slide5">
+<h2>La Boleta de Evaluación</h2>
+<div class="highlight"><h3>Información General (Todos los Niveles)</h3></div>
+<div class="card">
+<ul>
+<li>Nombre del alumno, nivel educativo y grado</li>
+<li>Datos de identificación de la institución educativa</li>
+<li>Nombre del Docente responsable de registro</li>
+<li>Total de asistencias en el ciclo escolar</li>
+<li>En su caso, observaciones o recomendaciones generales sobre el apoyo adicional o de atención especializada que requieran los alumnos</li>
+</ul>
+</div>
+<div class="grid">
+<div class="box" style="background:linear-gradient(135deg,#fff9e6 0%,#ffe6b3 100%)">
+<div class="icon">👶</div>
+<h3>Educación Preescolar</h3>
+<ul>
+<li>Las asignaturas que conforman y áreas del nivel</li>
+<li>Observaciones y sugerencias sobre los avances</li>
+</ul>
+</div>
+<div class="box" style="background:linear-gradient(135deg,#e6f3ff 0%,#b3d9ff 100%)">
+<div class="icon">🎒</div>
+<h3>Primaria y Secundaria</h3>
+<ul>
+<li>Las asignaturas y áreas de cada nivel</li>
+<li>Tres calificaciones parciales (una por periodo) y una final</li>
+<li>En primaria indígena: Lengua Indígena y Español</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide6">
+<h2>Periodos de Evaluación</h2>
+<table>
+<thead>
+<tr><th>Periodo</th><th>Duración</th><th>Registro y Comunicación</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1° Periodo</strong></td>
+<td>Del comienzo del ciclo escolar hasta el final del mes de noviembre</td>
+<td>Los últimos cuatro días hábiles del mes de noviembre</td>
+</tr>
+<tr>
+<td><strong>2° Periodo</strong></td>
+<td>Del comienzo del mes de diciembre hasta el final del mes de marzo</td>
+<td>Los últimos cuatro días del mes de marzo o, en su caso, los cuatro días anteriores al comienzo de las vacaciones de primavera</td>
+</tr>
+<tr>
+<td><strong>3° Periodo</strong></td>
+<td>Del comienzo del mes de abril hasta el final del ciclo escolar</td>
+<td>Los últimos cuatro días hábiles del ciclo escolar que corresponda</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight" style="margin-top:2rem">
+<p>👨‍👩‍👧‍👦 <strong>La comunicación de los resultados a los tutores no limita su derecho a informarse</strong> sobre el desempeño y desarrollo de sus hijos o pupilos en cualquier momento.</p>
+<p style="margin-top:1rem">👥 <strong>Tampoco limita a los docentes y directivos</strong> para convocar a los padres de familia o tutores a la escuela cuando lo consideren necesario.</p>
+</div>
+</div>
+
+<div class="slide" id="slide7">
+<h2>Escala de Calificaciones</h2>
+<div class="nivel-box" style="background:#fff9e6;border-left-color:#f39c12">
+<h3 style="color:#d68910">📚 Educación Preescolar</h3>
+<p style="color:#555">Se expresarán mediante <strong>observaciones y sugerencias</strong> sobre cada una de las asignaturas y áreas del nivel <strong>sin utilizar valores numéricos</strong>.</p>
+<div class="card" style="margin-top:1rem">
+<p><strong>Clubes de Autonomía Curricular y Educación Socioemocional:</strong> Las observaciones se comunicarán en forma oral o por escrito, sin utilizar valores numéricos. <strong>No se consignarán en la Boleta de Evaluación</strong>.</p>
+</div>
+</div>
+<div class="nivel-box" style="background:#e6f3ff;border-left-color:#3498db">
+<h3 style="color:#2874a6">📖 Primaria y Secundaria</h3>
+<div class="grid">
+<div class="box">
+<p><strong>a)</strong> Para las asignaturas y áreas (Artes y Educación Física) las calificaciones se expresarán en <strong>números enteros en una escala de 5 a 10</strong> y los promedios con un número entero y un decimal.</p>
+</div>
+<div class="box">
+<p><strong>b)</strong> La calificación de <strong style="color:#c0392b">5 es reprobatoria</strong>. Las calificaciones de <strong style="color:#27ae60">6 a 10 son aprobatorias</strong>.</p>
+</div>
+<div class="box">
+<p><strong>c)</strong> En <strong>primero y segundo grado de primaria</strong> la escala de calificaciones será de <strong style="color:#27ae60">6 a 10</strong>.</p>
+</div>
+<div class="box">
+<p><strong>d)</strong> <strong>Clubes y Educación Socioemocional:</strong> observaciones orales o por escrito, sin valores numéricos. No se consignarán en la Boleta.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide8">
+<h2>Acreditación por Nivel</h2>
+<div class="warning-box" style="background:linear-gradient(135deg,#f39c12 0%,#d68910 100%)">
+<h3>📚 Educación Preescolar</h3>
+<p>Se acredita con el <strong>solo hecho de haber cursado el grado correspondiente</strong>.</p>
+</div>
+<div class="success-box">
+<h3>📖 Educación Primaria</h3>
+<div class="grid">
+<div class="box" style="border-top-color:#27ae60">
+<h3 style="color:#27ae60">1° y 2° Grado</h3>
+<p>Se acreditan con el <strong>solo hecho de haber cursado el grado</strong>.</p>
+</div>
+<div class="box" style="border-top-color:#2980b9">
+<h3 style="color:#2980b9">3°, 4° y 5° Grado</h3>
+<ul>
+<li>Mínimo <strong>80% de asistencia</strong></li>
+<li>Promedio final mínimo de <strong>6</strong></li>
+<li>Calificación aprobatoria en <strong>al menos 6 asignaturas y áreas</strong></li>
+</ul>
+</div>
+<div class="box" style="border-top-color:#8e44ad">
+<h3 style="color:#8e44ad">6° Grado</h3>
+<ul>
+<li>Mínimo <strong>80% de asistencia</strong></li>
+<li>Promedio final mínimo de <strong>6</strong></li>
+<li>En <strong>todas las asignaturas y áreas</strong></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide9">
+<h2>Acreditación: Secundaria</h2>
+<div class="info-box">
+<h3>🎓 Educación Secundaria</h3>
+<div class="grid">
+<div class="box" style="border-top-color:#3498db">
+<div class="icon">📘</div>
+<h3 style="color:#2874a6">1° y 2° Grado</h3>
+<ul>
+<li>Mínimo <strong>80% de asistencia</strong> en el ciclo escolar</li>
+<li>Promedio final mínimo de <strong>6</strong></li>
+<li>Calificación aprobatoria en <strong>al menos 6 asignaturas y áreas</strong></li>
+</ul>
+</div>
+<div class="box" style="border-top-color:#e74c3c">
+<div class="icon">🎓</div>
+<h3 style="color:#c0392b">3° Grado</h3>
+<ul>
+<li>Mínimo <strong>80% de asistencia</strong> en el ciclo escolar</li>
+<li>Promedio final mínimo de <strong>6</strong></li>
+<li>En <strong>todas las asignaturas y áreas</strong></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide10">
+<h2>Promoción: Preescolar y Primaria</h2>
+<div class="nivel-box" style="background:#fff9e6;border-left-color:#f39c12">
+<h3 style="color:#d68910">📚 Educación Preescolar</h3>
+<p style="color:#555">El educando que curse los grados <strong>primero o segundo</strong> será promovido al siguiente. El educando que curse el <strong>tercer grado</strong> será promovido al primer grado de educación primaria.</p>
+</div>
+<div class="nivel-box" style="background:#e6f3ff;border-left-color:#3498db">
+<h3 style="color:#2874a6">📖 Educación Primaria</h3>
+<div class="card">
+<p><strong>1° y 2° Grado:</strong> El educando será promovido al siguiente grado.</p>
+</div>
+<div class="card">
+<p><strong>3°, 4° y 5° Grado:</strong> El alumno será promovido al siguiente grado cuando <strong>acredite el grado cursado</strong>.</p>
+</div>
+<div class="card">
+<p><strong>6° Grado:</strong> El alumno será promovido a la secundaria cuando acredite el grado cursado o cuando acredite una <strong>evaluación general de conocimientos</strong>.</p>
+</div>
+</div>
+</div>
+
+<div class="slide" id="slide11">
+<h2>Promoción: Secundaria</h2>
+<div class="section-box">
+<h3>🎓 Educación Secundaria</h3>
+<p>El alumno será <strong>promovido cuando acredite el grado cursado</strong>. Volverá a cursar el grado cuando tenga <strong>5 o más asignaturas y áreas no acreditadas</strong>.</p>
+</div>
+<div class="warning-box">
+<h3>⚠️ Situación de Riesgo</h3>
+<p>El alumno que se encuentre en situación de riesgo por no haber obtenido calificación aprobatoria en <strong>hasta 4 asignaturas y/o áreas</strong> podrá regularizar esta situación.</p>
+</div>
+<div class="info-box">
+<h3>📋 Inscripción Condicionada (1° y 2° Grado)</h3>
+<p>El alumno de primero o segundo grado podrá inscribirse al grado inmediato superior cuando, al concluir el primero o segundo periodo de regularización, conserve un <strong>mínimo de 6 asignaturas y/o áreas acreditadas</strong>.</p>
+</div>
+<div class="success-box">
+<h3>✅ Evaluación General de Conocimientos</h3>
+<p>El alumno podrá acreditar un grado a través de una evaluación general de conocimientos, en los términos que establezcan las Normas de Control Escolar aplicables.</p>
+</div>
+</div>
+
+<div class="slide" id="slide12">
+<h2>Certificación</h2>
+<div class="grid">
+<div class="box" style="background:linear-gradient(135deg,#fff9e6 0%,#ffe6b3 100%)">
+<div class="icon">📜</div>
+<h3>Preescolar</h3>
+<p>Certificado de Educación Preescolar</p>
+</div>
+<div class="box" style="background:linear-gradient(135deg,#e6f3ff 0%,#b3d9ff 100%)">
+<div class="icon">📜</div>
+<h3>Primaria</h3>
+<p>Certificado de Educación Primaria</p>
+</div>
+<div class="box" style="background:linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 100%)">
+<div class="icon">📜</div>
+<h3>Secundaria</h3>
+<p>Certificado de Educación Secundaria</p>
+</div>
+</div>
+<div class="highlight" style="margin-top:2rem">
+<p>Estos certificados podrán expedirse en <strong>versión electrónica</strong> y deberá sujetarse a las características de contenido, diseño y seguridad que al efecto se establezca en las <strong>Normas de Control Escolar aplicables</strong>.</p>
+</div>
+</div>
+
+<div class="slide" id="slide13">
+<h2>Acreditación y Promoción Anticipada</h2>
+<div class="section-box">
+<h3>🌟 Alumnos con Aptitudes Sobresalientes</h3>
+<p>Los alumnos con aptitudes sobresalientes que cumplan con los requisitos podrán ser:</p>
+</div>
+<div class="grid">
+<div class="box" style="border-top-color:#9b59b6">
+<div class="icon">⏩</div>
+<h3>Admisión Anticipada</h3>
+<p>Admitidos en la educación primaria o secundaria a una <strong>edad más temprana</strong> de la establecida.</p>
+</div>
+<div class="box" style="border-top-color:#3498db">
+<div class="icon">📈</div>
+<h3>Omisión de Grado</h3>
+<p>Omitir el <strong>grado escolar inmediato</strong> que les corresponda, en el mismo nivel educativo.</p>
+</div>
+</div>
+<div class="highlight" style="margin-top:2rem">
+<p><strong>Requisitos:</strong> Los alumnos deberán cumplir con los requisitos establecidos en las Normas de Control Escolar aplicables y contar con la evaluación y autorización correspondiente.</p>
+</div>
+</div>
+
+</div>
+<div class="controls">
+<button onclick="prevSlide()">← Anterior</button>
+<button onclick="nextSlide()">Siguiente →</button>
+</div>
+<script>
+let currentSlide=1;const totalSlides=13;
+function showSlide(n){
+const slides=document.querySelectorAll('.slide');
+slides.forEach(slide=>slide.classList.remove('active'));
+if(n>totalSlides)currentSlide=totalSlides;
+else if(n<1)currentSlide=1;
+else currentSlide=n;
+document.getElementById('slide'+currentSlide).classList.add('active');
+document.getElementById('counter').textContent=currentSlide+' / '+totalSlides;
+window.scrollTo({top:0,behavior:'smooth'});
+}
+function nextSlide(){showSlide(currentSlide+1)}
+function prevSlide(){showSlide(currentSlide-1)}
+document.addEventListener('keydown',function(e){
+if(e.key==='ArrowRight')nextSlide();
+if(e.key==='ArrowLeft')prevSlide();
+});
+showSlide(1);
+</script>
+</body>
+</html>

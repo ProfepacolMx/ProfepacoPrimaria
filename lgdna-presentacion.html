@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LGDNA – Derechos de Niñas, Niños y Adolescentes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; background: #e0f2fe; }
+
+  #app { width: 100vw; height: 100vh; display: flex; flex-direction: column; }
+
+  /* HEADER */
+  #header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 28px; background: #023e8a; color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2); flex-shrink: 0;
+  }
+  #header-title { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+  #progress-dots { display: flex; gap: 5px; align-items: center; }
+  .dot { height: 8px; border-radius: 4px; transition: all 0.3s ease; background: rgba(144,224,239,0.5); cursor: pointer; border: none; }
+  .dot.active { background: white; }
+  #slide-counter { font-size: 13px; opacity: 0.8; }
+
+  /* SLIDE AREA */
+  #slide-area { flex: 1; position: relative; overflow: hidden; }
+  .slide { position: absolute; inset: 0; animation: fadeIn 0.35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* FOOTER */
+  #footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 28px; background: #023e8a; color: white; flex-shrink: 0;
+  }
+  #footer-dots { display: flex; gap: 6px; }
+  .fdot { width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer; transition: background 0.2s; }
+  .fdot.active { background: white; }
+  .fdot:not(.active) { background: rgba(255,255,255,0.3); }
+
+  .nav-btn {
+    border: none; color: white; padding: 8px 22px; border-radius: 24px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+  }
+  .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; background: rgba(255,255,255,0.1) !important; }
+  #btn-prev { background: rgba(255,255,255,0.2); }
+  #btn-next { background: #00b4d8; }
+
+  /* COMMON SLIDE STYLES */
+  .slide-base { height: 100%; display: flex; flex-direction: column; }
+  .slide-bg-light { background: #f0f9ff; padding: 28px 36px; }
+  .slide-bg-blue { background: linear-gradient(135deg, #0077b6 0%, #023e8a 100%); padding: 32px 40px; color: white; }
+
+  .tag { background: #0077b6; color: white; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 1px; display: inline-block; }
+  .tag-white { background: rgba(255,255,255,0.25); color: white; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 1px; display: inline-block; }
+  .slide-title { font-size: 34px; font-weight: 800; color: #023e8a; font-family: Georgia, serif; margin-top: 8px; }
+  .slide-title-white { font-size: 36px; font-weight: 800; font-family: Georgia, serif; margin-top: 10px; }
+  .slide-header { margin-bottom: 18px; }
+
+  /* COVER */
+  #slide-0 {
+    background: linear-gradient(135deg, #0077b6 0%, #00b4d8 50%, #90e0ef 100%);
+    color: white; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center; padding: 40px; position: relative; overflow: hidden;
+  }
+  #slide-0 .circle1 { position: absolute; top: -60px; left: -60px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.08); }
+  #slide-0 .circle2 { position: absolute; bottom: -80px; right: -50px; width: 280px; height: 280px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+  #slide-0 .circle3 { position: absolute; top: 40px; right: 60px; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.07); }
+  #slide-0 .cover-emoji { font-size: 80px; margin-bottom: 16px; position: relative; z-index: 1; }
+  #slide-0 .cover-sup { font-size: 14px; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 12px; opacity: 0.85; font-family: Georgia, serif; position: relative; z-index: 1; }
+  #slide-0 .cover-main { font-size: 72px; font-weight: 900; letter-spacing: -2px; font-family: Georgia, serif; line-height: 1; position: relative; z-index: 1; }
+  #slide-0 .cover-divider { width: 80px; height: 4px; background: rgba(255,255,255,0.5); border-radius: 2px; margin: 16px auto; position: relative; z-index: 1; }
+  #slide-0 .cover-sub { font-size: 20px; max-width: 560px; line-height: 1.5; opacity: 0.92; font-family: Georgia, serif; font-weight: 400; position: relative; z-index: 1; }
+  #slide-0 .cover-badge { margin-top: 32px; padding: 10px 24px; background: rgba(255,255,255,0.2); border-radius: 24px; font-size: 13px; letter-spacing: 1px; position: relative; z-index: 1; }
+
+  /* PRINCIPIOS */
+  .principio-item { display: flex; align-items: center; gap: 16px; background: white; border-radius: 16px; padding: 14px 20px; box-shadow: 0 2px 12px rgba(0,119,182,0.08); border-left: 4px solid #00b4d8; }
+  .principio-icon { font-size: 26px; min-width: 38px; }
+  .principio-text { font-size: 14px; color: #1e3a5f; line-height: 1.4; }
+  .note-box { margin-top: 14px; background: #dbeafe; border-radius: 12px; padding: 11px 16px; font-size: 13px; color: #1e40af; font-style: italic; }
+
+  /* CATÁLOGO */
+  .catalogo-grid { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .derecho-card { border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; border: 1px solid rgba(0,119,182,0.15); }
+  .derecho-num { font-size: 10px; font-weight: 700; color: #0077b6; letter-spacing: 1px; }
+  .derecho-text { font-size: 12px; font-weight: 600; color: #023e8a; line-height: 1.3; }
+
+  /* CARDS */
+  .cards-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card-item { background: white; border-radius: 20px; padding: 22px 26px; box-shadow: 0 4px 20px rgba(0,119,182,0.1); display: flex; flex-direction: column; gap: 10px; border: 1px solid #bae6fd; }
+  .card-emoji { font-size: 38px; }
+  .card-title { font-size: 16px; font-weight: 700; color: #0077b6; }
+  .card-desc { font-size: 13.5px; color: #334155; line-height: 1.5; }
+
+  /* SPLIT */
+  .split-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .split-col { background: white; border-radius: 20px; padding: 22px 26px; box-shadow: 0 4px 20px rgba(0,119,182,0.1); border: 1px solid #bae6fd; }
+  .split-heading { font-size: 17px; font-weight: 700; color: #0077b6; margin-bottom: 16px; }
+  .check-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+  .check-mark { color: #00b4d8; font-weight: 700; font-size: 15px; margin-top: 1px; }
+  .check-text { font-size: 13.5px; color: #334155; line-height: 1.5; }
+
+  /* IGUALDAD */
+  .igualdad-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .igualdad-card { border-radius: 24px; padding: 34px 30px; color: white; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 8px 32px rgba(0,119,182,0.2); }
+  .igualdad-emoji { font-size: 52px; }
+  .igualdad-art { font-size: 12px; letter-spacing: 2px; opacity: 0.8; margin-bottom: 4px; }
+  .igualdad-title { font-size: 24px; font-weight: 800; font-family: Georgia, serif; }
+  .igualdad-desc { font-size: 14.5px; line-height: 1.6; opacity: 0.95; }
+
+  /* BIENESTAR */
+  .bienestar-row { flex: 1; display: flex; gap: 20px; }
+  .bienestar-card { flex: 1; background: white; border-radius: 20px; padding: 26px 22px; box-shadow: 0 4px 20px rgba(0,119,182,0.1); display: flex; flex-direction: column; gap: 12px; border: 2px solid #bae6fd; }
+  .bienestar-emoji { font-size: 44px; }
+  .bienestar-art { font-size: 11px; font-weight: 700; color: #0077b6; letter-spacing: 1px; }
+  .bienestar-title { font-size: 19px; font-weight: 800; color: #023e8a; }
+  .bienestar-desc { font-size: 13.5px; color: #334155; line-height: 1.6; }
+
+  /* SALUD */
+  .salud-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .salud-col { background: white; border-radius: 20px; padding: 22px; box-shadow: 0 4px 20px rgba(0,119,182,0.1); border: 1px solid #bae6fd; }
+  .salud-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .salud-emoji { font-size: 34px; }
+  .salud-art { font-size: 11px; font-weight: 700; color: #0077b6; letter-spacing: 1px; }
+  .salud-title { font-size: 18px; font-weight: 700; color: #023e8a; }
+  .bullet-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 9px; }
+  .bullet-dot { color: #00b4d8; font-weight: 700; min-width: 14px; }
+  .bullet-text { font-size: 13px; color: #334155; line-height: 1.4; }
+
+  /* DESCANSO */
+  .descanso-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 13px; }
+  .descanso-card { background: white; border-radius: 16px; padding: 16px 18px; box-shadow: 0 3px 14px rgba(0,119,182,0.08); display: flex; flex-direction: column; gap: 7px; border: 1px solid #bae6fd; }
+  .descanso-top { display: flex; align-items: center; gap: 8px; }
+  .descanso-emoji { font-size: 26px; }
+  .descanso-art { font-size: 11px; font-weight: 700; color: #0077b6; letter-spacing: 1px; }
+  .descanso-title { font-size: 14px; font-weight: 700; color: #023e8a; }
+  .descanso-desc { font-size: 12px; color: #475569; line-height: 1.4; }
+
+  /* PARTICIPACIÓN */
+  .participacion-grid { flex: 1; display: grid; grid-template-columns: 3fr 2fr; gap: 22px; }
+  .parti-col-title { font-size: 15px; font-weight: 700; color: #0077b6; margin-bottom: 12px; }
+  .parti-item { background: white; border-radius: 14px; padding: 14px 18px; box-shadow: 0 2px 12px rgba(0,119,182,0.07); display: flex; gap: 12px; align-items: flex-start; border-left: 4px solid #00b4d8; margin-bottom: 12px; }
+  .parti-emoji { font-size: 22px; min-width: 30px; }
+  .parti-art { font-size: 11px; font-weight: 700; color: #0077b6; margin-bottom: 3px; }
+  .parti-text { font-size: 13px; color: #334155; line-height: 1.4; }
+  .intimidad-card { background: #0077b6; border-radius: 20px; padding: 26px 22px; color: white; display: flex; flex-direction: column; gap: 12px; }
+  .intimidad-emoji { font-size: 38px; }
+  .intimidad-art { font-size: 11px; letter-spacing: 1px; opacity: 0.8; }
+  .intimidad-text { font-size: 13.5px; line-height: 1.6; opacity: 0.95; }
+
+  /* JURÍDICA */
+  .juridica-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .juridica-card { border-radius: 20px; padding: 22px 20px; color: white; display: flex; flex-direction: column; gap: 12px; }
+  .juridica-head { display: flex; align-items: center; gap: 10px; }
+  .juridica-emoji { font-size: 34px; }
+  .juridica-art-label { font-size: 10px; letter-spacing: 1.5px; opacity: 0.8; }
+  .juridica-title { font-size: 16px; font-weight: 800; }
+  .juridica-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+  .juridica-arrow { opacity: 0.7; min-width: 14px; }
+  .juridica-text { font-size: 12.5px; line-height: 1.4; opacity: 0.95; }
+
+  /* TIC */
+  .tic-list { flex: 1; display: flex; flex-direction: column; gap: 18px; }
+  .tic-card { background: rgba(255,255,255,0.12); border-radius: 20px; padding: 22px 26px; display: flex; gap: 18px; align-items: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+  .tic-emoji { font-size: 48px; min-width: 56px; }
+  .tic-art { font-size: 11px; letter-spacing: 2px; opacity: 0.75; margin-bottom: 5px; }
+  .tic-title { font-size: 19px; font-weight: 700; margin-bottom: 7px; }
+  .tic-desc { font-size: 13.5px; line-height: 1.6; opacity: 0.9; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="header">
+    <div id="header-title">
+      <span>⚖️</span>
+      <span>LGDNA · Derechos de Niñas, Niños y Adolescentes</span>
+    </div>
+    <div id="progress-dots"></div>
+    <div id="slide-counter"></div>
+  </div>
+
+  <!-- SLIDE AREA -->
+  <div id="slide-area"></div>
+
+  <!-- FOOTER -->
+  <div id="footer">
+    <button class="nav-btn" id="btn-prev" onclick="go(-1)">← Anterior</button>
+    <div id="footer-dots"></div>
+    <button class="nav-btn" id="btn-next" onclick="go(1)">Siguiente →</button>
+  </div>
+
+</div>
+
+<script>
+const slides = [
+  {
+    id: 0,
+    render: () => `
+      <div id="slide-0" class="slide">
+        <div class="circle1"></div>
+        <div class="circle2"></div>
+        <div class="circle3"></div>
+        <div class="cover-emoji">⚖️</div>
+        <div class="cover-sup">México · 2026</div>
+        <div class="cover-main">LGDNA</div>
+        <div class="cover-divider"></div>
+        <div class="cover-sub">Ley General de los Derechos de Niñas, Niños y Adolescentes</div>
+        <div class="cover-badge">Última reforma: 15 enero 2026</div>
+      </div>`
+  },
+  {
+    id: 1,
+    render: () => `
+      <div class="slide slide-base slide-bg-light">
+        <div class="slide-header">
+          <span class="tag">Artículos 2 y 3</span>
+          <div class="slide-title">Principios Rectores</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:11px;">
+          ${[
+            ["🌐","Enfoque integral, transversal con perspectiva de género y derechos humanos en el diseño de políticas y programas."],
+            ["👂","Promover la participación y tomar en cuenta la opinión de NNA en todos los asuntos de su incumbencia."],
+            ["📊","Mecanismos de seguimiento con datos desagregados por sexo, edad, discapacidad y origen étnico."],
+            ["🏛️","Todas las autoridades competentes deben cursar programas de formación con perspectiva de género."],
+            ["💡","El interés superior de la niñez es consideración primordial en toda decisión que les afecte."]
+          ].map(([icon,text]) => `
+            <div class="principio-item">
+              <span class="principio-icon">${icon}</span>
+              <span class="principio-text">${text}</span>
+            </div>`).join('')}
+        </div>
+        <div class="note-box">📌 Art. 3 — Las políticas públicas deben contribuir a la formación física, psicológica, económica, social, cultural, ambiental y cívica de NNA.</div>
+      </div>`
+  },
+  {
+    id: 2,
+    render: () => {
+      const derechos = [
+        ["I","Vida, paz, supervivencia y desarrollo"],["II","Prioridad"],["III","Identidad"],["IV","Vivir en familia"],
+        ["V","Igualdad sustantiva"],["VI","No discriminación"],["VII","Bienestar y sano desarrollo integral"],
+        ["VIII","Vida libre de violencia"],["IX","Protección de la salud"],["X","Inclusión con discapacidad"],
+        ["XI","Educación"],["XII","Descanso y esparcimiento"],["XIII","Libertad de convicciones"],
+        ["XIV","Libertad de expresión"],["XV","Participación"],["XVI","Asociación y reunión"],
+        ["XVII","Intimidad"],["XVIII","Seguridad jurídica"],["XIX","NNA migrantes"],["XX","Acceso a TIC"]
+      ];
+      const colors = ["#e0f2fe","#dbeafe","#e0e7ff","#ede9fe","#fce7f3","#d1fae5","#dcfce7","#fef3c7","#ffedd5","#fee2e2"];
+      return `<div class="slide slide-base slide-bg-light" style="padding:24px 32px;">
+        <div class="slide-header" style="margin-bottom:14px;">
+          <span class="tag">Artículo 13</span>
+          <div class="slide-title">Catálogo de Derechos</div>
+        </div>
+        <div class="catalogo-grid">
+          ${derechos.map(([num,text],i) => `
+            <div class="derecho-card" style="background:${colors[i%colors.length]};">
+              <span class="derecho-num">ART. 13 – ${num}</span>
+              <span class="derecho-text">${text}</span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    }
+  },
+  {
+    id: 3,
+    render: () => `
+      <div class="slide slide-base slide-bg-light">
+        <div class="slide-header">
+          <span class="tag">Artículos 14 – 17</span>
+          <div class="slide-title">Vida, Paz y Prioridad</div>
+        </div>
+        <div class="cards-grid">
+          ${[
+            ["💚","Art. 14 – Vida y Supervivencia","Las autoridades deben garantizar el desarrollo y prevenir conductas que atenten contra la supervivencia de NNA, así como investigar y sancionar los actos de privación de la vida."],
+            ["🕊️","Art. 16 – Paz","Derecho a la paz, a no ser privados de la vida en ninguna circunstancia, ni ser utilizados en conflictos armados o violentos."],
+            ["⭐","Art. 17 – Prioridad","Se les brindará protección y socorro primero. Se les atenderá antes que a los adultos en todos los servicios, en igualdad de condiciones."],
+            ["🏛️","Art. 18 – Interés Superior","En todas las medidas que tomen los órganos jurisdiccionales, autoridades administrativas y legislativos, el interés superior de la niñez es consideración primordial."]
+          ].map(([emoji,title,desc]) => `
+            <div class="card-item">
+              <span class="card-emoji">${emoji}</span>
+              <div class="card-title">${title}</div>
+              <div class="card-desc">${desc}</div>
+            </div>`).join('')}
+        </div>
+      </div>`
+  },
+  {
+    id: 4,
+    render: () => `
+      <div class="slide slide-base slide-bg-light">
+        <div class="slide-header">
+          <span class="tag">Artículos 19 – 22</span>
+          <div class="slide-title">Identidad y Familia</div>
+        </div>
+        <div class="split-grid">
+          <div class="split-col">
+            <div class="split-heading">🪪 Identidad (Arts. 19–21)</div>
+            ${["Derecho a nombre, apellidos y Registro Civil de forma gratuita e inmediata.",
+               "Derecho a contar con nacionalidad conforme a la Constitución y tratados.",
+               "Conocer su filiación y origen, siempre acorde al interés superior.",
+               "Preservar su identidad, nombre, nacionalidad y relaciones familiares.",
+               "La falta de documentos no será obstáculo para garantizar sus derechos."
+            ].map(t => `<div class="check-item"><span class="check-mark">✓</span><span class="check-text">${t}</span></div>`).join('')}
+          </div>
+          <div class="split-col">
+            <div class="split-heading">🏠 Familia (Art. 22)</div>
+            ${["Derecho a vivir en familia de manera plena.",
+               "La falta de recursos no justifica la separación familiar.",
+               "No pueden ser separados de quienes ejercen la patria potestad sin orden judicial.",
+               "Siempre se tomará en cuenta la opinión de NNA conforme a su madurez.",
+               "Las autoridades promoverán políticas de fortalecimiento familiar."
+            ].map(t => `<div class="check-item"><span class="check-mark">✓</span><span class="check-text">${t}</span></div>`).join('')}
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    id: 5,
+    render: () => `
+      <div class="slide slide-base slide-bg-light" style="padding:30px 38px;">
+        <div class="slide-header">
+          <span class="tag">Artículos 36, 37 y 39</span>
+          <div class="slide-title">Igualdad y No Discriminación</div>
+        </div>
+        <div class="igualdad-grid">
+          <div class="igualdad-card" style="background:#1a9cd8;">
+            <span class="igualdad-emoji">⚖️</span>
+            <div>
+              <div class="igualdad-art">Arts. 36–37</div>
+              <div class="igualdad-title">Igualdad Sustantiva</div>
+            </div>
+            <div class="igualdad-desc">Acceso al mismo trato y oportunidades. Las autoridades deben transversalizar la perspectiva de género, eliminar estereotipos y roles sexistas, y promover el empoderamiento de niñas y adolescentes.</div>
+          </div>
+          <div class="igualdad-card" style="background:#0e7ab5;">
+            <span class="igualdad-emoji">🚫</span>
+            <div>
+              <div class="igualdad-art">Art. 39</div>
+              <div class="igualdad-title">No Discriminación</div>
+            </div>
+            <div class="igualdad-desc">Prohibida cualquier discriminación por origen étnico, género, religión, discapacidad, preferencia sexual, condición económica, circunstancias de nacimiento o cualquier otra condición.</div>
+          </div>
+        </div>
+        <div class="note-box" style="margin-top:18px;">💡 Las diferencias de género son factor de análisis prioritario como causa de vulnerabilidad y discriminación contra las niñas y adolescentes.</div>
+      </div>`
+  },
+  {
+    id: 6,
+    render: () => `
+      <div class="slide slide-base slide-bg-light">
+        <div class="slide-header">
+          <span class="tag">Artículos 43, 44 y 46</span>
+          <div class="slide-title">Bienestar y Vida Libre de Violencia</div>
+        </div>
+        <div class="bienestar-row">
+          ${[
+            ["🌱","Art. 43","Sano Desarrollo Integral","Derecho a vivir en un medio ambiente sano y sustentable, en condiciones que permitan su desarrollo físico, mental, material, espiritual, ético, cultural y social."],
+            ["💛","Art. 44","Crianza Positiva","Quienes ejercen la patria potestad deben adoptar prácticas de crianza positiva sin castigos corporales ni tratos humillantes, proporcionando condiciones de vida suficientes."],
+            ["🛡️","Art. 46","Vida Libre de Violencia","Derecho a vivir una vida libre de toda forma de violencia y que se resguarde su integridad personal, a fin de lograr el libre desarrollo de su personalidad."]
+          ].map(([emoji,art,title,desc]) => `
+            <div class="bienestar-card">
+              <span class="bienestar-emoji">${emoji}</span>
+              <span class="bienestar-art">${art}</span>
+              <div class="bienestar-title">${title}</div>
+              <div class="bienestar-desc">${desc}</div>
+            </div>`).join('')}
+        </div>
+      </div>`
+  },
+  {
+    id: 7,
+    render: () => `
+      <div class="slide slide-base slide-bg-light" style="padding:26px 34px;">
+        <div class="slide-header" style="margin-bottom:16px;">
+          <span class="tag">Artículos 50 y 53</span>
+          <div class="slide-title">Salud e Inclusión</div>
+        </div>
+        <div class="salud-grid">
+          <div class="salud-col">
+            <div class="salud-head">
+              <span class="salud-emoji">🏥</span>
+              <div>
+                <div class="salud-art">Art. 50</div>
+                <div class="salud-title">Protección de la Salud</div>
+              </div>
+            </div>
+            ${["Atención médica gratuita y de calidad garantizada.",
+               "Programas de vacunación, nutrición y salud reproductiva.",
+               "Prevención de adicciones, sobrepeso y enfermedades.",
+               "Atención especial para NNA con discapacidad.",
+               "Prohibición de esterilización forzada y violencia obstétrica.",
+               "Detección temprana y rehabilitación de discapacidades."
+            ].map(t => `<div class="bullet-item"><span class="bullet-dot">•</span><span class="bullet-text">${t}</span></div>`).join('')}
+          </div>
+          <div class="salud-col">
+            <div class="salud-head">
+              <span class="salud-emoji">♿</span>
+              <div>
+                <div class="salud-art">Art. 53</div>
+                <div class="salud-title">Inclusión con Discapacidad</div>
+              </div>
+            </div>
+            ${["Igualdad sustantiva en el goce de todos los derechos.",
+               "Derecho a vivir incluidos en la comunidad en igualdad de condiciones.",
+               "Ajustes razonables garantizados por las autoridades.",
+               "No puede negarse acceso a educación ni a actividades culturales.",
+               "Diseño universal y accesibilidad en todas las instalaciones.",
+               "Señalización en Braille y formatos de fácil comprensión."
+            ].map(t => `<div class="bullet-item"><span class="bullet-dot">•</span><span class="bullet-text">${t}</span></div>`).join('')}
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    id: 8,
+    render: () => `
+      <div class="slide slide-base slide-bg-light" style="padding:26px 34px;">
+        <div class="slide-header" style="margin-bottom:14px;">
+          <span class="tag">Artículos 60, 62 – 65</span>
+          <div class="slide-title">Descanso, Expresión y Cultura</div>
+        </div>
+        <div class="descanso-grid">
+          ${[
+            ["🎮","Art. 60","Descanso y Esparcimiento","Derecho al juego, actividades recreativas, culturales, deportivas y artísticas propias de su edad como factores primordiales de desarrollo."],
+            ["🕌","Art. 62","Libertad de Convicciones","Libertad de convicciones éticas, pensamiento, conciencia, religión y cultura, garantizadas en el marco del Estado laico."],
+            ["🌍","Art. 63","Identidad Cultural","Derecho a disfrutar su lengua, usos, costumbres, prácticas culturales y todos los elementos que constituyan su identidad."],
+            ["📢","Art. 64","Libertad de Expresión","Derecho a expresar su opinión libremente, buscar, recibir y difundir información e ideas de todo tipo por cualquier medio."],
+            ["📱","Art. 65","Acceso a la Información","Derecho al libre acceso a la información. El Estado promoverá difusión de material que asegure su bienestar y desarrollo cultural."]
+          ].map(([emoji,art,title,desc]) => `
+            <div class="descanso-card" style="${art==='Art. 65'?'grid-column:2/4;':''}" >
+              <div class="descanso-top">
+                <span class="descanso-emoji">${emoji}</span>
+                <span class="descanso-art">${art}</span>
+              </div>
+              <div class="descanso-title">${title}</div>
+              <div class="descanso-desc">${desc}</div>
+            </div>`).join('')}
+        </div>
+      </div>`
+  },
+  {
+    id: 9,
+    render: () => `
+      <div class="slide slide-base slide-bg-light" style="padding:26px 34px;">
+        <div class="slide-header" style="margin-bottom:14px;">
+          <span class="tag">Artículos 71, 73 – 77</span>
+          <div class="slide-title">Participación e Intimidad</div>
+        </div>
+        <div class="participacion-grid">
+          <div>
+            <div class="parti-col-title">🗳️ Participación</div>
+            ${[
+              ["🗣️","Art. 71","Ser escuchados y tomados en cuenta en los asuntos de su interés, conforme a su edad, desarrollo evolutivo, cognoscitivo y madurez."],
+              ["⚖️","Art. 73","Participar y ser escuchados en todos los procesos judiciales y de procuración de justicia donde se diriman controversias que les afecten."],
+              ["📣","Art. 74","Las instancias gubernamentales en los tres órdenes de gobierno les informarán de qué manera su opinión fue valorada y tomada en cuenta."],
+              ["🤝","Art. 75","Derecho a asociarse y reunirse sin más limitaciones que las establecidas en la Constitución Política de los Estados Unidos Mexicanos."]
+            ].map(([emoji,art,text]) => `
+              <div class="parti-item">
+                <span class="parti-emoji">${emoji}</span>
+                <div>
+                  <div class="parti-art">${art}</div>
+                  <div class="parti-text">${text}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+          <div>
+            <div class="parti-col-title">🔏 Intimidad</div>
+            <div class="intimidad-card" style="height:calc(100% - 34px);">
+              <span class="intimidad-emoji">🔒</span>
+              <div class="intimidad-art">Arts. 76–77</div>
+              <div class="tic-title" style="font-size:17px;">Protección de Datos e Intimidad</div>
+              <div class="intimidad-text">Derecho a la intimidad personal y familiar, y a la protección de datos personales. No pueden ser objeto de injerencias arbitrarias ni divulgaciones o difusiones ilícitas de información que atenten contra su honra, imagen o reputación.</div>
+            </div>
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    id: 10,
+    render: () => `
+      <div class="slide slide-base slide-bg-light" style="padding:26px 34px;">
+        <div class="slide-header" style="margin-bottom:14px;">
+          <span class="tag">Artículos 82, 87 y 89</span>
+          <div class="slide-title">Seguridad Jurídica y Migrantes</div>
+        </div>
+        <div class="juridica-grid">
+          <div class="juridica-card" style="background:#0077b6;">
+            <div class="juridica-head">
+              <span class="juridica-emoji">📜</span>
+              <div>
+                <div class="juridica-art-label">Art. 82</div>
+                <div class="juridica-title">Seguridad Jurídica</div>
+              </div>
+            </div>
+            ${["Garantías constitucionales y de tratados internacionales.",
+               "Información clara y comprensible sobre los procedimientos.",
+               "Representación legal garantizada en todo momento.",
+               "Espacios lúdicos de descanso en recintos judiciales.",
+               "Protección de intimidad y datos personales.",
+               "Asistencia de traductor o intérprete cuando se requiera."
+            ].map(t => `<div class="juridica-item"><span class="juridica-arrow">→</span><span class="juridica-text">${t}</span></div>`).join('')}
+          </div>
+          <div class="juridica-card" style="background:#0096c7;">
+            <div class="juridica-head">
+              <span class="juridica-emoji">🚨</span>
+              <div>
+                <div class="juridica-art-label">Art. 87</div>
+                <div class="juridica-title">Notificación Inmediata</div>
+              </div>
+            </div>
+            ${["Al encontrar NNA en contexto de un delito:",
+               "Notificar de inmediato a quienes ejerzan la patria potestad o tutela.",
+               "Notificar a la Procuraduría de Protección competente.",
+               "Garantizar la protección integral del NNA en todo momento.",
+               "Ninguna acción que vulnere sus derechos estará permitida."
+            ].map(t => `<div class="juridica-item"><span class="juridica-arrow">→</span><span class="juridica-text">${t}</span></div>`).join('')}
+          </div>
+          <div class="juridica-card" style="background:#00b4d8;">
+            <div class="juridica-head">
+              <span class="juridica-emoji">✈️</span>
+              <div>
+                <div class="juridica-art-label">Art. 89</div>
+                <div class="juridica-title">NNA Migrantes</div>
+              </div>
+            </div>
+            ${["Protección sin importar nacionalidad ni situación migratoria.",
+               "Interés superior como consideración primordial siempre.",
+               "Derecho a reunificación familiar como prioridad.",
+               "Albergues y espacios de alojamiento dignos garantizados.",
+               "Prohibido devolverlos si hay riesgo para su vida o libertad."
+            ].map(t => `<div class="juridica-item"><span class="juridica-arrow">→</span><span class="juridica-text">${t}</span></div>`).join('')}
+          </div>
+        </div>
+      </div>`
+  },
+  {
+    id: 11,
+    render: () => `
+      <div class="slide slide-base slide-bg-blue">
+        <div class="slide-header" style="margin-bottom:24px;">
+          <span class="tag-white">Artículos 101 Bis – 101 Bis 2</span>
+          <div class="slide-title-white">Derecho a las TIC e Internet</div>
+        </div>
+        <div class="tic-list">
+          ${[
+            ["🌐","Art. 101 Bis","Acceso Universal a TIC","NNA gozan del derecho de acceso universal a las Tecnologías de la Información y Comunicación, así como a los servicios de radiodifusión, telecomunicaciones, banda ancha e Internet."],
+            ["🖥️","Art. 101 Bis 1","Inclusión Digital","El Estado garantizará la integración de NNA a la sociedad de la información mediante una política de inclusión digital universal en condiciones de equidad, asequibilidad, disponibilidad, accesibilidad y calidad."],
+            ["🔐","Art. 101 Bis 2","Uso Seguro de Internet","Derecho al acceso y uso seguro del Internet como medio efectivo para ejercer los derechos a la información, comunicación, educación, salud, esparcimiento y no discriminación."]
+          ].map(([emoji,art,title,desc]) => `
+            <div class="tic-card">
+              <span class="tic-emoji">${emoji}</span>
+              <div>
+                <div class="tic-art">${art}</div>
+                <div class="tic-title">${title}</div>
+                <div class="tic-desc">${desc}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`
+  }
+];
+
+let current = 0;
+const total = slides.length;
+
+function renderSlide() {
+  const area = document.getElementById('slide-area');
+  area.innerHTML = slides[current].render();
+}
+
+function renderNav() {
+  // Progress dots in header
+  const pd = document.getElementById('progress-dots');
+  pd.innerHTML = slides.map((_, i) => `
+    <button class="dot ${i===current?'active':''}" 
+      style="width:${i===current?20:8}px;"
+      onclick="jumpTo(${i})"></button>`).join('');
+
+  // Footer dots
+  const fd = document.getElementById('footer-dots');
+  fd.innerHTML = slides.map((_, i) => `
+    <button class="fdot ${i===current?'active':''}" onclick="jumpTo(${i})"></button>`).join('');
+
+  // Counter
+  document.getElementById('slide-counter').textContent = `${current+1} / ${total}`;
+
+  // Buttons
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').disabled = current === total - 1;
+}
+
+function go(delta) {
+  const next = current + delta;
+  if (next < 0 || next >= total) return;
+  current = next;
+  renderSlide();
+  renderNav();
+}
+
+function jumpTo(i) {
+  current = i;
+  renderSlide();
+  renderNav();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(-1);
+});
+
+// Init
+renderSlide();
+renderNav();
+</script>
+</body>
+</html>

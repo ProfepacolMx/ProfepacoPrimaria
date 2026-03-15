@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Interactivo de Evaluación – Fase 4</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap');
+
+  :root {
+    --primary:   #1a3a5c;
+    --secondary: #2e7d9e;
+    --accent:    #f4a020;
+    --accent2:   #e84f4f;
+    --success:   #27ae60;
+    --light:     #f0f6fb;
+    --white:     #ffffff;
+    --text:      #1c2b3a;
+    --muted:     #6b8499;
+    --card-bg:   #ffffff;
+    --shadow:    0 8px 32px rgba(26,58,92,0.13);
+    --radius:    18px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #e8f4fd 0%, #d4eaf7 40%, #fef3e2 100%);
+    min-height: 100vh;
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* DECORATIVE BACKGROUND SHAPES */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -120px; right: -120px;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(46,125,158,0.15) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -100px; left: -100px;
+    width: 380px; height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244,160,32,0.13) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: linear-gradient(120deg, var(--primary) 0%, var(--secondary) 100%);
+    color: var(--white);
+    text-align: center;
+    padding: 28px 20px 22px;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 4px 24px rgba(26,58,92,0.22);
+  }
+  .site-header::after {
+    content: '';
+    position: absolute;
+    bottom: -16px; left: 0; right: 0;
+    height: 18px;
+    background: inherit;
+    clip-path: ellipse(52% 100% at 50% 0%);
+  }
+  .header-icon {
+    font-size: 2.4rem;
+    display: block;
+    margin-bottom: 6px;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100%{transform:scale(1);} 50%{transform:scale(1.1);}
+  }
+  .site-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.35rem, 4vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  }
+  .header-subtitle {
+    font-size: clamp(0.78rem, 2.2vw, 1rem);
+    font-weight: 600;
+    margin-top: 6px;
+    opacity: 0.88;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .header-credit {
+    margin-top: 10px;
+    font-size: clamp(0.72rem, 2vw, 0.92rem);
+    font-weight: 700;
+    background: rgba(255,255,255,0.18);
+    display: inline-block;
+    padding: 4px 18px;
+    border-radius: 30px;
+    letter-spacing: 0.8px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  /* MAIN CONTAINER */
+  .main-wrap {
+    max-width: 800px;
+    margin: 44px auto 40px;
+    padding: 0 16px;
+    position: relative;
+    z-index: 5;
+  }
+
+  /* SCREEN CARDS */
+  .screen {
+    display: none;
+    animation: fadeSlideIn 0.55s cubic-bezier(.22,.68,0,1.2) both;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(32px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+  }
+  @keyframes fadeSlideOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-20px); }
+  }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: clamp(24px, 5vw, 48px);
+    border-top: 5px solid var(--accent);
+  }
+
+  /* WELCOME SCREEN */
+  .welcome-icon {
+    text-align: center;
+    font-size: 3.8rem;
+    margin-bottom: 12px;
+  }
+  .welcome-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 6px;
+    font-weight: 800;
+  }
+  .welcome-desc {
+    text-align: center;
+    color: var(--muted);
+    font-size: clamp(0.88rem, 2vw, 1.05rem);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .info-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  .pill {
+    background: var(--light);
+    border-radius: 30px;
+    padding: 7px 18px;
+    font-size: 0.83rem;
+    font-weight: 700;
+    color: var(--secondary);
+    border: 1.5px solid #cde4f0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  label.field-label {
+    display: block;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2.5px solid #cde4f0;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    background: var(--light);
+  }
+  input[type="text"]:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 4px rgba(46,125,158,0.12);
+    background: #fff;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s, background 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    box-shadow: 0 6px 22px rgba(26,58,92,0.28);
+  }
+  .btn-primary:hover { box-shadow: 0 10px 30px rgba(26,58,92,0.38); }
+
+  .btn-accent {
+    background: linear-gradient(135deg, var(--accent) 0%, #e8920a 100%);
+    color: white;
+    box-shadow: 0 6px 22px rgba(244,160,32,0.35);
+  }
+  .btn-accent:hover { box-shadow: 0 10px 30px rgba(244,160,32,0.45); }
+
+  .btn-success {
+    background: linear-gradient(135deg, var(--success) 0%, #1e9e52 100%);
+    color: white;
+    box-shadow: 0 6px 22px rgba(39,174,96,0.35);
+  }
+
+  .btn-full { width: 100%; margin-top: 18px; }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: var(--light);
+    border-radius: 30px;
+    height: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 1px solid #cde4f0;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary), var(--accent));
+    border-radius: 30px;
+    transition: width 0.55s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .q-counter {
+    background: var(--primary);
+    color: white;
+    border-radius: 30px;
+    padding: 3px 13px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  /* QUESTION CARD */
+  .q-format-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border-radius: 30px;
+    padding: 4px 14px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .q-text {
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.65;
+    margin-bottom: 22px;
+  }
+
+  /* MATCHING TABLE */
+  .matching-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 18px;
+    font-size: 0.88rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(26,58,92,0.08);
+  }
+  .matching-table th {
+    background: var(--primary);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 800;
+    font-size: 0.82rem;
+    letter-spacing: 0.5px;
+  }
+  .matching-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #e2eef5;
+    background: var(--light);
+    vertical-align: top;
+  }
+  .matching-table tr:last-child td { border-bottom: none; }
+  .matching-table td:first-child { font-weight: 700; color: var(--secondary); }
+
+  /* OPTIONS */
+  .options-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .option-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 14px 18px;
+    border-radius: 13px;
+    border: 2.5px solid #cde4f0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--light);
+    position: relative;
+    overflow: hidden;
+  }
+  .option-item:hover:not(.disabled) {
+    border-color: var(--secondary);
+    background: #e3f2fb;
+    transform: translateX(4px);
+    box-shadow: 0 4px 14px rgba(46,125,158,0.13);
+  }
+  .option-item.selected {
+    border-color: var(--secondary);
+    background: #dceef8;
+    box-shadow: 0 4px 14px rgba(46,125,158,0.18);
+  }
+  .option-item.correct {
+    border-color: var(--success);
+    background: #d5f5e3;
+    box-shadow: 0 4px 14px rgba(39,174,96,0.2);
+  }
+  .option-item.wrong {
+    border-color: var(--accent2);
+    background: #fde8e8;
+    box-shadow: 0 4px 14px rgba(232,79,79,0.15);
+  }
+  .option-item.disabled { cursor: default; }
+  .option-badge {
+    min-width: 32px; height: 32px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .option-item.correct .option-badge { background: var(--success); }
+  .option-item.wrong .option-badge   { background: var(--accent2); }
+  .option-item.selected .option-badge { background: var(--secondary); }
+  .option-text { font-size: 0.93rem; line-height: 1.55; font-weight: 600; color: var(--text); padding-top: 4px; }
+
+  /* FEEDBACK BOX */
+  .feedback-box {
+    display: none;
+    border-radius: 13px;
+    padding: 16px 20px;
+    margin-top: 18px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    font-weight: 600;
+    animation: fadeSlideIn 0.4s ease both;
+  }
+  .feedback-box.show { display: block; }
+  .feedback-box.correct-fb {
+    background: #d5f5e3;
+    border-left: 5px solid var(--success);
+    color: #1a6e3c;
+  }
+  .feedback-box.wrong-fb {
+    background: #fde8e8;
+    border-left: 5px solid var(--accent2);
+    color: #8e1a1a;
+  }
+  .feedback-box strong { display: block; margin-bottom: 4px; font-size: 1rem; }
+
+  /* NAV ROW */
+  .nav-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 22px;
+  }
+
+  /* SCORE SCREEN */
+  .score-ring-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 28px;
+  }
+  .score-ring {
+    position: relative;
+    width: 150px;
+    height: 150px;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .score-percent {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .score-label { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .score-cell {
+    border-radius: 13px;
+    padding: 18px;
+    text-align: center;
+  }
+  .score-cell.correct { background: #d5f5e3; }
+  .score-cell.wrong   { background: #fde8e8; }
+  .score-cell .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 800;
+  }
+  .score-cell.correct .num { color: var(--success); }
+  .score-cell.wrong   .num { color: var(--accent2); }
+  .score-cell .lbl { font-size: 0.82rem; font-weight: 700; color: var(--muted); margin-top: 4px; }
+
+  .motivator-box {
+    background: linear-gradient(120deg, var(--primary), var(--secondary));
+    color: white;
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.6;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 20px rgba(26,58,92,0.22);
+  }
+  .motivator-box .emoji { font-size: 1.8rem; display: block; margin-bottom: 8px; }
+
+  .student-name-display {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .result-sub {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 540px) {
+    .score-grid { grid-template-columns: 1fr 1fr; }
+    .card { padding: 20px; }
+    .btn { padding: 13px 22px; font-size: 0.9rem; }
+    .option-item { padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SITE HEADER ===== -->
+<header class="site-header">
+  <span class="header-icon">📚</span>
+  <h1>Simulador Interactivo de Evaluación</h1>
+  <p class="header-subtitle">Nueva Escuela Mexicana · Fase 4 · Plan de Estudios 2022</p>
+  <span class="header-credit">Prof. Francisco De Jesus Luna Benitez</span>
+</header>
+
+<div class="main-wrap">
+
+  <!-- ===== SCREEN 1: WELCOME ===== -->
+  <div id="screen-welcome" class="screen active">
+    <div class="card">
+      <div class="welcome-icon">🎓</div>
+      <h2 class="welcome-title">Bienvenido/a al Simulador</h2>
+      <p class="welcome-desc">Este instrumento evalúa tus conocimientos sobre el libro <em>"Un libro sin recetas para la maestra y el maestro – Fase 4"</em> y el Plan de Estudios 2022 de la Nueva Escuela Mexicana.</p>
+      <div class="info-pills">
+        <span class="pill">📝 30 preguntas</span>
+        <span class="pill">🎯 Opción múltiple</span>
+        <span class="pill">💡 Retroalimentación inmediata</span>
+        <span class="pill">📊 Resultados al finalizar</span>
+      </div>
+      <label class="field-label" for="student-name">✏️ Escribe tu nombre completo para comenzar:</label>
+      <input type="text" id="student-name" placeholder="Ej. María García López" autocomplete="off">
+      <button class="btn btn-primary btn-full" onclick="startSimulator()">🚀 Iniciar Simulador</button>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 2: QUESTION ===== -->
+  <div id="screen-question" class="screen">
+    <div class="card">
+      <div class="progress-label">
+        <span id="q-label">Pregunta 1 de 30</span>
+        <span class="q-counter" id="q-score-live">✔ 0 &nbsp; ✖ 0</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+      </div>
+      <div id="q-format-badge" class="q-format-badge">📌 Cuestionamiento directo</div>
+      <p class="q-text" id="q-text"></p>
+      <div id="q-table-wrap"></div>
+      <ul class="options-list" id="options-list"></ul>
+      <div class="feedback-box" id="feedback-box"></div>
+      <div class="nav-row">
+        <button class="btn btn-accent" id="btn-next" onclick="nextQuestion()" style="display:none">Siguiente ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 3: RESULTS ===== -->
+  <div id="screen-results" class="screen">
+    <div class="card">
+      <div class="student-name-display" id="result-name"></div>
+      <p class="result-sub">Resultados de tu evaluación</p>
+
+      <div class="score-ring-wrap">
+        <div class="score-ring">
+          <svg viewBox="0 0 120 120" width="150" height="150">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#e2eef5" stroke-width="12"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="url(#rg)" stroke-width="12"
+              stroke-linecap="round" id="score-arc"
+              stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+            <defs>
+              <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#2e7d9e"/>
+                <stop offset="100%" stop-color="#f4a020"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="score-ring-text">
+            <span class="score-percent" id="result-pct">0%</span>
+            <span class="score-label">aciertos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="score-grid">
+        <div class="score-cell correct">
+          <div class="num" id="result-correct">0</div>
+          <div class="lbl">✅ Correctas</div>
+        </div>
+        <div class="score-cell wrong">
+          <div class="num" id="result-wrong">0</div>
+          <div class="lbl">❌ Incorrectas</div>
+        </div>
+      </div>
+
+      <div class="motivator-box" id="motivator-box">
+        <span class="emoji" id="motivator-emoji">🌟</span>
+        <span id="motivator-text"></span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="restartSimulator()">🔄 Volver a intentar</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main-wrap -->
+
+<script>
+// ============================================================
+//  BANCO DE PREGUNTAS – 30 reactivos sobre Fase 4 / NEM 2022
+// ============================================================
+const questions = [
+  // 1
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Cuál es el enfoque principal del Plan de Estudios 2022 de la Nueva Escuela Mexicana para la Fase 4?",
+    table: null,
+    options: [
+      "Centrar el aprendizaje en la memorización de contenidos disciplinares fragmentados por asignatura.",
+      "Promover una educación integral, inclusiva y comunitaria que articule saberes desde los campos formativos.",
+      "Fomentar la competencia individual entre estudiantes mediante evaluaciones estandarizadas nacionales.",
+      "Priorizar el dominio de lectura y matemáticas por encima de los demás campos del conocimiento."
+    ],
+    correct: 1,
+    feedback: "El Plan de Estudios 2022 propone una educación integral que supera la fragmentación por asignaturas, articulando los aprendizajes a través de campos formativos y ejes articuladores con un enfoque comunitario e inclusivo, propio de la Nueva Escuela Mexicana."
+  },
+  // 2
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Cuáles son los cuatro Campos Formativos que conforman el currículo de la Fase 4 en el Plan de Estudios 2022?",
+    table: null,
+    options: [
+      "Matemáticas, Español, Ciencias Naturales y Ciencias Sociales.",
+      "Lenguajes; Saberes y Pensamiento Científico; Ética, Naturaleza y Sociedades; De lo Humano y lo Comunitario.",
+      "Comunicación, Razonamiento Lógico, Convivencia y Arte.",
+      "Humanidades, Ciencias Exactas, Tecnología y Cultura Física."
+    ],
+    correct: 1,
+    feedback: "El Plan de Estudios 2022 organiza los aprendizajes en cuatro campos formativos: Lenguajes; Saberes y Pensamiento Científico; Ética, Naturaleza y Sociedades; y De lo Humano y lo Comunitario. Estos sustituyen la organización tradicional por asignaturas."
+  },
+  // 3
+  {
+    format: "Completamiento",
+    text: "El Programa Analítico se construye a través de tres planos de codiseño. En el tercer plano, los docentes...",
+    table: null,
+    options: [
+      "...seleccionan y adaptan los contenidos nacionales prescritos para adecuarlos al contexto estatal.",
+      "...determinan la carga horaria semanal para cada campo formativo con base en la normativa federal.",
+      "...incorporan contenidos locales y comunitarios, contextualizando el currículo a las necesidades específicas de su comunidad escolar.",
+      "...evalúan los avances del grupo mediante instrumentos de evaluación sumativa diseñados por la SEP."
+    ],
+    correct: 2,
+    feedback: "El tercer plano de codiseño corresponde a la contextualización e incorporación de contenidos locales y comunitarios. En este nivel, los docentes adaptan el currículo a las características y necesidades particulares de su comunidad, otorgando relevancia y pertinencia a los aprendizajes."
+  },
+  // 4
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Qué son los Ejes Articuladores en el Plan de Estudios 2022 y cuál es su función principal?",
+    table: null,
+    options: [
+      "Son los temas específicos de cada campo formativo que deben abordarse en un orden establecido por la SEP.",
+      "Son criterios de evaluación que determinan el nivel de logro esperado al finalizar cada fase educativa.",
+      "Son perspectivas transversales que atraviesan todos los campos formativos para dar coherencia e integralidad al currículo.",
+      "Son los instrumentos didácticos que el docente utiliza para planear sus sesiones de clase semanales."
+    ],
+    correct: 2,
+    feedback: "Los Ejes Articuladores son perspectivas transversales —como inclusión, pensamiento crítico, igualdad de género, interculturalidad y vida saludable— que recorren todos los campos formativos, otorgando integralidad y coherencia a los aprendizajes desde distintas dimensiones de la vida."
+  },
+  // 5
+  {
+    format: "Ordenamiento",
+    text: "Ordene las fases de la metodología de Aprendizaje Basado en Proyectos Comunitarios (ABPC) de acuerdo con la secuencia correcta de implementación.",
+    table: null,
+    options: [
+      "Acción — Planeación — Intervención — Evaluación y cierre",
+      "Evaluación y cierre — Intervención — Acción — Planeación",
+      "Planeación — Acción — Intervención — Evaluación y cierre",
+      "Intervención — Planeación — Evaluación y cierre — Acción"
+    ],
+    correct: 2,
+    feedback: "La secuencia correcta del ABPC es: 1) Planeación (identificar la problemática y diseñar el proyecto), 2) Acción (investigar y desarrollar actividades), 3) Intervención (ejecutar el producto con la comunidad) y 4) Evaluación y cierre (reflexionar y sistematizar los aprendizajes)."
+  },
+  // 6
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Cuál es la diferencia fundamental entre la evaluación formativa y la evaluación sumativa en el marco del Plan de Estudios 2022?",
+    table: null,
+    options: [
+      "La evaluación formativa asigna calificaciones numéricas periódicas, mientras que la sumativa describe los avances en forma cualitativa.",
+      "La evaluación formativa acompaña el proceso de aprendizaje para retroalimentar y mejorar, mientras que la sumativa valora los logros alcanzados al final de un período.",
+      "La evaluación formativa la realiza exclusivamente el docente, mientras que la sumativa la aplica la supervisión escolar.",
+      "La evaluación formativa se enfoca en actitudes y valores, mientras que la sumativa evalúa únicamente los contenidos académicos."
+    ],
+    correct: 1,
+    feedback: "La evaluación formativa es continua, retroalimentadora y centrada en el proceso de aprendizaje; permite al docente y al alumno identificar áreas de mejora durante el trayecto. La evaluación sumativa, en cambio, valora los logros obtenidos al término de un período o ciclo determinado."
+  },
+  // 7
+  {
+    format: "Relación de elementos",
+    text: "Seleccione la opción que relacione correctamente cada Eje Articulador con su descripción.",
+    table: {
+      cols: ["Eje Articulador", "Descripción"],
+      rows: [
+        ["1. Inclusión", "a) Reconoce y valora la diversidad cultural y lingüística como riqueza para los aprendizajes."],
+        ["2. Interculturalidad crítica", "b) Promueve prácticas pedagógicas que garantizan la participación equitativa de todos los estudiantes."],
+        ["3. Pensamiento crítico", "c) Fomenta la capacidad de analizar, cuestionar y transformar la realidad con argumentos fundamentados."]
+      ]
+    },
+    options: ["1a, 2b, 3c", "1b, 2a, 3c", "1c, 2a, 3b", "1a, 2c, 3b"],
+    correct: 1,
+    feedback: "La Inclusión (1b) garantiza la participación equitativa de todos; la Interculturalidad crítica (2a) valora la diversidad cultural; y el Pensamiento crítico (3c) desarrolla la capacidad de analizar y cuestionar la realidad. Esta articulación sustenta el enfoque integral de la NEM."
+  },
+  // 8
+  {
+    format: "Cuestionamiento directo",
+    text: "Según el libro 'Un libro sin recetas para la maestra y el maestro – Fase 4', ¿qué papel desempeña la comunidad en el proceso educativo?",
+    table: null,
+    options: [
+      "Es un recurso secundario al que se recurre únicamente para actividades extracurriculares o festivales.",
+      "Constituye el punto de partida y el destinatario de los aprendizajes, siendo un agente activo en la construcción del currículo.",
+      "Su participación se limita a reuniones de padres de familia para informar sobre los avances académicos.",
+      "Solo interviene cuando el docente solicita apoyo para la realización de materiales didácticos específicos."
+    ],
+    correct: 1,
+    feedback: "En el enfoque de la NEM, la comunidad es el eje del proceso educativo: es el contexto desde el que se parte para problematizar, el espacio donde se interviene y el beneficiario de los proyectos. Esto le otorga pertinencia, relevancia y sentido social a los aprendizajes escolares."
+  },
+  // 9
+  {
+    format: "Completamiento",
+    text: "En el marco del Plan de Estudios 2022, el Consejo Técnico Escolar (CTE) cumple un papel central porque…",
+    table: null,
+    options: [
+      "…es el organismo encargado de vigilar el cumplimiento del reglamento escolar y resolver conflictos administrativos entre docentes.",
+      "…constituye el espacio colegiado donde los docentes reflexionan sobre su práctica, toman decisiones pedagógicas compartidas y construyen el Programa Analítico.",
+      "…tiene la facultad de modificar los libros de texto gratuitos de acuerdo con las necesidades particulares de la escuela.",
+      "…autoriza las calificaciones finales de los estudiantes y determina los casos de reprobación o promoción automática."
+    ],
+    correct: 1,
+    feedback: "El CTE es el espacio de trabajo colegiado por excelencia. En él, los docentes analizan su práctica, diagnostican el contexto comunitario y construyen colectivamente el Programa Analítico, lo que fortalece la autonomía profesional y la responsabilidad compartida por los aprendizajes."
+  },
+  // 10
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes situaciones describe mejor el principio de 'autonomía profesional docente' promovido por el Plan de Estudios 2022?",
+    table: null,
+    options: [
+      "El docente puede omitir los contenidos del programa oficial si considera que no son relevantes para su grupo.",
+      "El docente toma decisiones pedagógicas fundamentadas, contextualiza el currículo y diseña experiencias de aprendizaje pertinentes para su comunidad.",
+      "El docente tiene libertad absoluta para elegir los métodos de evaluación sin considerar los criterios establecidos por la SEP.",
+      "El docente puede sustituir los libros de texto por materiales propios sin informar a la supervisión escolar."
+    ],
+    correct: 1,
+    feedback: "La autonomía profesional docente significa que el maestro, con base en su formación, diagnóstico del contexto y criterio pedagógico, toma decisiones informadas para adaptar el currículo, diseñar situaciones didácticas pertinentes y evaluar formativamente, siempre dentro del marco del Plan de Estudios."
+  },
+  // 11
+  {
+    format: "Relación de elementos",
+    text: "Relacione cada campo formativo con el ámbito del conocimiento que le corresponde según el Plan de Estudios 2022.",
+    table: {
+      cols: ["Campo Formativo", "Ámbito"],
+      rows: [
+        ["1. Lenguajes", "a) Promueve el pensamiento matemático, científico y tecnológico para comprender y transformar el entorno."],
+        ["2. Saberes y Pensamiento Científico", "b) Aborda la diversidad lingüística, artística y cultural como medio de expresión y comunicación humana."],
+        ["3. Ética, Naturaleza y Sociedades", "c) Reflexiona sobre la vida en sociedad, los derechos humanos, el cuidado del medio ambiente y la convivencia ética."]
+      ]
+    },
+    options: ["1a, 2b, 3c", "1b, 2a, 3c", "1c, 2b, 3a", "1b, 2c, 3a"],
+    correct: 1,
+    feedback: "Lenguajes (1b) se enfoca en la expresión y comunicación; Saberes y Pensamiento Científico (2a) aborda la matemática, la ciencia y la tecnología; y Ética, Naturaleza y Sociedades (3c) trabaja la convivencia, los derechos, la sustentabilidad y los valores ciudadanos."
+  },
+  // 12
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Qué característica distingue al Aprendizaje Basado en Proyectos Comunitarios (ABPC) de otros métodos de enseñanza?",
+    table: null,
+    options: [
+      "Se centra en el trabajo individual del estudiante para desarrollar habilidades de estudio independiente.",
+      "Parte de una problemática real de la comunidad para generar aprendizajes significativos que contribuyan a transformar el entorno.",
+      "Consiste en la reproducción y memorización de contenidos teóricos establecidos en el programa oficial.",
+      "Su objetivo principal es preparar a los estudiantes para las evaluaciones nacionales estandarizadas."
+    ],
+    correct: 1,
+    feedback: "El ABPC parte de una situación-problema real detectada en la comunidad escolar. Los estudiantes investigan, planean, actúan e intervienen para encontrar soluciones, generando así aprendizajes significativos y con propósito social, lo cual fortalece el vínculo escuela-comunidad."
+  },
+  // 13
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Qué se entiende por 'integración curricular' en el contexto del Plan de Estudios 2022?",
+    table: null,
+    options: [
+      "La suma de contenidos de diferentes asignaturas en una misma sesión sin relación entre ellos.",
+      "La articulación de saberes de distintos campos formativos en torno a situaciones o problemáticas comunes, evitando la fragmentación del conocimiento.",
+      "La fusión de grados escolares en un mismo salón para optimizar los recursos humanos de la escuela.",
+      "La unificación de los libros de texto en un solo volumen que abarque todas las asignaturas del ciclo."
+    ],
+    correct: 1,
+    feedback: "La integración curricular implica articular saberes de distintos campos formativos alrededor de un proyecto, situación o problemática común. Esto supera la fragmentación del conocimiento y permite que los estudiantes construyan aprendizajes holísticos, significativos y aplicables a su vida."
+  },
+  // 14
+  {
+    format: "Completamiento",
+    text: "La evaluación diagnóstica al inicio del ciclo escolar es fundamental porque permite al docente...",
+    table: null,
+    options: [
+      "...asignar una calificación inicial para comparar el progreso de los estudiantes al final del año.",
+      "...conocer los saberes previos, intereses, necesidades y contexto de los estudiantes para diseñar situaciones de aprendizaje pertinentes.",
+      "...identificar qué alumnos requieren ser canalizados a educación especial antes de iniciar el trabajo escolar.",
+      "...determinar el nivel socioeconómico de las familias para solicitar apoyos materiales a la supervisión."
+    ],
+    correct: 1,
+    feedback: "La evaluación diagnóstica es el punto de partida pedagógico: permite al docente conocer los conocimientos previos, intereses, necesidades específicas y el contexto sociocultural del grupo, información indispensable para tomar decisiones pedagógicas pertinentes y planear el Programa Analítico."
+  },
+  // 15
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Qué papel tienen los Libros de Texto Gratuitos (LTG) en el Plan de Estudios 2022?",
+    table: null,
+    options: [
+      "Son el único recurso didáctico autorizado y deben seguirse de manera lineal y obligatoria.",
+      "Son materiales auxiliares que el docente puede usar, complementar o sustituir con otros recursos según las necesidades del grupo.",
+      "Son herramientas exclusivas para el uso de los estudiantes en casa, sin relación con la planeación docente.",
+      "Contienen el Programa Analítico terminado que el docente debe implementar sin modificaciones."
+    ],
+    correct: 1,
+    feedback: "Los LTG son recursos didácticos de apoyo que el docente puede aprovechar, complementar, adaptar o enriquecer con otros materiales. No son el único recurso ni deben seguirse de manera rígida: el docente, en ejercicio de su autonomía profesional, los integra de acuerdo con las necesidades de su grupo."
+  },
+  // 16
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes acciones refleja mejor el Eje Articulador 'Igualdad de género' en el aula de Fase 4?",
+    table: null,
+    options: [
+      "Asignar las mismas actividades físicas a niños y niñas sin considerar sus diferencias individuales.",
+      "Organizar equipos exclusivamente por género para evitar conflictos durante el trabajo colaborativo.",
+      "Promover que tanto niños como niñas compartan responsabilidades de liderazgo y participación en igualdad de condiciones y oportunidades.",
+      "Seleccionar textos literarios que representen únicamente personajes femeninos para compensar la desigualdad histórica."
+    ],
+    correct: 2,
+    feedback: "La igualdad de género implica garantizar condiciones equitativas de participación, liderazgo, acceso al conocimiento y toma de decisiones para todos los estudiantes, independientemente de su género. No se trata de ignorar diferencias, sino de eliminar las barreras y estereotipos que generan desigualdad."
+  },
+  // 17
+  {
+    format: "Relación de elementos",
+    text: "Relacione cada momento del Aprendizaje Basado en Proyectos Comunitarios con su actividad correspondiente.",
+    table: {
+      cols: ["Fase", "Actividad"],
+      rows: [
+        ["1. Planeación", "a) Los estudiantes presentan su producto ante la comunidad escolar para sensibilizar sobre el problema abordado."],
+        ["2. Acción", "b) El grupo realiza una asamblea para identificar la problemática comunitaria y definir el tipo de proyecto a desarrollar."],
+        ["3. Intervención", "c) Los estudiantes investigan, recopilan información y elaboran el producto o solución planificado."]
+      ]
+    },
+    options: ["1a, 2c, 3b", "1b, 2c, 3a", "1c, 2a, 3b", "1b, 2a, 3c"],
+    correct: 1,
+    feedback: "La Planeación (1b) inicia con la identificación participativa del problema; la Acción (2c) involucra la investigación y elaboración del producto; y la Intervención (3a) corresponde a la presentación o socialización del trabajo con la comunidad para generar un impacto real."
+  },
+  // 18
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Qué significa que el Plan de Estudios 2022 tenga un enfoque 'intercultural y crítico'?",
+    table: null,
+    options: [
+      "Que solo se aplica en escuelas indígenas o con población migrante de zonas rurales del país.",
+      "Que reconoce, valora y pone en diálogo las diversas culturas, lenguas y cosmovisiones presentes en México, cuestionando las relaciones de poder y discriminación.",
+      "Que los contenidos en lengua indígena reemplazan a los contenidos en español en todas las escuelas del país.",
+      "Que se excluyen los saberes de la cultura occidental para privilegiar exclusivamente los saberes indígenas y locales."
+    ],
+    correct: 1,
+    feedback: "El enfoque intercultural crítico reconoce la riqueza de la diversidad cultural y lingüística de México, promueve el diálogo entre saberes y cosmovisiones, y cuestiona las estructuras de poder, discriminación y exclusión. Aplica a todas las escuelas del país, independientemente de su contexto."
+  },
+  // 19
+  {
+    format: "Completamiento",
+    text: "El campo formativo 'De lo Humano y lo Comunitario' se distingue porque aborda...",
+    table: null,
+    options: [
+      "...exclusivamente el desarrollo de habilidades artísticas y expresión corporal de los estudiantes.",
+      "...el pensamiento lógico-matemático y las habilidades computacionales para el siglo XXI.",
+      "...el desarrollo personal, emocional, social y la identidad del estudiante en relación con su comunidad y su cuerpo.",
+      "...el análisis de fenómenos naturales y la construcción de conocimiento científico experimental."
+    ],
+    correct: 2,
+    feedback: "El campo 'De lo Humano y lo Comunitario' integra el desarrollo socioemocional, la identidad personal y colectiva, la educación física, artística y el sentido de pertenencia comunitaria. Reconoce al estudiante como ser integral con dimensiones afectivas, corporales, culturales y sociales."
+  },
+  // 20
+  {
+    format: "Ordenamiento",
+    text: "Ordene los pasos que debe seguir un docente de Fase 4 para construir el Programa Analítico de su grupo, de acuerdo con el proceso indicado en el Plan de Estudios 2022.",
+    table: null,
+    options: [
+      "Realizar el diagnóstico — Determinar los contenidos nacionales — Adaptar al contexto estatal — Incorporar contenidos locales — Socializar en CTE",
+      "Socializar en CTE — Incorporar contenidos locales — Adaptar al contexto estatal — Determinar los contenidos nacionales — Realizar el diagnóstico",
+      "Determinar los contenidos nacionales — Realizar el diagnóstico — Incorporar contenidos locales — Adaptar al contexto estatal — Socializar en CTE",
+      "Incorporar contenidos locales — Realizar el diagnóstico — Socializar en CTE — Adaptar al contexto estatal — Determinar los contenidos nacionales"
+    ],
+    correct: 0,
+    feedback: "La construcción del Programa Analítico inicia con el diagnóstico del contexto, sigue con la revisión de los contenidos nacionales (primer plano), la adaptación estatal (segundo plano), la incorporación de contenidos locales (tercer plano) y se consolida con la socialización y acuerdo en el CTE."
+  },
+  // 21
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Qué propósito tiene el 'diagnóstico socioeducativo' que realiza el docente al inicio del ciclo escolar?",
+    table: null,
+    options: [
+      "Elaborar un informe estadístico sobre el rendimiento académico histórico de la escuela para presentarlo a la supervisión.",
+      "Identificar las fortalezas, necesidades, intereses y características del contexto comunitario para orientar las decisiones pedagógicas.",
+      "Determinar qué estudiantes serán promovidos automáticamente al siguiente grado sin necesidad de evaluación formal.",
+      "Clasificar a los estudiantes en niveles de desempeño para integrar grupos homogéneos de trabajo."
+    ],
+    correct: 1,
+    feedback: "El diagnóstico socioeducativo permite al docente conocer al grupo y a su comunidad: saberes previos, intereses, necesidades, recursos disponibles y problemáticas del entorno. Esta información es el fundamento para diseñar un Programa Analítico pertinente, inclusivo y contextualizado."
+  },
+  // 22
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes estrategias representa mejor el principio de 'educación inclusiva' en el aula de Fase 4?",
+    table: null,
+    options: [
+      "Separar a los estudiantes con discapacidad en grupos especiales para darles atención individualizada fuera del aula regular.",
+      "Diseñar actividades con diferentes niveles de complejidad y modalidades de participación para que todos los estudiantes puedan acceder al aprendizaje.",
+      "Reducir el número de contenidos para los estudiantes con necesidades educativas especiales, permitiéndoles trabajar con un programa simplificado.",
+      "Asignar a un docente de apoyo exclusivo para los estudiantes con discapacidad, eximiendo al titular de su atención pedagógica."
+    ],
+    correct: 1,
+    feedback: "La educación inclusiva implica diseñar situaciones de aprendizaje flexibles que consideren la diversidad del grupo: distintos ritmos, estilos, capacidades y contextos. Esto se logra mediante el Diseño Universal para el Aprendizaje (DUA), que ofrece múltiples formas de participación, representación y expresión."
+  },
+  // 23
+  {
+    format: "Completamiento",
+    text: "Cuando el docente invita a un artesano de la comunidad a compartir sus saberes sobre técnicas tradicionales de manufactura, este actúa como...",
+    table: null,
+    options: [
+      "...un supervisor externo que evalúa los avances académicos del grupo.",
+      "...un recurso comunitario que enriquece los aprendizajes y fortalece el vínculo escuela-comunidad.",
+      "...un recurso humano que sustituye al docente en la planeación curricular del campo formativo.",
+      "...un agente de control que verifica el cumplimiento del programa oficial establecido por la SEP."
+    ],
+    correct: 1,
+    feedback: "Los saberes de los miembros de la comunidad son reconocidos en el Plan de Estudios 2022 como fuentes legítimas de conocimiento. Al invitarlos al aula, el docente enriquece los aprendizajes, reconoce los saberes locales, fortalece la identidad cultural y consolida el vínculo entre la escuela y su entorno."
+  },
+  // 24
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Qué implica la 'gestión del aprendizaje' por parte del docente de Fase 4 en el marco del Plan de Estudios 2022?",
+    table: null,
+    options: [
+      "Administrar eficientemente el tiempo escolar para cubrir la totalidad de los temas del libro de texto.",
+      "Organizar, mediar y acompañar los procesos de aprendizaje, creando ambientes favorables, fomentando la colaboración y ajustando las estrategias según las necesidades del grupo.",
+      "Gestionar los recursos financieros y materiales de la escuela para garantizar el buen funcionamiento administrativo.",
+      "Controlar la disciplina del grupo mediante normas y sanciones que regulen el comportamiento de los estudiantes."
+    ],
+    correct: 1,
+    feedback: "La gestión del aprendizaje implica que el docente organice intencionalmente el ambiente de aula, medie las interacciones, promueva el trabajo colaborativo, ajuste sus estrategias con base en la evaluación formativa y acompañe los procesos de construcción del conocimiento de manera activa y reflexiva."
+  },
+  // 25
+  {
+    format: "Relación de elementos",
+    text: "Relacione cada tipo de contenido del Programa Analítico con su descripción correspondiente.",
+    table: {
+      cols: ["Tipo de contenido", "Descripción"],
+      rows: [
+        ["1. Contenidos nacionales", "a) Saberes, prácticas y problemáticas propias de la comunidad y región donde se ubica la escuela."],
+        ["2. Contenidos estatales", "b) Aprendizajes fundamentales prescritos por la SEP para todos los estudiantes del país."],
+        ["3. Contenidos locales", "c) Elementos curriculares que cada entidad federativa añade para atender su contexto y diversidad regional."]
+      ]
+    },
+    options: ["1a, 2c, 3b", "1b, 2c, 3a", "1c, 2b, 3a", "1b, 2a, 3c"],
+    correct: 1,
+    feedback: "Los contenidos nacionales (1b) son los prescritos federalmente; los contenidos estatales (2c) son los que cada entidad añade según su contexto; y los contenidos locales (3a) provienen de la comunidad específica. Estos tres niveles conforman el Programa Analítico mediante el codiseño curricular."
+  },
+  // 26
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Cuál es la finalidad del Eje Articulador 'Apropiación de las culturas a través de la lectura y la escritura'?",
+    table: null,
+    options: [
+      "Enseñar a los estudiantes caligrafía y ortografía mediante la copia repetitiva de textos literarios clásicos.",
+      "Garantizar que todos los estudiantes alcancen el nivel lector establecido en las evaluaciones nacionales estandarizadas.",
+      "Fomentar el acceso al conocimiento, la expresión del pensamiento y la participación cultural a través de prácticas auténticas de lectura y escritura.",
+      "Cubrir la totalidad de los textos incluidos en los libros de texto gratuitos durante el ciclo escolar."
+    ],
+    correct: 2,
+    feedback: "Este eje busca que la lectura y la escritura sean herramientas para apropiarse de la cultura, expresar ideas, construir conocimiento y participar en la vida social y cultural. Va más allá de la mecánica lectora: implica desarrollar lectores y escritores críticos, reflexivos y culturalmente situados."
+  },
+  // 27
+  {
+    format: "Completamiento",
+    text: "En el contexto de la Nueva Escuela Mexicana, cuando se habla de 'vida saludable' como eje articulador, se hace referencia a...",
+    table: null,
+    options: [
+      "...únicamente los hábitos de higiene y nutrición que deben promoverse en la hora de educación física.",
+      "...un enfoque integral que abarca el bienestar físico, emocional, social y ambiental del estudiante y su comunidad.",
+      "...los programas federales de salud que el docente debe difundir obligatoriamente en el aula.",
+      "...la revisión periódica del estado nutricional de los estudiantes a cargo de personal médico externo."
+    ],
+    correct: 1,
+    feedback: "El eje 'Vida saludable' tiene un enfoque integral: no se limita a la salud física sino que abarca el bienestar emocional, la salud mental, las relaciones interpersonales, el cuidado del entorno y la sustentabilidad ambiental, articulándose con los distintos campos formativos de manera transversal."
+  },
+  // 28
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Qué se entiende por 'saberes previos' y por qué son fundamentales en el enfoque pedagógico de la NEM?",
+    table: null,
+    options: [
+      "Son los conocimientos aprendidos en el ciclo escolar anterior y sirven para determinar el nivel académico del estudiante.",
+      "Son los conocimientos, experiencias y concepciones que el estudiante trae consigo, y constituyen el punto de partida para construir nuevos aprendizajes con significado.",
+      "Son los contenidos que el docente ya enseñó y que los estudiantes deben memorizar antes de avanzar al siguiente tema.",
+      "Son los datos que aparecen en el expediente escolar del alumno y que informan al docente sobre su trayectoria académica previa."
+    ],
+    correct: 1,
+    feedback: "Los saberes previos son todo el conocimiento, las experiencias y las ideas que el estudiante ha construido a lo largo de su vida, dentro y fuera de la escuela. Reconocerlos es fundamental porque el aprendizaje significativo se construye sobre lo que ya se sabe, enriqueciendo y complejizando la comprensión."
+  },
+  // 29
+  {
+    format: "Ordenamiento",
+    text: "Ordene los elementos que debe contener un Programa Analítico de Fase 4, según la lógica de planeación del Plan de Estudios 2022.",
+    table: null,
+    options: [
+      "Diagnóstico del contexto — Propósitos formativos — Contenidos articulados — Estrategias didácticas — Criterios de evaluación",
+      "Criterios de evaluación — Estrategias didácticas — Contenidos articulados — Propósitos formativos — Diagnóstico del contexto",
+      "Propósitos formativos — Diagnóstico del contexto — Criterios de evaluación — Estrategias didácticas — Contenidos articulados",
+      "Estrategias didácticas — Diagnóstico del contexto — Propósitos formativos — Criterios de evaluación — Contenidos articulados"
+    ],
+    correct: 0,
+    feedback: "El Programa Analítico inicia con el diagnóstico del contexto (punto de partida), define los propósitos formativos (hacia dónde se va), selecciona los contenidos articulados (qué se aprende), determina las estrategias didácticas (cómo se aprende) y establece los criterios de evaluación (cómo se valora el proceso)."
+  },
+  // 30
+  {
+    format: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes situaciones refleja mejor la 'corresponsabilidad' entre la escuela y la familia en el marco del Plan de Estudios 2022?",
+    table: null,
+    options: [
+      "Los padres de familia revisan y firman las tareas que el docente asigna diariamente para verificar su cumplimiento.",
+      "Las familias participan activamente en la vida escolar: aportan saberes comunitarios, colaboran en proyectos y acompañan el proceso de aprendizaje de sus hijos.",
+      "La escuela informa trimestralmente a las familias sobre las calificaciones mediante boletines impresos.",
+      "Los padres de familia financian los materiales didácticos y la infraestructura necesaria para el buen funcionamiento escolar."
+    ],
+    correct: 1,
+    feedback: "La corresponsabilidad familia-escuela en la NEM implica una participación genuina y activa: las familias son agentes educativos que comparten saberes, se involucran en los proyectos comunitarios y acompañan los aprendizajes. Va más allá de la firma de tareas o la recepción de calificaciones."
+  }
+];
+
+// ============================================================
+//  APP STATE
+// ============================================================
+let currentQ    = 0;
+let score       = 0;
+let wrong       = 0;
+let answered    = false;
+let studentName = '';
+
+// ============================================================
+//  START
+// ============================================================
+function startSimulator() {
+  const nameInput = document.getElementById('student-name').value.trim();
+  if (!nameInput) {
+    document.getElementById('student-name').focus();
+    document.getElementById('student-name').style.borderColor = '#e84f4f';
+    document.getElementById('student-name').placeholder = '⚠ Por favor escribe tu nombre...';
+    setTimeout(() => {
+      document.getElementById('student-name').style.borderColor = '#cde4f0';
+    }, 2000);
+    return;
+  }
+  studentName = nameInput;
+  currentQ = 0; score = 0; wrong = 0;
+  showScreen('screen-question');
+  renderQuestion();
+}
+
+// ============================================================
+//  RENDER QUESTION
+// ============================================================
+function renderQuestion() {
+  answered = false;
+  const q = questions[currentQ];
+
+  document.getElementById('q-label').textContent = `Pregunta ${currentQ + 1} de ${questions.length}`;
+  document.getElementById('q-score-live').innerHTML = `✔ ${score} &nbsp; ✖ ${wrong}`;
+
+  const pct = ((currentQ) / questions.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+
+  const formatIcons = {
+    "Cuestionamiento directo": "❓",
+    "Completamiento": "✏️",
+    "Ordenamiento": "🔢",
+    "Relación de elementos": "🔗"
+  };
+  const badge = document.getElementById('q-format-badge');
+  badge.textContent = `${formatIcons[q.format] || '📌'} ${q.format}`;
+
+  document.getElementById('q-text').textContent = q.text;
+
+  // TABLE (for relación de elementos)
+  const tableWrap = document.getElementById('q-table-wrap');
+  tableWrap.innerHTML = '';
+  if (q.table) {
+    let html = `<table class="matching-table"><thead><tr>`;
+    q.table.cols.forEach(c => { html += `<th>${c}</th>`; });
+    html += `</tr></thead><tbody>`;
+    q.table.rows.forEach(row => {
+      html += `<tr>`;
+      row.forEach(cell => { html += `<td>${cell}</td>`; });
+      html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+    tableWrap.innerHTML = html;
+  }
+
+  // OPTIONS
+  const letters = ['A', 'B', 'C', 'D'];
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const li = document.createElement('li');
+    li.className = 'option-item';
+    li.setAttribute('data-index', i);
+    li.innerHTML = `<span class="option-badge">${letters[i]}</span><span class="option-text">${opt}</span>`;
+    li.onclick = () => selectOption(i);
+    list.appendChild(li);
+  });
+
+  // Feedback / button
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  fb.innerHTML = '';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+// ============================================================
+//  SELECT OPTION
+// ============================================================
+function selectOption(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[currentQ];
+  const items = document.querySelectorAll('.option-item');
+  items.forEach(el => el.classList.add('disabled'));
+
+  const selectedEl = items[idx];
+  const isCorrect  = idx === q.correct;
+
+  selectedEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) items[q.correct].classList.add('correct');
+
+  const fb = document.getElementById('feedback-box');
+  if (isCorrect) {
+    score++;
+    fb.className = 'feedback-box correct-fb show';
+    fb.innerHTML = `<strong>✅ ¡Excelente! Respuesta correcta.</strong>${q.feedback}`;
+  } else {
+    wrong++;
+    fb.className = 'feedback-box wrong-fb show';
+    fb.innerHTML = `<strong>❌ Respuesta incorrecta.</strong>${q.feedback}`;
+  }
+
+  document.getElementById('q-score-live').innerHTML = `✔ ${score} &nbsp; ✖ ${wrong}`;
+  document.getElementById('btn-next').style.display = 'inline-flex';
+
+  // Scroll to feedback
+  setTimeout(() => {
+    fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 150);
+}
+
+// ============================================================
+//  NEXT QUESTION
+// ============================================================
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResults();
+  } else {
+    showScreen('screen-question');
+    renderQuestion();
+  }
+}
+
+// ============================================================
+//  RESULTS
+// ============================================================
+function showResults() {
+  showScreen('screen-results');
+  const pct = Math.round((score / questions.length) * 100);
+
+  document.getElementById('result-name').textContent = `👤 ${studentName}`;
+  document.getElementById('result-correct').textContent = score;
+  document.getElementById('result-wrong').textContent = wrong;
+  document.getElementById('result-pct').textContent = pct + '%';
+
+  // Animate ring
+  const circumference = 326.73;
+  const offset = circumference - (pct / 100) * circumference;
+  setTimeout(() => {
+    document.getElementById('score-arc').style.transition = 'stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)';
+    document.getElementById('score-arc').style.strokeDashoffset = offset;
+  }, 300);
+
+  // Motivator
+  let emoji, msg;
+  if (pct >= 90) {
+    emoji = '🏆';
+    msg = '¡Desempeño sobresaliente! Dominas los fundamentos del Plan de Estudios 2022. ¡Sigue adelante!';
+  } else if (pct >= 75) {
+    emoji = '🌟';
+    msg = '¡Muy buen trabajo! Tienes un sólido conocimiento del tema. Refuerza los puntos pendientes y lo lograrás.';
+  } else if (pct >= 60) {
+    emoji = '📚';
+    msg = 'Buen esfuerzo. Estás en el camino correcto. Revisa los temas en los que tuviste dificultad y sigue practicando.';
+  } else {
+    emoji = '💪';
+    msg = 'No te desanimes. Cada intento es una oportunidad de aprender. Repasa el material y vuelve a intentarlo.';
+  }
+  document.getElementById('motivator-emoji').textContent = emoji;
+  document.getElementById('motivator-text').textContent = msg;
+}
+
+// ============================================================
+//  RESTART
+// ============================================================
+function restartSimulator() {
+  document.getElementById('score-arc').style.transition = 'none';
+  document.getElementById('score-arc').style.strokeDashoffset = '326.73';
+  currentQ = 0; score = 0; wrong = 0;
+  document.getElementById('student-name').value = '';
+  showScreen('screen-welcome');
+}
+
+// ============================================================
+//  SCREEN SWITCHER
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Keyboard: Enter to start or next
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const welcome = document.getElementById('screen-welcome');
+    const nextBtn = document.getElementById('btn-next');
+    if (welcome.classList.contains('active')) startSimulator();
+    else if (nextBtn.style.display !== 'none') nextQuestion();
+  }
+});
+</script>
+</body>
+</html>

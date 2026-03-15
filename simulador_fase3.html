@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Interactivo de Evaluación – Fase 3</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Montserrat:wght@700;900&display=swap');
+
+  :root {
+    --rojo:    #C62828;
+    --rojo2:   #E53935;
+    --azul:    #1565C0;
+    --azul2:   #1E88E5;
+    --verde:   #2E7D32;
+    --verde2:  #43A047;
+    --naranja: #E65100;
+    --amarillo:#F9A825;
+    --gris:    #F4F6FA;
+    --blanco:  #FFFFFF;
+    --texto:   #1A1A2E;
+    --sombra:  0 8px 32px rgba(21,101,192,0.13);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #E3F0FF 0%, #F4E6FF 50%, #FFF3E0 100%);
+    min-height: 100vh;
+    color: var(--texto);
+  }
+
+  /* ──────────────── HEADER ──────────────── */
+  header {
+    background: linear-gradient(135deg, var(--rojo) 0%, var(--azul) 100%);
+    color: #fff;
+    padding: 18px 24px 14px;
+    text-align: center;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.22);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content:'';
+    position:absolute; top:-40px; left:-40px;
+    width:180px; height:180px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.07);
+  }
+  header::after {
+    content:'';
+    position:absolute; bottom:-50px; right:-30px;
+    width:220px; height:220px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.06);
+  }
+  .header-icon { font-size: 2.6rem; line-height:1; margin-bottom:4px; }
+  header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.2rem, 3.5vw, 1.85rem);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  header .subtitle {
+    font-size: clamp(0.75rem, 2vw, 0.95rem);
+    opacity: 0.88;
+    margin-top: 3px;
+    font-weight: 600;
+  }
+  .credit {
+    margin-top: 6px;
+    font-size: clamp(0.7rem, 1.8vw, 0.88rem);
+    opacity: 0.8;
+    font-style: italic;
+    letter-spacing: 0.2px;
+  }
+
+  /* ──────────────── CONTENEDOR PRINCIPAL ──────────────── */
+  .main-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+  }
+
+  /* ──────────────── PANTALLA ──────────────── */
+  .screen { display: none; animation: fadeUp .45s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(22px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ──────────────── TARJETA ──────────────── */
+  .card {
+    background: var(--blanco);
+    border-radius: 20px;
+    padding: clamp(22px,5vw,40px);
+    box-shadow: var(--sombra);
+    border-top: 5px solid var(--azul);
+  }
+
+  /* ──────────────── PANTALLA INICIO ──────────────── */
+  .start-icon { font-size: 4rem; text-align:center; margin-bottom:12px; }
+  .start-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.3rem, 4vw, 1.9rem);
+    font-weight: 900;
+    color: var(--azul);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .start-desc {
+    text-align:center;
+    color:#555;
+    font-size: clamp(0.85rem,2.2vw,1rem);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .info-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  .chip {
+    background: #EEF4FF;
+    color: var(--azul);
+    border: 1.5px solid #BBDEFB;
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+  .form-group { margin-bottom: 22px; }
+  .form-group label {
+    display: block;
+    font-weight: 700;
+    color: var(--azul);
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 13px 18px;
+    border: 2px solid #BBDEFB;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    color: var(--texto);
+    transition: border-color .25s, box-shadow .25s;
+    outline: none;
+  }
+  .form-group input:focus {
+    border-color: var(--azul2);
+    box-shadow: 0 0 0 3px rgba(30,136,229,0.18);
+  }
+
+  /* ──────────────── BOTONES ──────────────── */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 15px 24px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .18s, box-shadow .18s, opacity .18s;
+    letter-spacing: 0.4px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul2) 100%);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(21,101,192,0.35);
+  }
+  .btn-primary:hover { box-shadow: 0 8px 24px rgba(21,101,192,0.45); transform: translateY(-2px); }
+  .btn-success {
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde2) 100%);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(46,125,50,0.35);
+  }
+  .btn-success:hover { box-shadow: 0 8px 24px rgba(46,125,50,0.45); transform: translateY(-2px); }
+  .btn-danger {
+    background: linear-gradient(135deg, var(--rojo) 0%, var(--rojo2) 100%);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(198,40,40,0.3);
+  }
+  .btn-sm {
+    width: auto;
+    display: inline-block;
+    padding: 10px 28px;
+    font-size: 0.9rem;
+  }
+
+  /* ──────────────── BARRA DE PROGRESO ──────────────── */
+  .progress-wrap {
+    margin-bottom: 20px;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .progress-bar-bg {
+    background: #E3F0FF;
+    border-radius: 50px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--azul2), var(--rojo2));
+    border-radius: 50px;
+    transition: width .5s ease;
+  }
+
+  /* ──────────────── PREGUNTA ──────────────── */
+  .question-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul2) 100%);
+    color: #fff;
+    border-radius: 50px;
+    padding: 4px 16px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    letter-spacing: 0.3px;
+  }
+  .tipo-badge {
+    display: inline-flex;
+    align-items: center;
+    background: #FFF3E0;
+    color: var(--naranja);
+    border: 1.5px solid #FFE0B2;
+    border-radius: 50px;
+    padding: 3px 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .question-text {
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    font-weight: 700;
+    line-height: 1.65;
+    color: var(--texto);
+    margin-bottom: 22px;
+  }
+
+  /* ──────────────── OPCIONES ──────────────── */
+  .options-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+  .option-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 16px;
+    border: 2px solid #D0DEFA;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s, transform .15s;
+    background: #FAFCFF;
+  }
+  .option-item:hover { border-color: var(--azul2); background: #EEF4FF; transform: translateX(4px); }
+  .option-item.selected { border-color: var(--azul); background: #E3F0FF; }
+  .option-item.correct  { border-color: var(--verde2); background: #E8F5E9; }
+  .option-item.incorrect{ border-color: var(--rojo2);  background: #FFEBEE; }
+  .option-item.disabled { pointer-events: none; }
+  .option-letter {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul2) 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(21,101,192,0.25);
+    transition: background .2s;
+  }
+  .option-item.correct  .option-letter { background: linear-gradient(135deg, var(--verde) 0%, var(--verde2) 100%); }
+  .option-item.incorrect .option-letter { background: linear-gradient(135deg, var(--rojo) 0%, var(--rojo2) 100%); }
+  .option-text {
+    font-size: clamp(0.86rem, 2.2vw, 0.97rem);
+    line-height: 1.5;
+    padding-top: 4px;
+  }
+
+  /* ──────────────── FEEDBACK ──────────────── */
+  .feedback-box {
+    margin-top: 18px;
+    padding: 14px 18px;
+    border-radius: 13px;
+    font-size: clamp(0.84rem, 2vw, 0.94rem);
+    font-weight: 600;
+    line-height: 1.55;
+    display: none;
+    animation: fadeUp .3s ease;
+  }
+  .feedback-box.correct  { background:#E8F5E9; border-left:4px solid var(--verde2); color:#1B5E20; }
+  .feedback-box.incorrect{ background:#FFEBEE; border-left:4px solid var(--rojo2);  color:#B71C1C; }
+  .feedback-icon { font-size:1.2rem; margin-right:6px; }
+
+  /* ──────────────── BOTÓN SIGUIENTE ──────────────── */
+  .btn-next-wrap { margin-top: 22px; }
+
+  /* ──────────────── RESULTADOS ──────────────── */
+  .results-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .results-icon { font-size: 4rem; margin-bottom: 8px; }
+  .results-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+    font-weight: 900;
+    color: var(--azul);
+    margin-bottom: 4px;
+  }
+  .results-subtitle { color:#666; font-size:0.92rem; }
+
+  .score-circle-wrap { display:flex; justify-content:center; margin:24px 0; }
+  .score-circle {
+    width: clamp(130px, 30vw, 160px);
+    height: clamp(130px, 30vw, 160px);
+    border-radius: 50%;
+    background: conic-gradient(var(--azul2) 0%, var(--azul2) var(--pct), #E3F0FF var(--pct));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 24px rgba(21,101,192,0.25);
+    position: relative;
+  }
+  .score-circle::before {
+    content:'';
+    position:absolute;
+    width:72%;
+    height:72%;
+    border-radius:50%;
+    background:#fff;
+  }
+  .score-pct {
+    position: relative;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 900;
+    color: var(--azul);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media(max-width:460px){ .stats-grid { grid-template-columns: repeat(1,1fr); } }
+  .stat-card {
+    background: var(--gris);
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+    border-top: 3px solid var(--azul2);
+  }
+  .stat-card.green { border-color: var(--verde2); }
+  .stat-card.red   { border-color: var(--rojo2); }
+  .stat-num {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
+    font-weight: 900;
+    color: var(--azul);
+  }
+  .stat-card.green .stat-num { color: var(--verde); }
+  .stat-card.red   .stat-num { color: var(--rojo); }
+  .stat-label { font-size: 0.78rem; color:#777; font-weight:700; margin-top:2px; }
+
+  .motivador {
+    background: linear-gradient(135deg, #EEF4FF 0%, #FFF3E0 100%);
+    border-radius: 14px;
+    padding: 18px 22px;
+    text-align: center;
+    border: 1.5px solid #BBDEFB;
+    font-size: clamp(0.88rem, 2.2vw, 1rem);
+    font-weight: 700;
+    color: var(--azul);
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .motivador .mot-icon { font-size:1.5rem; display:block; margin-bottom:6px; }
+
+  .btn-restart-wrap { display:flex; gap:12px; flex-wrap:wrap; }
+  .btn-restart-wrap .btn { flex:1; min-width:160px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+<header>
+  <div class="header-icon">🎓</div>
+  <h1>Simulador Interactivo de Evaluación</h1>
+  <p class="subtitle">Programa Sintético de la Fase 3 · Educación Primaria</p>
+  <p class="credit">Prof. Francisco De Jesus Luna Benitez</p>
+</header>
+
+<!-- ══════════════════ CONTENIDO PRINCIPAL ══════════════════ -->
+<div class="main-wrap">
+
+  <!-- ── PANTALLA INICIO ── -->
+  <div id="screen-start" class="screen active">
+    <div class="card">
+      <div class="start-icon">📝</div>
+      <h2 class="start-title">¡Bienvenido al Simulador!</h2>
+      <p class="start-desc">
+        Evalúa tus conocimientos sobre el <strong>Programa Sintético de la Fase 3</strong>.<br>
+        Responde con atención y revisa la retroalimentación en cada pregunta.
+      </p>
+      <div class="info-chips">
+        <span class="chip">📋 30 preguntas</span>
+        <span class="chip">🔤 Opción múltiple</span>
+        <span class="chip">💡 Con retroalimentación</span>
+        <span class="chip">📱 100% responsive</span>
+      </div>
+      <div class="form-group">
+        <label for="student-name">✏️ Ingresa tu nombre completo</label>
+        <input type="text" id="student-name" placeholder="Nombre del estudiante..." autocomplete="off">
+      </div>
+      <button class="btn btn-primary" onclick="startSimulator()">🚀 Iniciar Simulador</button>
+    </div>
+  </div>
+
+  <!-- ── PANTALLA PREGUNTA ── -->
+  <div id="screen-question" class="screen">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="progress-text">Pregunta 1 de 30</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div>
+        <span class="question-badge" id="q-number">📌 Pregunta 1</span>
+        <span class="tipo-badge" id="q-tipo">Cuestionamiento directo</span>
+      </div>
+      <p class="question-text" id="q-text"></p>
+      <ul class="options-list" id="options-list"></ul>
+      <div class="feedback-box" id="feedback-box"></div>
+      <div class="btn-next-wrap">
+        <button class="btn btn-primary" id="btn-next" style="display:none" onclick="nextQuestion()">
+          Siguiente pregunta →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PANTALLA RESULTADOS ── -->
+  <div id="screen-results" class="screen">
+    <div class="card">
+      <div class="results-header">
+        <div class="results-icon" id="results-icon">🏆</div>
+        <div class="results-name" id="results-name"></div>
+        <div class="results-subtitle">Resultados del Simulador · Fase 3</div>
+      </div>
+      <div class="score-circle-wrap">
+        <div class="score-circle" id="score-circle">
+          <span class="score-pct" id="score-pct">0%</span>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="res-total">30</div>
+          <div class="stat-label">Preguntas</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-num" id="res-correct">0</div>
+          <div class="stat-label">✅ Correctas</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-num" id="res-incorrect">0</div>
+          <div class="stat-label">❌ Incorrectas</div>
+        </div>
+      </div>
+      <div class="motivador">
+        <span class="mot-icon" id="mot-icon">⭐</span>
+        <span id="mot-text"></span>
+      </div>
+      <div class="btn-restart-wrap">
+        <button class="btn btn-primary" onclick="restartSame()">🔄 Intentar de nuevo</button>
+        <button class="btn btn-success" onclick="restartNew()">🏠 Nuevo intento</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main-wrap -->
+
+<!-- ══════════════════ JAVASCRIPT ══════════════════ -->
+<script>
+// ──────────────────────────────────────────────
+// BANCO DE 30 PREGUNTAS
+// ──────────────────────────────────────────────
+const questions = [
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es la definición correcta del Programa Analítico dentro del currículo de educación primaria?",
+    options: [
+      "Es el primer nivel de concreción del currículo, elaborado exclusivamente por las autoridades educativas federales.",
+      "Es el segundo nivel de concreción del currículo, resultado del ejercicio en que los docentes contextualizan y sitúan los procesos formativos a partir de los Programas Sintéticos.",
+      "Es el tercer nivel de concreción del currículo, diseñado únicamente para la educación secundaria.",
+      "Es un formato administrativo de llenado obligatorio que organiza los contenidos nacionales sin modificación alguna."
+    ],
+    correct: 1,
+    feedback: "El Programa Analítico es el SEGUNDO nivel de concreción del currículo. Es un documento que los docentes construyen y reconstruyen permanentemente, contextualizando los procesos formativos a partir de los Programas Sintéticos y las necesidades de la comunidad escolar."
+  },
+  {
+    tipo: "Completamiento",
+    text: "El Programa Analítico no es un formato específico que se llene por cuestiones administrativas; es un documento que se construye y reconstruye de manera permanente, que organiza de modo específico varias de las acciones que ya se realizan en la escuela, incorpora nuevas o reorienta el sentido de otras para atender las finalidades que el Plan de estudio señala. Surge del análisis, reflexión, selección y organización de los contenidos propuestos en los Programas Sintéticos, en distintos espacios y momentos, incluidos el Consejo Técnico Escolar (CTE) y...",
+    options: [
+      "...las asambleas de padres de familia y los comités de evaluación externos.",
+      "...las academias para el caso de secundaria, además de los ámbitos de formación docente.",
+      "...los supervisores escolares y los inspectores de zona durante las visitas anuales.",
+      "...los libros de texto nacionales y los materiales de apoyo pedagógico oficial."
+    ],
+    correct: 1,
+    feedback: "El Programa Analítico surge del trabajo en el CTE y las academias para el caso de secundaria, además de los ámbitos de formación docente. Su construcción implica el análisis y reflexión colectiva del colectivo docente."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuántos planos conforman el Programa Analítico y cuál es la función del primer plano?",
+    options: [
+      "Dos planos; el primer plano consiste en diseñar los proyectos didácticos de cada grado escolar.",
+      "Cuatro planos; el primer plano establece la evaluación formativa de las y los estudiantes.",
+      "Tres planos; el primer plano se refiere a la lectura de la realidad de la escuela como punto de partida para la toma de decisiones.",
+      "Tres planos; el primer plano implica la toma de decisiones sobre los contenidos que habrán de incorporarse al programa."
+    ],
+    correct: 2,
+    feedback: "El Programa Analítico se configura en TRES planos. El primer plano es la Lectura de la realidad: analizar el diagnóstico de aprendizajes, reconocer las voces y expectativas de los estudiantes, y establecer relaciones entre las condiciones educativas de la escuela y sus retos."
+  },
+  {
+    tipo: "Relación de elementos",
+    text: "Relacione cada plano del Programa Analítico con su descripción correspondiente.\n\nPlanos:\n1. Primer plano\n2. Segundo plano\n3. Tercer plano\n\nDescripciones:\na) Toma de decisiones respecto de los contenidos que habrán de incorporarse al Programa Analítico.\nb) Concreción del Programa Analítico.\nc) Lectura de la realidad de la escuela como punto de partida para la toma de decisiones.",
+    options: [
+      "1c, 2b, 3a",
+      "1a, 2c, 3b",
+      "1c, 2a, 3b",
+      "1b, 2a, 3c"
+    ],
+    correct: 2,
+    feedback: "La correspondencia correcta es: Primer plano = Lectura de la realidad (c); Segundo plano = Toma de decisiones sobre los contenidos (a); Tercer plano = Concreción del Programa Analítico (b). Los tres planos forman parte del proceso del codiseño."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "En contextos de diversidad lingüística, ¿cuál es el enfoque correcto para la alfabetización de los estudiantes que llegan a la escuela con distintos grados de manejo de la oralidad?",
+    options: [
+      "Priorizar la enseñanza en español como única lengua de instrucción para lograr homogeneidad en el grupo.",
+      "Utilizar la lengua materna como principal vía para el aprendizaje de la lectura y la escritura, siendo la segunda lengua objeto de aprendizaje tanto oral como escrito.",
+      "Separar a los estudiantes por nivel de dominio del español para avanzar de forma más eficiente en la alfabetización.",
+      "Enseñar primero las letras del abecedario de manera nemotécnica para que todos los estudiantes partan del mismo nivel."
+    ],
+    correct: 1,
+    feedback: "En contextos de diversidad lingüística, se requiere una alfabetización donde la lengua materna sea la principal vía para el aprendizaje de la lectura y la escritura, y la segunda lengua sea objeto de aprendizaje tanto en lo oral como en lo escrito. Se debe evitar el manejo de letras solo en el plano de la sonoridad."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es la diferencia fundamental que las y los docentes deben reconocer entre el aprendizaje de las letras y el aprendizaje del sistema de escritura?",
+    options: [
+      "No existe diferencia; aprender las letras es exactamente lo mismo que aprender el sistema de escritura.",
+      "Las letras son únicamente signos visuales sin función comunicativa, mientras el sistema de escritura sí tiene función comunicativa.",
+      "Las letras son elementos del sistema de escritura; pero un sistema implica comprender cómo se relacionan y funcionan sus elementos, proceso de larga duración que no puede sustituirse por la enseñanza nemotécnica.",
+      "El sistema de escritura se aprende antes que las letras, ya que primero se comprende la lógica y luego los símbolos individuales."
+    ],
+    correct: 2,
+    feedback: "Las letras son elementos del sistema de escritura, así como lo son otros signos; pero un sistema implica considerar cómo se relacionan y funcionan sus elementos. Comprender esto es un proceso de larga duración que no puede ser sustituido por la enseñanza nemotécnica de las letras."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es el papel del acompañamiento de docentes, padres, madres de familia y otras personas en la adquisición del lenguaje escrito de los estudiantes?",
+    options: [
+      "Es prescindible, ya que los estudiantes adquieren el lenguaje escrito de manera completamente autónoma dentro del salón de clases.",
+      "Resulta esencial por medio de la implementación de estrategias didácticas específicas en función del proceso de desarrollo de los estudiantes.",
+      "Solo corresponde a los docentes; la familia no debe intervenir en el proceso de adquisición del lenguaje escrito.",
+      "Su papel es únicamente corregir los errores ortográficos de los estudiantes una vez que ya saben leer y escribir."
+    ],
+    correct: 1,
+    feedback: "La adquisición del lenguaje escrito es un proceso que toma tiempo y en el cual resulta ESENCIAL el acompañamiento de docentes, padres y madres de familia y otras personas, a través de estrategias didácticas específicas en función del proceso de desarrollo de los estudiantes."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes situaciones describe correctamente cómo la interacción directa con la escritura promueve el aprendizaje en los estudiantes de la Fase 3?",
+    options: [
+      "Los alumnos copian textos del libro de texto para memorizar las reglas ortográficas y gramaticales.",
+      "El docente dicta palabras para que los alumnos practiquen su escritura y mejoren su caligrafía.",
+      "Los alumnos formulan hipótesis sobre la escritura, las ponen a prueba y las ajustan en función de su comprensión e interpretación al interactuar directamente con textos.",
+      "Los alumnos leen en voz alta ante el grupo para que el docente identifique sus errores de pronunciación."
+    ],
+    correct: 2,
+    feedback: "La interacción directa con la escritura provoca que los alumnos formulen hipótesis, las pongan a prueba y las vayan ajustando según su comprensión e interpretación. Se espera que resuelvan los problemas que la lectura y escritura les presenten tanto en la vida escolar como cotidiana."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿En qué ámbitos ocurre el empleo de los lenguajes según el Programa Sintético de la Fase 3?",
+    options: [
+      "Únicamente en el ámbito escolar, ya que es donde se dan las condiciones formales de aprendizaje.",
+      "En los ámbitos escolar y familiar, sin incluir el comunitario para evitar distracciones del proceso educativo formal.",
+      "En los ámbitos escolar, familiar y comunitario en general, por lo que los docentes deben promover actividades en distintas situaciones y contextos.",
+      "Exclusivamente en el ámbito comunitario, donde los estudiantes aplican lo aprendido en la escuela."
+    ],
+    correct: 2,
+    feedback: "El empleo de los lenguajes ocurre en los ámbitos escolar, familiar y comunitario en general. Por ello es esencial que los docentes promuevan actividades en distintas situaciones y contextos, considerando la lengua materna, la segunda lengua, y en su caso, la lengua de señas."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es la función principal de los lenguajes artísticos en la Fase 3 según el Programa Sintético?",
+    options: [
+      "Servir exclusivamente como actividades de entretenimiento y relajación al final de la jornada escolar.",
+      "Ser vías fundamentales de aprendizaje para considerar con mayor detenimiento sensaciones, emociones y sentimientos en relación con el entorno natural y social, reconfigurando y construyendo nuevos vínculos.",
+      "Reemplazar las materias de ciencias y matemáticas cuando los estudiantes muestran dificultades de aprendizaje.",
+      "Evaluar el talento artístico innato de los estudiantes para identificar a quienes tienen aptitudes para las bellas artes."
+    ],
+    correct: 1,
+    feedback: "En cuanto a los lenguajes artísticos, la exploración y experimentación son vías fundamentales de aprendizaje para considerar con mayor detenimiento sensaciones, emociones y sentimientos en relación con el entorno natural y social, así como situaciones de la vida cotidiana e interacciones con otras personas."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es el propósito de promover el desarrollo del pensamiento artístico y creativo en la Fase 3?",
+    options: [
+      "Preparar a los estudiantes para participar en concursos escolares y festivales artísticos de zona.",
+      "Posibilitar las experiencias artísticas y estéticas a través de procesos de apreciación y producción, comenzando a usar los lenguajes artísticos como medios de expresión personal y representación del entorno.",
+      "Sustituir la enseñanza tradicional por actividades artísticas que resulten más atractivas para los estudiantes.",
+      "Desarrollar habilidades motoras finas que faciliten posteriormente la escritura cursiva de los estudiantes."
+    ],
+    correct: 1,
+    feedback: "En la Fase 3 se continúa promoviendo el desarrollo del pensamiento artístico y creativo a través de procesos de apreciación y producción que posibilitan las experiencias artísticas y estéticas. Se comienza a usar conscientemente los lenguajes artísticos como medios para la expresión personal y la representación del entorno natural y social."
+  },
+  {
+    tipo: "Ordenamiento",
+    text: "Ordene los elementos que conforman el proceso de relación entre programas de estudio y codiseño, desde el punto de partida hasta el producto final del docente.\n\n1. Programa Analítico de la escuela\n2. Proceso de apropiación, articulación y contextualización\n3. Programa de estudio con Contenidos nacionales\n4. Planeación didáctica del docente\n5. Contenidos nacionales contextualizados / Contenidos locales por escuela",
+    options: [
+      "3, 5, 2, 1, 4",
+      "1, 3, 2, 5, 4",
+      "3, 2, 5, 1, 4",
+      "2, 3, 5, 4, 1"
+    ],
+    correct: 2,
+    feedback: "El orden correcto es: Programa de estudio con Contenidos nacionales (3) → Proceso de apropiación, articulación y contextualización (2) → Contenidos contextualizados/locales por codiseño (5) → Programa Analítico de la escuela (1) → Planeación didáctica del docente (4)."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es una de las consideraciones esenciales para la construcción y reconstrucción del Programa Analítico según el Programa Sintético de la Fase 3?",
+    options: [
+      "Elaborarlo de forma individual por cada docente sin socialización con el colectivo escolar.",
+      "Basarse únicamente en los resultados de las evaluaciones estandarizadas nacionales del ciclo anterior.",
+      "Considerar la situación educativa de los estudiantes: lo que saben, con qué frecuencia asisten, los recursos disponibles, qué lengua hablan y las expectativas que tienen sobre la escuela.",
+      "Seguir el formato único establecido por la SEP sin modificar el orden de los contenidos nacionales."
+    ],
+    correct: 2,
+    feedback: "Para construir el Programa Analítico se debe considerar la situación educativa de las y los estudiantes: lo que saben al inicio del ciclo escolar, con qué frecuencia asisten, los recursos con los que cuentan, qué lengua hablan, y las expectativas que tienen sobre la escuela —qué esperan y quieren aprender."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "En el Campo formativo Ética, Naturaleza y Sociedades, ¿de qué manera niñas y niños se reconocerán como parte de la naturaleza durante la Fase 3?",
+    options: [
+      "Realizando únicamente actividades de laboratorio en espacios cerrados y controlados por el docente.",
+      "Reconociéndose como seres vivos que forman parte de la naturaleza junto con el agua, aire y suelo, e identificando que las personas interactúan con la naturaleza en todas las actividades que realizan.",
+      "Estudiando la naturaleza solo a través de libros de texto y enciclopedias sin actividades prácticas.",
+      "Limitando el análisis ambiental a problemas globales como el cambio climático, sin vincularlos con el entorno inmediato."
+    ],
+    correct: 1,
+    feedback: "En este campo, niñas y niños se reconocerán como seres vivos que forman parte de la naturaleza junto con el agua, aire y suelo, entre otros componentes. Identificarán que las personas interactúan con la naturaleza en todas las actividades que realizan y la transforman a través del tiempo."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál de los siguientes propósitos corresponde al desarrollo de bases de ciudadanía activa en la Fase 3 dentro del campo de Ética, Naturaleza y Sociedades?",
+    options: [
+      "Que los estudiantes memoricen los artículos de la Constitución Política de los Estados Unidos Mexicanos.",
+      "Que los estudiantes aprendan a obedecer las normas escolares sin cuestionarlas para garantizar la convivencia.",
+      "Que los estudiantes se reconozcan a sí mismos y a los demás como sujetos de derechos, participen en la construcción de acuerdos y reglas, y promuevan una cultura de paz mediante el diálogo.",
+      "Que los estudiantes realicen visitas a los poderes del estado para conocer cómo funciona el gobierno."
+    ],
+    correct: 2,
+    feedback: "En la Fase 3 se adquieren bases de ciudadanía activa al reconocerse a sí mismo y a los demás como sujetos de derechos, participar en la construcción de acuerdos y reglas, reconocer la diversidad, y participar en la transformación de conflictos mediante el diálogo para promover una cultura de paz."
+  },
+  {
+    tipo: "Relación de elementos",
+    text: "Relacione cada propósito del campo Ética, Naturaleza y Sociedades con el ámbito al que corresponde.\n\nPropósitos:\n1. Responsabilidad en el cuidado y conservación de la naturaleza\n2. Respeto y protección de los derechos humanos\n3. Desarrollo de conciencias histórica y geográfica\n\nÁmbitos:\na) Comprender que el presente es resultado de decisiones del pasado y que el futuro depende de las decisiones actuales.\nb) Asumir compromisos de bajo impacto ambiental y sustentabilidad para garantizar un ambiente sano.\nc) Aprender a defender los derechos ante situaciones de desigualdad e injusticia y ejercerlos de manera informada y pacífica.",
+    options: [
+      "1b, 2c, 3a",
+      "1c, 2a, 3b",
+      "1a, 2b, 3c",
+      "1b, 2a, 3c"
+    ],
+    correct: 0,
+    feedback: "La relación correcta es: 1 Responsabilidad en el cuidado de la naturaleza → b) compromisos de bajo impacto ambiental; 2 Respeto de derechos humanos → c) defender derechos ante injusticia; 3 Conciencias histórica y geográfica → a) el presente es resultado del pasado."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es la característica que distingue al Campo formativo De lo Humano y lo Comunitario en la Fase 3?",
+    options: [
+      "Se centra exclusivamente en el desarrollo de habilidades deportivas para mejorar la condición física de los estudiantes.",
+      "Promueve el reconocimiento de prácticas socioculturales vinculadas con el autoconocimiento, el autocuidado, la relación con el medio ambiente y la alimentación, contextualizadas en situaciones de la vida real.",
+      "Se limita al desarrollo de proyectos de ciencias naturales relacionados con el funcionamiento del cuerpo humano.",
+      "Establece normas de comportamiento escolar que los estudiantes deben seguir para garantizar la convivencia pacífica."
+    ],
+    correct: 1,
+    feedback: "El Campo De lo Humano y lo Comunitario reconoce e identifica diversas prácticas socioculturales vinculadas con el autoconocimiento, el autocuidado, la relación con el medio ambiente y su conservación, con el cuerpo humano, la salud y la alimentación, aplicadas en situaciones de la vida real."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es el enfoque recomendado para interpretar las prácticas socioculturales dentro del Campo De lo Humano y lo Comunitario?",
+    options: [
+      "Analizar las prácticas socioculturales únicamente a través de textos académicos y libros especializados.",
+      "Problematizar situaciones de la vida real articulando saberes, experiencias y conocimientos propios, vinculándolos con los que se puedan plantear desde otros Campos formativos.",
+      "Comparar las prácticas culturales locales con las internacionales para identificar cuáles son superiores.",
+      "Restringir el análisis a prácticas culturales aprobadas por la comunidad sin cuestionar su impacto."
+    ],
+    correct: 1,
+    feedback: "Para interpretar las prácticas socioculturales, es recomendable problematizar situaciones de la vida real articulando saberes, experiencias y conocimientos propios, con los que se puedan plantear desde otros Campos formativos. Esto favorece el aprendizaje situado y significativo."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "En el campo De lo Humano y lo Comunitario, ¿qué papel juegan los docentes como portadores de saberes y conocimientos?",
+    options: [
+      "Los docentes deben limitarse a seguir el libro de texto sin aportar sus propios conocimientos al proceso.",
+      "Los docentes poseen un importante conjunto de saberes y conocimientos construidos en la práctica y durante su formación, que los llevan a recurrir a diversas fuentes, incluyendo tecnologías digitales y especialistas locales.",
+      "Los docentes deben delegar todo el proceso de enseñanza a los especialistas externos de la comunidad.",
+      "Los saberes docentes son secundarios frente a los contenidos establecidos en los programas nacionales."
+    ],
+    correct: 1,
+    feedback: "Las y los docentes poseen un importante conjunto de saberes y conocimientos construidos en la práctica y durante su formación profesional, y recurren a diversas fuentes para enriquecerla. Se sugiere utilizar tecnologías digitales y la participación de especialistas locales, tanto en contextos rurales como urbanos."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es el propósito del abordaje de los Contenidos y Procesos de desarrollo de aprendizaje en el campo de Saberes y Pensamiento Científico en la Fase 3?",
+    options: [
+      "Que los estudiantes memoricen fórmulas matemáticas y apliquen algoritmos sin comprender su significado.",
+      "Que los estudiantes comprendan la relación vital de interdependencia entre los seres humanos y la naturaleza, así como la relevancia de las matemáticas como herramientas para la construcción de conocimientos.",
+      "Que los estudiantes aprendan ciencias y matemáticas como disciplinas separadas sin ninguna vinculación entre ellas.",
+      "Que los estudiantes realicen exclusivamente experimentos en el laboratorio para comprobar las teorías científicas establecidas."
+    ],
+    correct: 1,
+    feedback: "El abordaje de los Contenidos implica partir de lo concreto y relacionarlo con vivencias, contextos y situaciones relevantes. Se pretende que los estudiantes comprendan la relación de interdependencia entre los seres humanos y la naturaleza, y la relevancia de las matemáticas como herramientas para la construcción de conocimientos y el desarrollo del pensamiento."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál de los siguientes cuestionamientos corresponde al enfoque matemático del campo Saberes y Pensamiento Científico en la Fase 3?",
+    options: [
+      "¿Cuál es la fórmula para calcular el área de un triángulo rectángulo?",
+      "¿Cuál es el procedimiento para realizar una división de tres cifras paso a paso?",
+      "¿Cuál es mayor?, ¿cuántos?, ¿cuánto?, ¿qué forma tiene?, ¿a qué se parece?, ¿cómo registramos?, ¿cuándo?, ¿dónde?",
+      "¿Cuáles son las propiedades conmutativa y asociativa de la suma?"
+    ],
+    correct: 2,
+    feedback: "El enfoque matemático en la Fase 3 busca aplicar los contenidos en el momento en que surja la oportunidad en cualquier campo formativo o actividad cotidiana, como herramienta de análisis para cuestionamientos como: ¿cuál es mayor?, ¿cuántos?, ¿cuánto?, ¿qué forma tiene?, ¿a qué se parece?, ¿cómo registramos?, ¿cuándo?, ¿dónde?"
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es la orientación didáctica para abordar situaciones problemáticas matemáticas con niñas y niños en la Fase 3?",
+    options: [
+      "Presentar ejercicios de práctica mecánica con alta cantidad de repeticiones para garantizar la automatización de procedimientos.",
+      "Identificar y dar significado a los contenidos matemáticos a través de situaciones problemáticas que sean interesantes y tengan sentido para niñas y niños, desarrollándolas a partir de los elementos observados.",
+      "Separar la enseñanza de las matemáticas de la de las ciencias naturales para evitar confusiones conceptuales.",
+      "Evaluar los conocimientos matemáticos únicamente mediante exámenes escritos estandarizados al final de cada bimestre."
+    ],
+    correct: 1,
+    feedback: "La orientación es identificar y dar significado a los contenidos matemáticos a través de situaciones problemáticas que sean interesantes y tengan sentido para los estudiantes. Deben desarrollarse en el aula a partir de los elementos observados y aplicarse cuando surja la oportunidad en cualquier campo formativo o actividad cotidiana."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Qué actividad didáctica corresponde a la organización e interpretación de datos en el primer grado de la Fase 3?",
+    options: [
+      "Recolecta, organiza, representa e interpreta datos en tablas o pictogramas para responder preguntas de su interés.",
+      "Elabora registros de datos mediante distintos recursos como pictogramas o tablas para responder preguntas de su interés.",
+      "Construye gráficas de barras con datos estadísticos obtenidos de fuentes digitales confiables.",
+      "Aplica operaciones de estadística descriptiva básica para calcular media, moda y mediana de conjuntos de datos."
+    ],
+    correct: 1,
+    feedback: "En el primer grado de la Fase 3, el proceso de desarrollo de aprendizaje en organización e interpretación de datos consiste en elaborar registros de datos mediante distintos recursos como pictogramas o tablas para responder preguntas de su interés. En segundo grado ya se recolecta, organiza, representa e interpreta."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es la condición indispensable para que las actividades del campo de Saberes y Pensamiento Científico sean apropiadas para niñas y niños de la Fase 3?",
+    options: [
+      "Que estén alineadas únicamente con los estándares internacionales de evaluación educativa PISA.",
+      "Que correspondan a la edad, contexto, características, necesidades e intereses de niñas y niños, pongan en juego los conocimientos del Campo formativo y den lugar a preguntas retadoras.",
+      "Que sean diseñadas exclusivamente por especialistas en didáctica de las ciencias sin intervención docente.",
+      "Que incluyan obligatoriamente el uso de tecnología digital como tabletas o computadoras personales."
+    ],
+    correct: 1,
+    feedback: "Las actividades deben corresponder a la edad, contexto, características, necesidades e intereses de niñas y niños, deben poner en juego y construir los conocimientos del Campo formativo, dar lugar a preguntas retadoras que impliquen recuperar sus experiencias, el trabajo dentro y fuera del aula, así como la experimentación bajo condiciones de seguridad."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es la finalidad de promover una comprensión integrada de los procesos y fenómenos naturales en el campo Saberes y Pensamiento Científico?",
+    options: [
+      "Que los estudiantes puedan identificar las ramas de la biología, química y física para elegir su futura carrera.",
+      "Establecer vinculaciones entre los Contenidos del Campo considerando el orden de aprendizaje de las disciplinas, la construcción de significados y la relación complementaria entre las matemáticas y las ciencias naturales.",
+      "Reducir el tiempo dedicado a ciencias para dar más importancia a la lectura y la escritura en los primeros grados.",
+      "Limitar el estudio de la naturaleza a los fenómenos que pueden observarse directamente en el salón de clases."
+    ],
+    correct: 1,
+    feedback: "Para promover la comprensión integrada, se deben establecer vinculaciones entre los Contenidos del Campo, atendiendo a criterios claros como el orden de aprendizaje derivado de las especificidades de las disciplinas, la construcción de significados de los objetos de estudio, y la relación complementaria entre las matemáticas y las ciencias naturales."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes actividades describe correctamente el proceso de desarrollo de aprendizaje para el contenido 'Representación de distintas formas de ser y estar en el mundo a partir de la ficción' en el segundo grado de la Fase 3?",
+    options: [
+      "Lee de forma individual textos que contengan seres imaginarios, para representarlos empleando elementos de los lenguajes artísticos.",
+      "Crea personajes ficticios empleando formas, colores, texturas, movimientos, gestos y sonidos a partir de una narración, poema, canción o pintura.",
+      "Construye personajes combinando distintas características de las personas y seres vivos de su entorno, e investiga sobre distintas formas de hablar, pensar, comer y moverse de personas de diferentes comunidades.",
+      "Identifica los elementos visuales básicos de las obras de arte para reproducirlos en sus propias creaciones plásticas."
+    ],
+    correct: 2,
+    feedback: "En el segundo grado de la Fase 3, el proceso de desarrollo de aprendizaje incluye: construir personajes combinando características de personas y seres vivos del entorno, investigar formas de hablar, pensar, comer, moverse y vestirse de personas de diferentes comunidades, y reconocer que vestuario, maquillaje y máscaras enriquecen la caracterización de personajes."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Qué característica distingue a México como nación en el ámbito del campo Ética, Naturaleza y Sociedades?",
+    options: [
+      "Es un país monolingüe con una sola identidad cultural resultado de la herencia colonial.",
+      "Es un país homogéneo desde el punto de vista étnico y cultural, con una sola forma de expresión artística.",
+      "Es el país pluricultural donde vivimos, conformado por una diversidad de historias, identidades y patrimonio.",
+      "Es un país cuya identidad cultural es idéntica a la de los demás países latinoamericanos."
+    ],
+    correct: 2,
+    feedback: "En el campo de Ética, Naturaleza y Sociedades se reconoce que México es el país pluricultural donde vivimos, conformado por una diversidad de historias, identidades y patrimonio. Los estudiantes desarrollan su identidad y sentido de pertenencia a una comunidad caracterizada por la diversidad de personas y familias con múltiples formas de ser, prácticas, saberes, expresiones lingüísticas y estéticas."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es la orientación para las actividades del campo De lo Humano y lo Comunitario relacionadas con la salud y la alimentación?",
+    options: [
+      "Desarrollar proyectos relacionados con problemáticas de salud y alimentación presentes en la comunidad donde se ubica la escuela, vinculados con los intereses y necesidades de niñas y niños.",
+      "Estudiar exclusivamente las enfermedades más comunes a nivel nacional sin considerar las particularidades de la comunidad escolar.",
+      "Aplicar dietas estandarizadas recomendadas por los organismos internacionales de salud sin adaptar las recomendaciones al contexto local.",
+      "Limitarse a revisar las etiquetas de alimentos procesados para identificar el contenido nutricional de los productos."
+    ],
+    correct: 0,
+    feedback: "Se sugiere la realización de proyectos relacionados con problemáticas de salud y alimentación que se presenten en la comunidad donde se ubica la escuela. Para llevarlo a cabo, es preferible que esté vinculado con los intereses y necesidades de niñas y niños, promoviendo un aprendizaje situado y relevante."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes describe correctamente la temporalidad del Programa Analítico?",
+    options: [
+      "Es bimestral, se actualiza cada dos meses conforme avanzan los contenidos del programa.",
+      "Es anual, y el abordaje de los Contenidos se define en función de la dosificación que las y los docentes consideren pertinente.",
+      "Es quincenal, se revisa y actualiza en cada sesión del Consejo Técnico Escolar mensual.",
+      "Es fija y predeterminada por la SEP, sin posibilidad de ajuste por parte de los docentes."
+    ],
+    correct: 1,
+    feedback: "La temporalidad del Programa Analítico es ANUAL, y el abordaje de los Contenidos se define en función de la dosificación que las y los docentes consideren pertinente. Cabe recordar que en el Programa Sintético los contenidos no se presentan en una secuenciación y orden definidos."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "Seleccione la opción que describe correctamente el proceso de apropiación, articulación y contextualización en la relación entre los programas de estudio y el codiseño.",
+    options: [
+      "Es una etapa donde las autoridades federales modifican los contenidos nacionales para adaptarlos a los libros de texto.",
+      "Es el proceso mediante el cual los docentes, como colectivo escolar, transforman los contenidos nacionales en contenidos contextualizados y locales que dan origen al Programa Analítico de la escuela.",
+      "Es la fase en que los padres de familia aprueban o rechazan los contenidos propuestos en el Programa Sintético.",
+      "Es un procedimiento administrativo realizado una sola vez al inicio de cada ciclo escolar sin posibilidad de actualización."
+    ],
+    correct: 1,
+    feedback: "El proceso de apropiación, articulación y contextualización es el que permite a los docentes, como colectivo escolar, transformar los contenidos nacionales en contenidos contextualizados y contenidos locales basados en el contexto (codiseño), generando así el Programa Analítico de la escuela y, posteriormente, la planeación didáctica del docente."
+  },
+  {
+    tipo: "Cuestionamiento directo",
+    text: "¿Cuál es la razón principal por la que los aprendizajes del lenguaje escrito deben basarse en el empleo con significado de la escritura, según el Programa Sintético de la Fase 3?",
+    options: [
+      "Porque el uso de la escritura con significado garantiza que los estudiantes obtengan mejores resultados en exámenes estandarizados.",
+      "Porque es fundamental que los aprendizajes se basen en el empleo con significado de la escritura, evitando así el manejo de letras solo en el plano de la sonoridad, especialmente en contextos de diversidad lingüística.",
+      "Porque la escritura con significado es más fácil de evaluar mediante pruebas de opción múltiple.",
+      "Porque permite sustituir la lengua materna por el español de forma más eficiente y rápida en los primeros grados."
+    ],
+    correct: 1,
+    feedback: "Es fundamental que los aprendizajes se basen en el empleo con significado de la escritura, evitando así el manejo de letras solo en el plano de la sonoridad. Esto es especialmente relevante en contextos de diversidad lingüística, donde los estudiantes siguen un solo proceso para comprender el sistema de escritura alfabética pero necesitan información sobre los elementos particulares de la escritura de cada lengua."
+  }
+];
+
+// ──────────────────────────────────────────────
+// ESTADO
+// ──────────────────────────────────────────────
+let studentName = '';
+let currentQ    = 0;
+let score       = 0;
+let answered    = false;
+
+// ──────────────────────────────────────────────
+// INICIO
+// ──────────────────────────────────────────────
+function startSimulator() {
+  const input = document.getElementById('student-name').value.trim();
+  if (!input) {
+    document.getElementById('student-name').focus();
+    document.getElementById('student-name').style.borderColor = '#E53935';
+    setTimeout(() => document.getElementById('student-name').style.borderColor = '#BBDEFB', 2000);
+    return;
+  }
+  studentName = input;
+  currentQ = 0;
+  score    = 0;
+  showScreen('screen-question');
+  renderQuestion();
+}
+
+// ──────────────────────────────────────────────
+// PANTALLAS
+// ──────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ──────────────────────────────────────────────
+// RENDERIZAR PREGUNTA
+// ──────────────────────────────────────────────
+function renderQuestion() {
+  answered = false;
+  const q   = questions[currentQ];
+  const num = currentQ + 1;
+  const pct = Math.round((currentQ / questions.length) * 100);
+
+  document.getElementById('progress-text').textContent = `Pregunta ${num} de ${questions.length}`;
+  document.getElementById('progress-pct').textContent  = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  document.getElementById('q-number').textContent = `📌 Pregunta ${num}`;
+  document.getElementById('q-tipo').textContent   = q.tipo;
+  document.getElementById('q-text').innerHTML     = q.text.replace(/\n/g, '<br>');
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const ol = document.getElementById('options-list');
+  ol.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const li = document.createElement('li');
+    li.className = 'option-item';
+    li.innerHTML = `
+      <span class="option-letter">${letters[i]}</span>
+      <span class="option-text">${opt}</span>`;
+    li.addEventListener('click', () => selectOption(i, li));
+    ol.appendChild(li);
+  });
+
+  const fb = document.getElementById('feedback-box');
+  fb.style.display = 'none';
+  fb.className = 'feedback-box';
+
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+// ──────────────────────────────────────────────
+// SELECCIONAR OPCIÓN
+// ──────────────────────────────────────────────
+function selectOption(index, el) {
+  if (answered) return;
+  answered = true;
+
+  const q       = questions[currentQ];
+  const items   = document.querySelectorAll('.option-item');
+  const correct = q.correct;
+
+  items.forEach(item => item.classList.add('disabled'));
+
+  const fb = document.getElementById('feedback-box');
+
+  if (index === correct) {
+    el.classList.add('correct');
+    score++;
+    fb.className = 'feedback-box correct';
+    fb.innerHTML = `<span class="feedback-icon">✅</span><strong>¡Muy bien!</strong> Tu respuesta es correcta. ${q.feedback}`;
+  } else {
+    el.classList.add('incorrect');
+    items[correct].classList.add('correct');
+    fb.className = 'feedback-box incorrect';
+    fb.innerHTML = `<span class="feedback-icon">❌</span><strong>Respuesta incorrecta.</strong> ${q.feedback}`;
+  }
+
+  fb.style.display = 'block';
+
+  const btnNext = document.getElementById('btn-next');
+  btnNext.style.display = 'block';
+  if (currentQ === questions.length - 1) {
+    btnNext.textContent = '📊 Ver resultados';
+  } else {
+    btnNext.textContent = 'Siguiente pregunta →';
+  }
+}
+
+// ──────────────────────────────────────────────
+// SIGUIENTE PREGUNTA
+// ──────────────────────────────────────────────
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResults();
+  } else {
+    showScreen('screen-question');
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// ──────────────────────────────────────────────
+// RESULTADOS
+// ──────────────────────────────────────────────
+function showResults() {
+  const total     = questions.length;
+  const incorrect = total - score;
+  const pct       = Math.round((score / total) * 100);
+
+  document.getElementById('results-name').textContent = '🎓 ' + studentName;
+  document.getElementById('res-total').textContent    = total;
+  document.getElementById('res-correct').textContent  = score;
+  document.getElementById('res-incorrect').textContent= incorrect;
+  document.getElementById('score-pct').textContent    = pct + '%';
+
+  // Círculo de progreso
+  const circle = document.getElementById('score-circle');
+  circle.style.setProperty('--pct', pct + '%');
+
+  // Mensaje motivador
+  let icon, msg;
+  if      (pct >= 90) { icon='🏆'; msg='¡Excelente resultado! Demuestras un dominio sobresaliente del Programa Sintético de la Fase 3. ¡Sigue adelante!'; }
+  else if (pct >= 70) { icon='⭐'; msg='¡Buen trabajo! Tienes un sólido conocimiento del programa. Repasa los temas en los que tuviste dificultad para alcanzar la excelencia.'; }
+  else if (pct >= 50) { icon='💪'; msg='Vas por buen camino. Sigue practicando para fortalecer tus conocimientos del Programa Sintético de la Fase 3.'; }
+  else                { icon='📚'; msg='No te desanimes. Revisa nuevamente los contenidos del Programa Sintético de la Fase 3 y vuelve a intentarlo. ¡Tú puedes!'; }
+
+  document.getElementById('results-icon').textContent = icon;
+  document.getElementById('mot-icon').textContent     = icon;
+  document.getElementById('mot-text').textContent     = msg;
+
+  showScreen('screen-results');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ──────────────────────────────────────────────
+// REINICIAR
+// ──────────────────────────────────────────────
+function restartSame() {
+  currentQ = 0;
+  score    = 0;
+  showScreen('screen-question');
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartNew() {
+  currentQ    = 0;
+  score       = 0;
+  studentName = '';
+  document.getElementById('student-name').value = '';
+  showScreen('screen-start');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

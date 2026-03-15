@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artículo 4° CPEUM - Derechos Fundamentales</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #4A90E2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.8rem;
+            color: #4A90E2;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            color: #4A90E2;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #FFD700;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            color: #5DADE2;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .profesor-header {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            font-size: 1rem;
+            color: #4A90E2;
+            z-index: 1000;
+        }
+
+        .professor-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .professor-box h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .author-box {
+            background: linear-gradient(135deg, #87CEEB 0%, #4A90E2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #555;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 5px solid #4A90E2;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #4A90E2;
+            transition: transform 0.3s ease;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+        }
+
+        .highlight {
+            background: #E3F2FD;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #5DADE2;
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        button {
+            background: #4A90E2;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #357ABD;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(53, 122, 189, 0.4);
+        }
+
+        .counter {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #4A90E2;
+            z-index: 1000;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .derecho-box {
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .derecho-box h3 {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .derecho-box p {
+            color: white;
+        }
+
+        strong {
+            color: #4A90E2;
+        }
+
+        .portada {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .portada h1 {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .portada .icon {
+            font-size: 5rem;
+        }
+
+        .constitucion-box {
+            background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);
+            color: #333;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .parrafo-numero {
+            background: white;
+            color: #4A90E2;
+            padding: 0.5rem 1rem;
+            border-radius: 50%;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+
+        .conexion-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+        }
+
+        .conexion-box h3 {
+            color: white;
+        }
+
+        .conexion-box p, .conexion-box ul {
+            color: white;
+        }
+
+        .conexion-box li {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .profesor-header {
+                font-size: 0.8rem;
+                padding: 0.8rem 1rem;
+                left: 1rem;
+                top: 1rem;
+            }
+
+            .counter {
+                right: 1rem;
+                top: 1rem;
+                font-size: 1rem;
+                padding: 0.8rem 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .portada h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profesor-header">👨‍🏫 Profesor Francisco De Jesus Luna Benitez</div>
+    <div class="counter" id="counter">1 / 10</div>
+
+    <div class="container">
+        <!-- SLIDE 1: PORTADA -->
+        <div class="slide active" id="slide1">
+            <div class="portada">
+                <div class="icon">⚖️</div>
+                <h1>ARTÍCULO 4° CONSTITUCIONAL</h1>
+                <div class="subtitle">Derechos Fundamentales - Párrafos 8, 9 y 10</div>
+                <div class="constitucion-box">
+                    📜 Constitución Política de los Estados Unidos Mexicanos
+                </div>
+                <div class="professor-box" style="margin-top: 2rem;">
+                    <h3>Derechos Humanos Fundamentales</h3>
+                    <p style="color: white; font-size: 1.2rem;">Agua • Vivienda • Identidad</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: CONTEXTO CONSTITUCIONAL -->
+        <div class="slide" id="slide2">
+            <h2>El Artículo 4° Constitucional</h2>
+            
+            <div class="highlight">
+                <div class="icon">📖</div>
+                <h3>¿Qué es el Artículo 4°?</h3>
+                <p>Es uno de los artículos fundamentales de la Constitución que <strong>garantiza diversos derechos humanos</strong> esenciales para todas las personas en México.</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">👥</div>
+                    <h3>Para Quiénes</h3>
+                    <p>Toda persona en territorio mexicano, sin distinción alguna</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🛡️</div>
+                    <h3>Protección Constitucional</h3>
+                    <p>Derechos garantizados por la Carta Magna del país</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">⚖️</div>
+                    <h3>Carácter Obligatorio</h3>
+                    <p>El Estado debe garantizar su cumplimiento</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Enfoque de esta Presentación</h3>
+                <p>Nos enfocaremos en tres derechos fundamentales establecidos en los párrafos <strong>8, 9 y 10</strong> del Artículo 4°, y su relación con los derechos de niñas, niños y adolescentes.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: PÁRRAFO 8 - DERECHO AL AGUA -->
+        <div class="slide" id="slide3">
+            <h2>Párrafo 8: Derecho al Agua</h2>
+            
+            <div class="derecho-box">
+                <div class="icon">💧</div>
+                <h3><span class="parrafo-numero">8</span>Derecho al Acceso al Agua</h3>
+                <p style="font-size: 1.1rem; margin-top: 1rem;">"Toda persona tiene derecho al acceso, disposición y saneamiento de agua para consumo personal y doméstico en forma suficiente, salubre, aceptable y asequible."</p>
+            </div>
+
+            <h3>Características del Derecho al Agua:</h3>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">✅</div>
+                    <h3>Suficiente</h3>
+                    <p>Cantidad adecuada para satisfacer necesidades básicas</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🏥</div>
+                    <h3>Salubre</h3>
+                    <p>Agua limpia, libre de contaminantes y enfermedades</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">👍</div>
+                    <h3>Aceptable</h3>
+                    <p>Con color, olor y sabor apropiados</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">💰</div>
+                    <h3>Asequible</h3>
+                    <p>Accesible económicamente para todas las personas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: OBLIGACIONES DEL ESTADO - AGUA -->
+        <div class="slide" id="slide4">
+            <h2>Obligaciones del Estado sobre el Agua</h2>
+            
+            <div class="highlight">
+                <p style="text-align: center;"><strong>El Estado garantizará este derecho</strong> y la ley definirá las bases, apoyos y modalidades para el acceso y uso equitativo y sustentable de los recursos hídricos.</p>
+            </div>
+
+            <div class="card">
+                <h3>🏛️ Participación de Autoridades</h3>
+                <ul>
+                    <li><strong>Federación:</strong> Normatividad nacional y gestión de recursos</li>
+                    <li><strong>Entidades Federativas:</strong> Implementación estatal</li>
+                    <li><strong>Municipios:</strong> Distribución y servicios locales</li>
+                    <li><strong>Ciudadanía:</strong> Participación en la consecución de estos fines</li>
+                </ul>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">♻️</div>
+                    <h3>Uso Sustentable</h3>
+                    <p>Gestión responsable de recursos hídricos para generaciones futuras</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">⚖️</div>
+                    <h3>Acceso Equitativo</h3>
+                    <p>Distribución justa del agua para toda la población</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: PÁRRAFO 9 - DERECHO A LA VIVIENDA -->
+        <div class="slide" id="slide5">
+            <h2>Párrafo 9: Derecho a la Vivienda</h2>
+            
+            <div class="derecho-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="icon">🏠</div>
+                <h3><span class="parrafo-numero">9</span>Derecho a la Vivienda Adecuada</h3>
+                <p style="font-size: 1.1rem; margin-top: 1rem;">"Toda persona tiene derecho a disfrutar de vivienda adecuada. La Ley establecerá los instrumentos y apoyos necesarios a fin de alcanzar tal objetivo."</p>
+            </div>
+
+            <h3>¿Qué implica una Vivienda Adecuada?</h3>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">🛡️</div>
+                    <h3>Seguridad</h3>
+                    <p>Protección física contra elementos naturales y condiciones estructuralmente seguras</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">💡</div>
+                    <h3>Servicios Básicos</h3>
+                    <p>Acceso a agua potable, electricidad, drenaje y otros servicios esenciales</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">📏</div>
+                    <h3>Espacio Suficiente</h3>
+                    <p>Espacio apropiado para vivir dignamente según el tamaño de la familia</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🌍</div>
+                    <h3>Ubicación Apropiada</h3>
+                    <p>Acceso a servicios educativos, de salud, empleo y otros servicios sociales</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: PÁRRAFO 10 - DERECHO A LA IDENTIDAD -->
+        <div class="slide" id="slide6">
+            <h2>Párrafo 10: Derecho a la Identidad</h2>
+            
+            <div class="derecho-box" style="background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%); color: #333;">
+                <div class="icon">👶</div>
+                <h3 style="color: #333;"><span class="parrafo-numero">10</span>Derecho a la Identidad y Registro</h3>
+                <p style="font-size: 1.1rem; margin-top: 1rem; color: #333;">"Toda persona tiene derecho a la identidad y a ser registrado de manera inmediata a su nacimiento. El Estado garantizará el cumplimiento de estos derechos."</p>
+            </div>
+
+            <div class="highlight">
+                <h3>Gratuidad del Registro</h3>
+                <p>La autoridad competente expedirá <strong>gratuitamente</strong> la primera copia certificada del acta de registro de nacimiento.</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">📄</div>
+                    <h3>Identidad Legal</h3>
+                    <p>Nombre, apellidos, nacionalidad y otros datos que identifican a la persona</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">⏰</div>
+                    <h3>Registro Inmediato</h3>
+                    <p>Debe realizarse al momento del nacimiento, sin demoras</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🆓</div>
+                    <h3>Sin Costo</h3>
+                    <p>Primera acta de nacimiento completamente gratuita</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🎯</div>
+                    <h3>Acceso a Derechos</h3>
+                    <p>Base para ejercer otros derechos fundamentales</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: IMPORTANCIA DE LA IDENTIDAD -->
+        <div class="slide" id="slide7">
+            <h2>Importancia del Derecho a la Identidad</h2>
+            
+            <div class="highlight">
+                <div class="icon">🔑</div>
+                <h3>La Identidad: Llave de Acceso a Derechos</h3>
+                <p>El derecho a la identidad es <strong>fundamental</strong> porque permite el acceso a todos los demás derechos humanos y servicios públicos.</p>
+            </div>
+
+            <h3>Con Identidad Legal, las personas pueden:</h3>
+
+            <div class="card">
+                <ul>
+                    <li><strong>Acceder a servicios de salud</strong> - Atención médica y seguridad social</li>
+                    <li><strong>Inscribirse en escuelas</strong> - Ejercer el derecho a la educación</li>
+                    <li><strong>Obtener documentos oficiales</strong> - Pasaporte, credencial, etc.</li>
+                    <li><strong>Heredar bienes</strong> - Derechos de sucesión</li>
+                    <li><strong>Votar</strong> - Participar en la vida democrática del país</li>
+                    <li><strong>Trabajar formalmente</strong> - Acceso al empleo digno</li>
+                    <li><strong>Abrir cuentas bancarias</strong> - Servicios financieros</li>
+                </ul>
+            </div>
+
+            <div class="box" style="margin-top: 1.5rem;">
+                <div class="icon">⚠️</div>
+                <h3>Sin Identidad Legal</h3>
+                <p>Las personas quedan en <strong>situación de invisibilidad jurídica</strong>, sin acceso a derechos básicos y servicios esenciales, vulnerables a la explotación y discriminación.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: CONEXIÓN CON EL ACUERDO 14/12/23 -->
+        <div class="slide" id="slide8">
+            <h2>Conexión con el Acuerdo 14/12/23</h2>
+            
+            <div class="conexion-box">
+                <div class="icon">🔗</div>
+                <h3>Interés Superior de la Niñez</h3>
+                <p>Tanto el Artículo 4° como el Acuerdo 14/12/23 se fundamentan en el <strong>principio del interés superior de la niñez</strong>, que debe guiar todas las decisiones y políticas públicas.</p>
+            </div>
+
+            <div class="highlight">
+                <h3>Derechos Fundamentales de NNA en Artículo 4°</h3>
+                <p>"Los niños y las niñas tienen derecho a la satisfacción de sus necesidades de <strong>alimentación, salud, educación y sano esparcimiento</strong> para su desarrollo integral."</p>
+            </div>
+
+            <div class="card">
+                <h3>Principios Compartidos:</h3>
+                <ul>
+                    <li>✅ Interés superior de la niñez</li>
+                    <li>✅ No discriminación</li>
+                    <li>✅ Derecho a la dignidad</li>
+                    <li>✅ Protección integral</li>
+                    <li>✅ Participación de NNA</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: DERECHOS INTERCONECTADOS -->
+        <div class="slide" id="slide9">
+            <h2>Derechos Interconectados para NNA</h2>
+            
+            <div class="highlight">
+                <p style="text-align: center;">Los derechos al <strong>agua, vivienda e identidad</strong> son esenciales para garantizar una <strong>educación libre de violencia</strong> y un desarrollo integral de niñas, niños y adolescentes.</p>
+            </div>
+
+            <div class="grid">
+                <div class="derecho-box">
+                    <div class="icon">💧</div>
+                    <h3>Agua + Educación</h3>
+                    <p>Escuelas con agua potable y saneamiento adecuado son fundamentales para la salud y dignidad de los estudiantes</p>
+                </div>
+                
+                <div class="derecho-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="icon">🏠</div>
+                    <h3>Vivienda + Desarrollo</h3>
+                    <p>Vivienda adecuada proporciona espacio para estudiar, descansar y desarrollarse integralmente</p>
+                </div>
+                
+                <div class="derecho-box" style="background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%); color: #333;">
+                    <div class="icon">📄</div>
+                    <h3 style="color: #333;">Identidad + Acceso</h3>
+                    <p style="color: #333;">El registro de nacimiento permite el acceso a la educación y a todos los servicios de protección</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Acuerdo 14/12/23: Ambiente Escolar Seguro</h3>
+                <p>Para prevenir y erradicar el acoso escolar, se necesita garantizar condiciones básicas de dignidad: agua, infraestructura adecuada y reconocimiento legal de todos los estudiantes.</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: CONCLUSIÓN -->
+        <div class="slide" id="slide10">
+            <h2>Responsabilidad Compartida</h2>
+            
+            <div class="highlight">
+                <div class="icon">🤝</div>
+                <h3>Obligaciones de Ascendientes y Tutores</h3>
+                <p>El Artículo 4° establece: "Los ascendientes, tutores y custodios tienen la obligación de <strong>preservar y exigir el cumplimiento</strong> de estos derechos y principios."</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">👨‍👩‍👧‍👦</div>
+                    <h3>Familias</h3>
+                    <p>Garantizar agua, vivienda digna e identidad legal de NNA</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🏛️</div>
+                    <h3>Estado</h3>
+                    <p>Crear políticas públicas y garantizar el acceso universal a estos derechos</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🏫</div>
+                    <h3>Escuelas</h3>
+                    <p>Ambientes seguros con servicios básicos y sin discriminación</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">👥</div>
+                    <h3>Sociedad</h3>
+                    <p>Vigilar y exigir el cumplimiento de estos derechos fundamentales</p>
+                </div>
+            </div>
+
+            <div class="author-box" style="margin-top: 2rem;">
+                <div class="icon">✨</div>
+                <h3>Derechos Fundamentales + Educación Libre de Violencia</h3>
+                <p style="color: white; margin-top: 1rem;">Artículo 4° CPEUM + Acuerdo 14/12/23</p>
+                <p style="color: white; font-size: 1rem; margin-top: 0.5rem;">Por el desarrollo integral de niñas, niños y adolescentes</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevSlide()">← Anterior</button>
+        <button onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 10;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => slide.classList.remove('active'));
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            else if (n < 1) currentSlide = 1;
+            else currentSlide = n;
+
+            document.getElementById('slide' + currentSlide).classList.add('active');
+            document.getElementById('counter').textContent = currentSlide + ' / ' + totalSlides;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(1);
+    </script>
+</body>
+</html>

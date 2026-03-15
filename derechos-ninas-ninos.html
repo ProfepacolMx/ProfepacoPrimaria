@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20 Derechos Humanos de Niñas, Niños y Adolescentes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #FF6EC7 0%, #FF1493 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.8rem;
+            color: #FF1493;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            color: #FF1493;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #FFD700;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            color: #FF6EC7;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .professor-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .professor-box h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .author-box {
+            background: linear-gradient(135deg, #FF6EC7 0%, #FF1493 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #555;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 5px solid #FF1493;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #FF1493;
+            transition: transform 0.3s ease;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+        }
+
+        .highlight {
+            background: #FFE4F0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #FF6EC7;
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        button {
+            background: #FF1493;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #C71585;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(199, 21, 133, 0.4);
+        }
+
+        .counter {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #FF1493;
+            z-index: 1000;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .derecho-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .derecho-box h3 {
+            color: white;
+        }
+
+        .derecho-box p {
+            color: white;
+        }
+
+        .derecho-box ul {
+            color: white;
+        }
+
+        .derecho-box li {
+            color: white;
+        }
+
+        .numero-derecho {
+            display: inline-block;
+            background: #FFD700;
+            color: #333;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 50px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-right: 1rem;
+            font-family: 'Merriweather', serif;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .intro-box h3 {
+            color: white;
+        }
+
+        .intro-box p {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .slide {
+                padding: 2rem;
+            }
+            
+            .controls {
+                bottom: 1rem;
+                right: 1rem;
+            }
+            
+            button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .numero-derecho {
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="counter" id="counter">1 / 15</div>
+
+    <div class="container">
+        <!-- SLIDE 1: PORTADA -->
+        <div class="slide active" id="slide1">
+            <div class="professor-box">
+                <h3>👨‍🏫 Profesor: Francisco De Jesus Luna Benitez</h3>
+            </div>
+
+            <h1>20 Derechos Humanos de Niñas, Niños y Adolescentes</h1>
+            <div class="subtitle">Sistema Nacional de Protección Integral de Niñas, Niños y Adolescentes (SIPINNA)</div>
+            
+            <div class="author-box">
+                <div class="icon">🎓</div>
+                <h3>¡Te invitamos a conocerlos!</h3>
+                <p style="color: white; margin-top: 1rem;">Ley General de los Derechos de Niñas, Niños y Adolescentes</p>
+                <p style="color: white; font-size: 1rem; margin-top: 0.5rem;"></p>
+            </div>
+
+            <div class="highlight" style="margin-top: 2rem;">
+                <p><strong>Niñas y niños:</strong> Menores de 12 años</p>
+                <p><strong>Adolescentes:</strong> Personas de entre 12 años cumplidos y menos de 18 años de edad</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: INTRODUCCIÓN -->
+        <div class="slide" id="slide2">
+            <h2>Fundamento Legal</h2>
+            
+            <div class="intro-box">
+                <h3>Los Derechos Humanos de niñas, niños y adolescentes están previstos en:</h3>
+                <ul>
+                    <li><strong>Constitución Política de los Estados Unidos Mexicanos</strong></li>
+                    <li><strong>Tratados Internacionales</strong></li>
+                    <li><strong>Convención sobre los Derechos del Niño</strong></li>
+                    <li><strong>Ley General de los Derechos de Niñas, Niños y Adolescentes</strong> (Art. 13)</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <h3>Reconocimiento</h3>
+                <p>La ley reconoce a niñas, niños y adolescentes como <strong>titulares de derechos</strong> de manera enunciativa y no limitativa.</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">👶</div>
+                    <h3>Niñas y Niños</h3>
+                    <p>Menores de 12 años</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">👧👦</div>
+                    <h3>Adolescentes</h3>
+                    <p>Entre 12 y menos de 18 años</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: DERECHOS 1 Y 2 -->
+        <div class="slide" id="slide3">
+            <h2>Derechos 1 y 2</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">1</span>Derecho a la Vida, Supervivencia y Desarrollo</h3>
+                <p>Tienen derecho a que se proteja su vida, su supervivencia, su dignidad y a que se garantice su desarrollo integral. <strong>No pueden ser privados de la vida bajo ninguna circunstancia.</strong></p>
+                <ul>
+                    <li>Disfrutar de una vida plena en condiciones acordes a su dignidad</li>
+                    <li>No ser utilizados en conflictos armados o violentos</li>
+                    <li>Las autoridades deben prevenir conductas que atenten contra su supervivencia</li>
+                </ul>
+            </div>
+
+            <div class="derecho-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <h3><span class="numero-derecho">2</span>Derecho de Prioridad</h3>
+                <p>Tienen derecho a que se les atienda de manera prioritaria:</p>
+                <ul>
+                    <li>Protección y socorro en cualquier circunstancia</li>
+                    <li>Atención antes que a las personas adultas en todos los servicios</li>
+                    <li>Ser considerados en el diseño y ejecución de políticas públicas</li>
+                </ul>
+                <p style="margin-top: 1rem;"><strong>Interés Superior de la Niñez:</strong> Se tomará siempre como consideración primordial (Art. 4° Constitución).</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: DERECHOS 3 Y 4 -->
+        <div class="slide" id="slide4">
+            <h2>Derechos 3 y 4</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">3</span>Derecho a la Identidad</h3>
+                <p>Niñas, niños y adolescentes deben contar con:</p>
+                <ul>
+                    <li>Nombre y apellidos</li>
+                    <li>Inscripción en el registro civil de forma inmediata y gratuita</li>
+                    <li>Primera copia certificada del acta de nacimiento sin costo</li>
+                    <li>Nacionalidad</li>
+                    <li>Conocer su origen para preservar su identidad y relaciones familiares</li>
+                </ul>
+                <p style="margin-top: 1rem;"><strong>Importante:</strong> La falta de documentación NUNCA será obstáculo para garantizar sus derechos.</p>
+            </div>
+
+            <div class="derecho-box" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <h3><span class="numero-derecho">4</span>Derecho a Vivir en Familia</h3>
+                <p>Tienen derecho a vivir en una familia y no podrán ser separados de ella por falta de recursos.</p>
+                <ul>
+                    <li>Convivir con madre y padre en ambiente libre de violencia</li>
+                    <li>Solo pueden ser separados por orden de autoridad competente</li>
+                    <li>La institucionalización será el último recurso</li>
+                    <li>Derecho a convivir con familias incluso si están privados de libertad</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: DERECHOS 5 Y 6 -->
+        <div class="slide" id="slide5">
+            <h2>Derechos 5 y 6</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">5</span>Derecho a la Igualdad Sustantiva</h3>
+                <p>Tienen derecho a que se les proporcione un mismo trato y a la igualdad de oportunidades.</p>
+                <ul>
+                    <li>Acciones afirmativas para eliminar obstáculos de acceso a educación, alimentación y salud</li>
+                    <li>Eliminación de costumbres, tradiciones y estereotipos sexistas</li>
+                    <li>Igualdad sustantiva para las niñas y adolescentes</li>
+                </ul>
+            </div>
+
+            <div class="derecho-box" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <h3><span class="numero-derecho">6</span>Derecho a No Ser Discriminado</h3>
+                <p>Tienen derecho a no ser sujetos de discriminación alguna.</p>
+                <p>No se les puede limitar o restringir sus derechos en razón de:</p>
+                <ul>
+                    <li>Origen étnico, nacional o social</li>
+                    <li>Idioma, edad, género o preferencia sexual</li>
+                    <li>Religión, opinión o condición económica</li>
+                    <li>Discapacidad o estado de salud</li>
+                    <li>O cualquier otra condición</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: DERECHOS 7 Y 8 -->
+        <div class="slide" id="slide6">
+            <h2>Derechos 7 y 8</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">7</span>Derecho a Vivir en Condiciones de Bienestar</h3>
+                <p>Tienen derecho a vivir en un medio ambiente sano y sustentable que permita su desarrollo, bienestar y crecimiento armonioso (físico, mental, material, espiritual, ético, cultural y social).</p>
+                <ul>
+                    <li>Quienes ejerzan la patria potestad deben proporcionar condiciones de vida suficientes</li>
+                    <li>Edad mínima para contraer matrimonio: 18 años</li>
+                </ul>
+            </div>
+
+            <div class="derecho-box" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                <h3><span class="numero-derecho">8</span>Derecho a una Vida Libre de Violencia</h3>
+                <p>Tienen derecho a vivir una vida libre de toda forma de violencia y a que se resguarde su integridad personal.</p>
+                <p><strong>Las autoridades deben prevenir, atender y sancionar:</strong></p>
+                <ul>
+                    <li>Descuido, negligencia y abandono</li>
+                    <li>Abuso físico, psicológico o sexual</li>
+                    <li>Trata de personas y explotación sexual infantil</li>
+                    <li>Trabajo antes de los 15 años</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: DERECHOS 9 Y 10 -->
+        <div class="slide" id="slide7">
+            <h2>Derechos 9 y 10</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">9</span>Derecho a la Protección de la Salud</h3>
+                <p>Tienen derecho al más alto nivel posible de salud y a recibir servicios de atención médica <strong>gratuita y de calidad</strong>.</p>
+                <p><strong>Las autoridades se coordinarán para:</strong></p>
+                <ul>
+                    <li>Reducir la morbilidad y mortalidad</li>
+                    <li>Combatir desnutrición, sobrepeso y obesidad</li>
+                    <li>Promover alimentación equilibrada y ejercicio físico</li>
+                    <li>Fomentar programas de vacunación</li>
+                    <li>Control periódico de crecimiento y desarrollo</li>
+                </ul>
+            </div>
+
+            <div class="derecho-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                <h3><span class="numero-derecho">10</span>Derecho a la Inclusión (Niñas, Niños y Adolescentes con Discapacidad)</h3>
+                <p>Deben ejercer plenamente todos sus derechos considerando sus propias necesidades.</p>
+                <ul>
+                    <li>Facilitar intérprete o medios tecnológicos para obtener información comprensible</li>
+                    <li>Diseño universal de accesibilidad</li>
+                    <li>No se puede negar su inclusión en educación o actividades recreativas</li>
+                    <li>Acciones interdisciplinarias para diagnóstico y rehabilitación</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: DERECHO 11 -->
+        <div class="slide" id="slide8">
+            <h2>Derecho 11: Educación</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">11</span>Derecho a la Educación</h3>
+                <p>Tienen derecho a una educación de calidad que contribuya al conocimiento de sus propios derechos.</p>
+            </div>
+
+            <div class="card">
+                <h3>Características de la Educación</h3>
+                <ul>
+                    <li>Basada en enfoque de derechos humanos</li>
+                    <li>Atiende necesidades específicas de cada NNA</li>
+                    <li>Garantiza respeto a su dignidad humana</li>
+                    <li>Desarrollo armónico de potencialidades y personalidad</li>
+                    <li>Fortalece derechos humanos y libertades fundamentales</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <h3>Obligaciones de las Autoridades</h3>
+                <ul>
+                    <li>Proporcionar atención educativa para su pleno desarrollo</li>
+                    <li>Garantizar gratuidad de la educación pública obligatoria</li>
+                    <li>Fortalecer calidad educativa</li>
+                    <li>Adaptar el sistema a las condiciones de cada estudiante</li>
+                    <li>Fomentar convivencia escolar armónica</li>
+                    <li>Prevenir y atender casos de violencia en centros educativos</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: DERECHOS 12 Y 13 -->
+        <div class="slide" id="slide9">
+            <h2>Derechos 12 y 13</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">12</span>Derecho al Descanso y al Esparcimiento</h3>
+                <p>Tienen derecho al descanso, esparcimiento, juego y actividades recreativas propias de su edad.</p>
+                <ul>
+                    <li>Participar libremente en actividades culturales, deportivas y artísticas</li>
+                    <li>Padres o tutores no pueden imponerles regímenes desproporcionados</li>
+                    <li>Las autoridades deben garantizar estos derechos</li>
+                    <li>Fomentar oportunidades en condiciones de igualdad</li>
+                </ul>
+            </div>
+
+            <div class="derecho-box" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                <h3><span class="numero-derecho">13</span>Derecho a la Libertad de Convicciones</h3>
+                <p>Tienen derecho a disfrutar libremente su cultura, lengua, usos, costumbres, prácticas culturales, religión y todos los elementos que constituyan su identidad cultural.</p>
+                <ul>
+                    <li>No pueden ser discriminados por ejercer su libertad de convicciones</li>
+                    <li>Marco del estado laico</li>
+                    <li>Protección de derechos y libertades fundamentales</li>
+                    <li>Promoción de la diversidad cultural</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: DERECHOS 14 Y 15 -->
+        <div class="slide" id="slide10">
+            <h2>Derechos 14 y 15</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">14</span>Derecho a la Libertad de Expresión</h3>
+                <p>Tienen derecho a expresar libremente su opinión, así como buscar, recibir y difundir información e ideas de todo tipo.</p>
+                <ul>
+                    <li>Implica el derecho a que se tome en cuenta su opinión</li>
+                    <li>En poblaciones indígenas: información en lengua local</li>
+                    <li>NNA con discapacidad: sistemas de apoyo para expresarse</li>
+                    <li>Clasificación de contenidos en medios de comunicación</li>
+                </ul>
+            </div>
+
+            <div class="derecho-box" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%);">
+                <h3><span class="numero-derecho">15</span>Derecho de Participación</h3>
+                <p>Tienen derecho a ser escuchados y tomados en cuenta en los asuntos de su interés, conforme a su edad y madurez.</p>
+                <ul>
+                    <li>Las autoridades deben garantizar su participación permanente</li>
+                    <li>En decisiones de los ámbitos: familiar, escolar, social y comunitario</li>
+                    <li>En procesos judiciales y de procuración de justicia</li>
+                    <li>Derecho a que les informen cómo su opinión fue valorada</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: DERECHOS 16 Y 17 -->
+        <div class="slide" id="slide11">
+            <h2>Derechos 16 y 17</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">16</span>Derecho de Asociación y Reunión</h3>
+                <p>Niños, niñas y adolescentes tienen derecho a asociarse y reunirse, sin más limitaciones que las establecidas en la Constitución.</p>
+                <ul>
+                    <li>Quienes ejerzan la patria potestad los representarán cuando sea necesario</li>
+                    <li>Pueden formar organizaciones y grupos</li>
+                    <li>Libertad de reunión pacífica</li>
+                </ul>
+            </div>
+
+            <div class="derecho-box" style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);">
+                <h3><span class="numero-derecho">17</span>Derecho a la Intimidad</h3>
+                <p>Niñas, niños y adolescentes tienen derecho a la intimidad personal y familiar, así como a la protección de sus datos personales.</p>
+                <ul>
+                    <li>No pueden ser objeto de injerencias arbitrarias en su vida privada</li>
+                    <li>Protección de imagen, nombre y datos personales</li>
+                    <li>Se considera violación: cualquier manejo directo de su imagen en medios</li>
+                    <li>Se requiere consentimiento escrito de quienes ejerzan la patria potestad</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: DERECHOS 18 Y 19 -->
+        <div class="slide" id="slide12">
+            <h2>Derechos 18 y 19</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">18</span>Derecho a la Seguridad Jurídica</h3>
+                <p>Las autoridades que aprueben procedimientos donde estén relacionados NNA estarán obligadas a:</p>
+                <ul>
+                    <li>Garantizar la protección y prevalencia del interés superior de la niñez</li>
+                    <li>Garantizar el ejercicio de sus derechos</li>
+                    <li>Proporcionar información clara y comprensible</li>
+                    <li>Garantizar su derecho a ser representados</li>
+                    <li>Proporcionar asistencia de profesionales especializados</li>
+                    <li>Proporcionar traductor o intérprete si se requiere</li>
+                </ul>
+            </div>
+
+            <div class="derecho-box" style="background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);">
+                <h3><span class="numero-derecho">19</span>Derechos de Niñas, Niños y Adolescentes Migrantes</h3>
+                <p>Garantizar los derechos de NNA migrantes, acompañados, no acompañados, separados, nacionales, extranjeros y repatriados, <strong>independientemente de su nacionalidad o situación migratoria.</strong></p>
+                <ul>
+                    <li>Puede prevalecer la unidad o reunificación familiar</li>
+                    <li>Espacios de alojamiento o albergues apropiados</li>
+                    <li>Prohibido devolver, expulsar o deportar cuando su vida esté en peligro</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: DERECHO 20 -->
+        <div class="slide" id="slide13">
+            <h2>Derecho 20: Acceso a las TIC's</h2>
+            
+            <div class="derecho-box">
+                <h3><span class="numero-derecho">20</span>Derecho de Acceso a las Tecnologías de la Información</h3>
+                <p>Tienen derecho de acceso a las tecnologías de la información y comunicación, así como a los servicios de radiodifusión, telecomunicaciones, banda ancha e Internet.</p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">🌐</div>
+                    <h3>Derecho de Acceso</h3>
+                    <p>Las TIC's deben estar disponibles gratuitamente o a bajo costo en comunidad, escuela y lugares públicos, con capacitación para su uso.</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🛡️</div>
+                    <h3>Derecho a la Protección</h3>
+                    <p>Vigilancia para evitar acoso, intimidación, engaño, robo de información y contenidos violentos o inadecuados.</p>
+                </div>
+            </div>
+
+            <div class="highlight">
+                <h3>Obligaciones de las Autoridades</h3>
+                <ul>
+                    <li>Establecer mecanismos para fomentar el uso responsable y seguro</li>
+                    <li>Facilitar intérprete o medios tecnológicos para NNA con discapacidad</li>
+                    <li>Garantizar acceso equitativo a las tecnologías</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: RESUMEN DE DERECHOS -->
+        <div class="slide" id="slide14">
+            <h2>Los 20 Derechos - Resumen</h2>
+            
+            <div class="grid">
+                <div class="box">
+                    <p><strong>1.</strong> Vida, supervivencia y desarrollo</p>
+                </div>
+                <div class="box">
+                    <p><strong>2.</strong> Prioridad</p>
+                </div>
+                <div class="box">
+                    <p><strong>3.</strong> Identidad</p>
+                </div>
+                <div class="box">
+                    <p><strong>4.</strong> Vivir en familia</p>
+                </div>
+                <div class="box">
+                    <p><strong>5.</strong> Igualdad sustantiva</p>
+                </div>
+                <div class="box">
+                    <p><strong>6.</strong> No discriminación</p>
+                </div>
+                <div class="box">
+                    <p><strong>7.</strong> Condiciones de bienestar</p>
+                </div>
+                <div class="box">
+                    <p><strong>8.</strong> Vida libre de violencia</p>
+                </div>
+                <div class="box">
+                    <p><strong>9.</strong> Protección de la salud</p>
+                </div>
+                <div class="box">
+                    <p><strong>10.</strong> Inclusión con discapacidad</p>
+                </div>
+                <div class="box">
+                    <p><strong>11.</strong> Educación</p>
+                </div>
+                <div class="box">
+                    <p><strong>12.</strong> Descanso y esparcimiento</p>
+                </div>
+                <div class="box">
+                    <p><strong>13.</strong> Libertad de convicciones</p>
+                </div>
+                <div class="box">
+                    <p><strong>14.</strong> Libertad de expresión</p>
+                </div>
+                <div class="box">
+                    <p><strong>15.</strong> Participación</p>
+                </div>
+                <div class="box">
+                    <p><strong>16.</strong> Asociación y reunión</p>
+                </div>
+                <div class="box">
+                    <p><strong>17.</strong> Intimidad</p>
+                </div>
+                <div class="box">
+                    <p><strong>18.</strong> Seguridad jurídica</p>
+                </div>
+                <div class="box">
+                    <p><strong>19.</strong> Derechos migrantes</p>
+                </div>
+                <div class="box">
+                    <p><strong>20.</strong> Acceso a TIC's</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 15: CONCLUSIÓN -->
+        <div class="slide" id="slide15">
+            <h2>Compromiso de Todos</h2>
+            
+            <div class="highlight">
+                <h3>Responsabilidad Compartida</h3>
+                <p>Las autoridades federales, de las entidades federativas, municipales y de las demarcaciones territoriales, en el ámbito de sus respectivas competencias, adoptarán las medidas necesarias para <strong>garantizar estos derechos a todas las niñas, niños y adolescentes sin discriminación de ningún tipo o condición.</strong></p>
+            </div>
+
+            <div class="grid">
+                <div class="box">
+                    <div class="icon">👨‍👩‍👧‍👦</div>
+                    <h3>Familias</h3>
+                    <p>Responsables del cuidado y protección</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🏛️</div>
+                    <h3>Autoridades</h3>
+                    <p>Garantizar el ejercicio de derechos</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🏫</div>
+                    <h3>Instituciones</h3>
+                    <p>Crear espacios seguros e inclusivos</p>
+                </div>
+                
+                <div class="box">
+                    <div class="icon">🌍</div>
+                    <h3>Sociedad</h3>
+                    <p>Promover y respetar sus derechos</p>
+                </div>
+            </div>
+
+            <div class="author-box" style="margin-top: 2rem;">
+                <div class="icon">✨</div>
+                <h3>Protección Integral de la Niñez y Adolescencia</h3>
+                <p style="color: white; margin-top: 1rem;">SIPINNA - Sistema Nacional de Protección Integral</p>
+                <p style="color: white; font-size: 1rem; margin-top: 0.5rem;">Por el derecho de todas y todos a crecer con dignidad</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="prevSlide()">← Anterior</button>
+        <button onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 15;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => slide.classList.remove('active'));
+
+            if (n > totalSlides) currentSlide = totalSlides;
+            else if (n < 1) currentSlide = 1;
+            else currentSlide = n;
+
+            document.getElementById('slide' + currentSlide).classList.add('active');
+            document.getElementById('counter').textContent = currentSlide + ' / ' + totalSlides;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        showSlide(1);
+    </script>
+</body>
+</html>

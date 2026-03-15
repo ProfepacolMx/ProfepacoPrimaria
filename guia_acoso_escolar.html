@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Protocolo de Atención al Acoso Escolar</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap');
+
+:root {
+  --navy:   #1a2d4f;
+  --navy2:  #243660;
+  --navy3:  #162240;
+  --orange: #e07b10;
+  --orange2:#f5a030;
+  --orange3:#fdebd0;
+  --green:  #4a7c59;
+  --green2: #5e9e70;
+  --green3: #dff0e5;
+  --teal:   #2e7d7a;
+  --red:    #c0392b;
+  --red2:   #fde8e6;
+  --slate:  #5a6e8a;
+  --cream:  #f8f5ef;
+  --white:  #ffffff;
+  --gray1:  #f0f2f6;
+  --gray2:  #dde2ec;
+  --gray3:  #8c97b0;
+  --dark:   #1a2336;
+  --r:      16px;
+  --sh:     0 4px 20px rgba(0,0,0,.10);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  font-family: 'Lexend', sans-serif;
+  background: var(--gray1); color: var(--dark);
+  font-size: 16px;
+}
+
+/* ══ APP SHELL ══ */
+#app { width:100%; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ══ TOPBAR ══ */
+#topbar {
+  flex-shrink:0; height:52px;
+  background: var(--navy3);
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0 1.1rem;
+  box-shadow: 0 3px 14px rgba(0,0,0,.35);
+  z-index:200;
+}
+.tb-brand { display:flex; align-items:center; gap:.5rem; }
+.tb-ico { font-size:1.2rem; }
+.tb-name { font-size:.95rem; font-weight:800; color:#fff; letter-spacing:.2px; }
+.tb-tag {
+  background:rgba(224,123,16,.22); border:1.5px solid var(--orange2);
+  border-radius:20px; padding:.18rem .7rem;
+  font-size:.65rem; font-weight:700; color:var(--orange2); letter-spacing:.6px;
+  display:none;
+}
+@media(min-width:480px){ .tb-tag { display:block; } }
+.tb-prog { display:flex; align-items:center; gap:.45rem; }
+.tb-num { font-size:.75rem; color:rgba(255,255,255,.6); }
+.pbar { width:88px; height:5px; background:rgba(255,255,255,.18); border-radius:3px; overflow:hidden; }
+.pfill { height:100%; background:var(--orange2); border-radius:3px; transition:width .4s ease; }
+
+/* ══ STAGE ══ */
+#stage { flex:1; overflow:hidden; position:relative; }
+
+.sc {
+  position:absolute; inset:0; display:none;
+  flex-direction:column; overflow:hidden;
+  opacity:0; transform:translateX(40px);
+  transition:opacity .32s ease, transform .32s ease;
+}
+.sc.active { display:flex; opacity:1; transform:translateX(0); }
+.sc.exit   { display:flex; opacity:0; transform:translateX(-40px); }
+
+/* ══ SCREEN HEADER ══ */
+.sch {
+  flex-shrink:0; background:var(--white);
+  border-bottom: 3px solid var(--gray2);
+  padding: .7rem 1.1rem .55rem;
+}
+.sch-row { display:flex; align-items:center; gap:.55rem; }
+.sch-ico { font-size:1.6rem; flex-shrink:0; }
+.sch-text {}
+.sch-title {
+  font-size:1.05rem; font-weight:800; color:var(--navy);
+  line-height:1.2;
+}
+.sch-sub { font-size:.75rem; color:var(--gray3); margin-top:2px; }
+
+/* ══ BODY ══ */
+.scb {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  padding:.85rem 1rem 1rem;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin; scrollbar-color:var(--gray2) transparent;
+}
+.scb::-webkit-scrollbar { width:4px; }
+.scb::-webkit-scrollbar-thumb { background:var(--gray2); border-radius:2px; }
+
+/* ══ BOTTOM NAV ══ */
+#botnav {
+  flex-shrink:0; height:58px;
+  background:var(--white); border-top:1px solid var(--gray2);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 1rem;
+  box-shadow:0 -3px 14px rgba(0,0,0,.07);
+  z-index:200;
+}
+.nbtn { padding:.48rem 1.1rem; border:none; border-radius:30px; cursor:pointer;
+        font-family:'Lexend',sans-serif; font-weight:700; font-size:.82rem;
+        transition:all .2s; }
+.nbtn:active { transform:scale(.96); }
+.nbtn.prev { background:var(--gray2); color:var(--dark); }
+.nbtn.next { background:var(--navy); color:#fff; box-shadow:0 3px 12px rgba(26,45,79,.35); }
+.nbtn:disabled { opacity:.3; cursor:not-allowed; }
+.ndots { display:flex; gap:5px; align-items:center; }
+.ndot { width:8px; height:8px; border-radius:50%; background:var(--gray2); cursor:pointer; transition:all .2s; }
+.ndot.on { background:var(--orange); transform:scale(1.35); }
+
+/* ══ FOOTER ══ */
+#foot {
+  flex-shrink:0; background:var(--navy3); color:rgba(255,255,255,.45);
+  font-size:.62rem; text-align:center; padding:.3rem .5rem; letter-spacing:.3px;
+}
+
+/* ══════════════════════════════
+   PORTADA
+══════════════════════════════ */
+#s0 { background:linear-gradient(140deg, var(--navy3) 0%, #1d3460 60%, #163050 100%); }
+.cover {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:1.5rem 1.2rem; text-align:center; gap:.7rem;
+}
+.cv-badge {
+  background:rgba(224,123,16,.2); border:1.5px solid var(--orange2);
+  border-radius:30px; padding:.3rem 1rem;
+  font-size:.7rem; font-weight:700; letter-spacing:1.2px;
+  color:var(--orange2); text-transform:uppercase;
+}
+.cv-icon { font-size:4rem; filter:drop-shadow(0 4px 18px rgba(0,0,0,.45)); }
+.cv-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,5.5vw,2.5rem); font-weight:900;
+  color:#fff; line-height:1.15;
+}
+.cv-title span { color:var(--orange2); }
+.cv-sub { font-size:.88rem; color:rgba(255,255,255,.65); max-width:360px; line-height:1.6; }
+.cv-timeline {
+  display:flex; align-items:center; gap:0;
+  background:rgba(255,255,255,.1); border-radius:30px;
+  padding:.45rem .8rem; flex-wrap:wrap; justify-content:center; gap:.3rem;
+}
+.cvt-step {
+  display:flex; align-items:center; gap:.3rem;
+  font-size:.72rem; font-weight:700; color:rgba(255,255,255,.9);
+}
+.cvt-step .num {
+  width:22px; height:22px; border-radius:50%;
+  background:var(--orange); color:var(--navy3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.68rem; font-weight:800; flex-shrink:0;
+}
+.cvt-arr { color:rgba(255,255,255,.4); font-size:.9rem; margin:0 .15rem; }
+.cv-author {
+  background:rgba(74,124,89,.25); border:1.5px solid var(--green2);
+  border-radius:12px; padding:.5rem 1.1rem;
+  font-size:.78rem; color:#7fd8a0; font-weight:700;
+}
+.cv-btn {
+  background:var(--orange); color:var(--navy3);
+  border:none; border-radius:30px; padding:.7rem 2.2rem;
+  font-family:'Lexend',sans-serif; font-weight:800; font-size:.95rem;
+  cursor:pointer; box-shadow:0 5px 22px rgba(224,123,16,.45);
+  transition:transform .15s, box-shadow .15s;
+}
+.cv-btn:hover { transform:translateY(-2px); box-shadow:0 7px 28px rgba(224,123,16,.55); }
+
+/* ══════════════════════════════
+   GENERIC COMPONENTS
+══════════════════════════════ */
+.lbl {
+  display:block; font-size:.68rem; font-weight:800; letter-spacing:1.5px;
+  text-transform:uppercase; margin-bottom:.5rem;
+}
+.lbl.navy   { color:var(--navy); }
+.lbl.orange { color:var(--orange); }
+.lbl.green  { color:var(--green); }
+.lbl.red    { color:var(--red); }
+.lbl.teal   { color:var(--teal); }
+
+/* timeline strip */
+.ts {
+  display:flex; gap:0; margin-bottom:.75rem;
+  background:var(--white); border-radius:12px;
+  overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+.ts-item {
+  flex:1; padding:.45rem .4rem; text-align:center;
+  font-size:.66rem; font-weight:700; color:var(--gray3);
+  border-right:1px solid var(--gray2); transition:all .2s;
+}
+.ts-item:last-child { border-right:none; }
+.ts-item.a { background:var(--orange); color:#fff; }
+.ts-item.b { background:var(--navy2); color:#fff; }
+.ts-item.c { background:var(--teal); color:#fff; }
+.ts-item.d { background:var(--green); color:#fff; }
+.ts-item .tsn { font-size:.6rem; display:block; opacity:.8; }
+
+/* card */
+.card {
+  background:var(--white); border-radius:var(--r);
+  padding:1rem 1.1rem; margin-bottom:.7rem;
+  box-shadow:var(--sh);
+  border-left:5px solid var(--navy);
+}
+.card.orange { border-left-color:var(--orange); }
+.card.green  { border-left-color:var(--green); }
+.card.teal   { border-left-color:var(--teal); }
+.card.red    { border-left-color:var(--red); }
+.card.gold   { border-left-color:#c8971a; }
+.card h3 { font-size:.95rem; font-weight:800; color:var(--dark); margin-bottom:.4rem; line-height:1.25; }
+.card p  { font-size:.82rem; color:#555; line-height:1.6; }
+.card ul { padding-left:1.2rem; }
+.card li { font-size:.8rem; color:#555; margin-bottom:.32rem; line-height:1.5; }
+
+/* highlight box */
+.hl {
+  border-radius:14px; padding:.85rem 1rem; margin-bottom:.7rem; border:2px solid;
+}
+.hl.navy-hl  { background:linear-gradient(135deg,#e8edf7,#d4dced); border-color:#9aaad4; }
+.hl.orange-hl{ background:linear-gradient(135deg,#fef3e2,#fde8c0); border-color:var(--orange2); }
+.hl.green-hl { background:linear-gradient(135deg,#e0f2e5,#cce9d4); border-color:var(--green2); }
+.hl.red-hl   { background:linear-gradient(135deg,#fde8e6,#facfc9); border-color:#e08880; }
+.hl.teal-hl  { background:linear-gradient(135deg,#e0f0ef,#cce5e3); border-color:var(--teal); }
+.hl h4 { font-size:.9rem; font-weight:800; display:flex; align-items:center; gap:.4rem; margin-bottom:.4rem; line-height:1.2; }
+.hl.navy-hl h4  { color:var(--navy); }
+.hl.orange-hl h4{ color:#7a4900; }
+.hl.green-hl h4 { color:var(--green); }
+.hl.red-hl h4   { color:var(--red); }
+.hl.teal-hl h4  { color:var(--teal); }
+.hl p, .hl li { font-size:.8rem; color:#444; line-height:1.6; }
+.hl ul { padding-left:1.2rem; }
+.hl li { margin-bottom:.28rem; }
+
+/* grid */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; margin-bottom:.7rem; }
+.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.55rem; margin-bottom:.7rem; }
+
+/* mini card */
+.mc {
+  background:var(--white); border-radius:14px; padding:.8rem .75rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.08); text-align:center;
+}
+.mc .ico { font-size:1.7rem; margin-bottom:.25rem; }
+.mc .name { font-size:.78rem; font-weight:800; color:var(--dark); }
+.mc .desc { font-size:.68rem; color:var(--gray3); margin-top:.2rem; line-height:1.35; }
+
+/* tipo acoso cards */
+.tipo {
+  border-radius:14px; padding:.85rem .9rem; color:#fff;
+  box-shadow:0 3px 14px rgba(0,0,0,.15); margin-bottom:.65rem;
+}
+.tipo.t1 { background:linear-gradient(135deg,#c8971a,#e0b020); }
+.tipo.t2 { background:linear-gradient(135deg,var(--green),#3d6b4c); }
+.tipo.t3 { background:linear-gradient(135deg,var(--navy),var(--navy2)); }
+.tipo.t4 { background:linear-gradient(135deg,var(--red),#a32b20); }
+.tipo h3 { font-size:.95rem; font-weight:800; margin-bottom:.4rem; display:flex; align-items:center; gap:.4rem; }
+.tipo .sub { font-size:.74rem; font-weight:700; opacity:.85; margin-bottom:.3rem; }
+.tipo ul  { padding-left:1.1rem; }
+.tipo li  { font-size:.76rem; opacity:.9; margin-bottom:.22rem; line-height:1.45; }
+
+/* accordion */
+.acc { margin-bottom:.5rem; }
+.ah {
+  background:var(--white); border:1.5px solid var(--gray2);
+  border-radius:12px; padding:.7rem .95rem;
+  display:flex; justify-content:space-between; align-items:center;
+  cursor:pointer; font-size:.85rem; font-weight:700; color:var(--dark);
+  transition:background .2s; margin-bottom:2px;
+}
+.ah:hover { background:#f0f3f9; }
+.ah.open { background:#e8edf7; color:var(--navy); border-color:#9aaad4; border-radius:12px 12px 0 0; }
+.aarr { transition:transform .25s; font-size:.9rem; }
+.ah.open .aarr { transform:rotate(180deg); }
+.ab {
+  max-height:0; overflow:hidden;
+  border:1.5px solid #9aaad4; border-top:none;
+  border-radius:0 0 12px 12px; background:#f5f7fc;
+  transition:max-height .3s ease; margin-bottom:3px;
+}
+.ab.open { max-height:600px; }
+.ab-in { padding:.75rem .95rem; font-size:.8rem; color:#444; line-height:1.6; }
+.ab-in ul { padding-left:1.1rem; }
+.ab-in li { margin-bottom:.3rem; }
+.ab-in strong { color:var(--navy); }
+
+/* ruta columns */
+.ruta-wrap { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; margin-bottom:.7rem; }
+.ruta-col { background:var(--white); border-radius:var(--r); overflow:hidden; box-shadow:var(--sh); }
+.ruta-head { padding:.6rem .85rem; font-size:.82rem; font-weight:800; color:#fff; }
+.ruta-head.navy   { background:var(--navy2); }
+.ruta-head.orange { background:var(--orange); }
+.ruta-step {
+  padding:.55rem .85rem; font-size:.76rem; color:#444; line-height:1.5;
+  border-bottom:1px solid var(--gray2); display:flex; gap:.4rem; align-items:flex-start;
+}
+.ruta-step:last-child { border-bottom:none; }
+.rn { font-weight:800; color:var(--navy); flex-shrink:0; font-size:.78rem; }
+
+/* roles table */
+.roles-wrap { background:var(--white); border-radius:var(--r); overflow:hidden; box-shadow:var(--sh); margin-bottom:.7rem; }
+.roles-head { display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; background:var(--navy2); }
+.rh { padding:.45rem .5rem; font-size:.64rem; font-weight:800; color:#fff; text-align:center; border-right:1px solid rgba(255,255,255,.15); }
+.rh:last-child { border-right:none; }
+.roles-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; border-bottom:1px solid var(--gray2); }
+.roles-row:last-child { border-bottom:none; }
+.rc { padding:.45rem .5rem; font-size:.68rem; color:#444; text-align:center; border-right:1px solid var(--gray2); display:flex; align-items:center; justify-content:center; line-height:1.35; }
+.rc:first-child { font-weight:800; color:var(--navy); font-size:.72rem; }
+.rc:last-child { border-right:none; }
+.dot-o { color:var(--orange); font-size:1rem; }
+
+/* colegiado engranajes */
+.colegiado-grid { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.7rem; }
+.cog {
+  background:var(--white); border-radius:var(--r); padding:.85rem .9rem;
+  box-shadow:var(--sh); border-top:4px solid var(--navy);
+}
+.cog:nth-child(2) { border-top-color:var(--green); }
+.cog:nth-child(3) { border-top-color:var(--orange); }
+.cog:nth-child(4) { border-top-color:var(--teal); }
+.cog h4 { font-size:.84rem; font-weight:800; color:var(--dark); margin-bottom:.35rem; display:flex; gap:.35rem; align-items:center; }
+.cog p  { font-size:.76rem; color:#555; line-height:1.55; }
+
+/* indicadores list */
+.ind-grid { display:flex; flex-direction:column; gap:.4rem; margin-bottom:.7rem; }
+.ind-item {
+  background:var(--white); border-radius:10px; padding:.6rem .9rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.07); display:flex; gap:.6rem; align-items:flex-start;
+  font-size:.82rem; color:#444; line-height:1.5;
+}
+.ind-item .ii { font-size:1rem; flex-shrink:0; margin-top:1px; }
+
+/* quiz */
+.qprog { font-size:.75rem; color:var(--gray3); text-align:right; margin-bottom:.6rem; }
+.qcard {
+  background:var(--white); border-radius:var(--r);
+  padding:1rem 1.1rem; box-shadow:var(--sh); margin-bottom:.7rem;
+}
+.qtext { font-size:.9rem; font-weight:700; color:var(--dark); margin-bottom:.8rem; line-height:1.5; }
+.opts { display:flex; flex-direction:column; gap:.45rem; }
+.opt {
+  padding:.6rem .9rem; border:2px solid var(--gray2);
+  border-radius:12px; background:var(--white);
+  font-family:'Lexend',sans-serif; font-size:.8rem; font-weight:600; color:var(--dark);
+  cursor:pointer; text-align:left; transition:all .18s; line-height:1.4;
+}
+.opt:hover:not(:disabled) { border-color:var(--navy2); background:#f0f3f9; }
+.opt.ok   { background:#d4f7e5; border-color:var(--green2); color:var(--green); }
+.opt.fail { background:#fde8e6; border-color:#e08880; color:var(--red); }
+.opt:disabled { cursor:default; }
+.qfb {
+  font-size:.8rem; font-weight:700; border-radius:10px;
+  padding:.5rem .85rem; margin-top:.45rem; display:none; line-height:1.45;
+}
+.qfb.show { display:block; }
+.qfb.ok   { background:#d4f7e5; color:var(--green); }
+.qfb.fail { background:#fde8e6; color:var(--red); }
+.qnext {
+  margin-top:.6rem; padding:.5rem 1.5rem; background:var(--navy); color:#fff;
+  border:none; border-radius:30px; font-family:'Lexend',sans-serif;
+  font-size:.82rem; font-weight:700; cursor:pointer; display:none;
+  box-shadow:0 3px 10px rgba(26,45,79,.3);
+}
+.qnext.show { display:inline-block; }
+.score-box {
+  background:linear-gradient(135deg,var(--navy3),#1d3460);
+  border-radius:var(--r); padding:1.4rem 1.1rem; text-align:center; color:#fff;
+}
+.snum { font-size:3rem; font-weight:900; color:var(--orange2); line-height:1; }
+.slbl { font-size:.88rem; margin-top:.25rem; }
+.smsg { font-size:.8rem; opacity:.8; margin-top:.4rem; line-height:1.45; }
+.retry {
+  margin-top:.85rem; padding:.52rem 1.6rem;
+  background:var(--orange); color:var(--navy3);
+  border:none; border-radius:30px; font-family:'Lexend',sans-serif;
+  font-weight:800; font-size:.85rem; cursor:pointer;
+}
+
+/* summary */
+.sum-grid { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.7rem; }
+.si {
+  background:var(--white); border-radius:14px; padding:.8rem .9rem;
+  box-shadow:var(--sh);
+}
+.si .si-h {
+  font-size:.75rem; font-weight:800; color:#fff;
+  border-radius:8px; padding:.22rem .6rem; margin-bottom:.4rem; display:inline-block;
+}
+.sh1 { background:var(--orange); }
+.sh2 { background:var(--navy2); }
+.sh3 { background:var(--teal); }
+.sh4 { background:var(--green); }
+.si ul { padding-left:1.1rem; }
+.si li { font-size:.74rem; color:#555; margin-bottom:.25rem; line-height:1.45; }
+
+.key-box {
+  background:var(--navy3); border-radius:var(--r); padding:1rem 1.1rem;
+  margin-bottom:.7rem;
+}
+.key-box h4 { font-size:.9rem; font-weight:800; color:var(--orange2); margin-bottom:.55rem; }
+.key-row {
+  display:flex; gap:.55rem; align-items:flex-start;
+  padding:.4rem 0; border-bottom:1px solid rgba(255,255,255,.1);
+  font-size:.78rem; color:rgba(255,255,255,.8); line-height:1.5;
+}
+.key-row:last-child { border-bottom:none; }
+.key-row strong { color:var(--orange2); flex-shrink:0; }
+
+.final-q {
+  background:linear-gradient(135deg,var(--navy3),#1d3460);
+  border-radius:var(--r); padding:1.1rem;
+  font-family:'Playfair Display',serif; font-size:.92rem; font-style:italic;
+  color:#fff; text-align:center; line-height:1.6; margin-bottom:.7rem;
+}
+.final-q span { color:var(--orange2); font-style:normal; font-weight:700; }
+
+/* responsive */
+@media(max-width:400px) {
+  .g2,.g3,.ruta-wrap,.sum-grid,.colegiado-grid { grid-template-columns:1fr; }
+  .roles-head, .roles-row { grid-template-columns:1fr 1fr 1fr; }
+  .rh:nth-child(n+4), .rc:nth-child(n+4) { display:none; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-brand">
+    <span class="tb-ico">🛡️</span>
+    <span class="tb-name">Protocolo Acoso Escolar</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:.6rem;">
+    <span class="tb-tag">RED DE SEGURIDAD</span>
+    <div class="tb-prog">
+      <span class="tb-num" id="plabel">1/10</span>
+      <div class="pbar"><div class="pfill" id="pfill" style="width:10%"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STAGE -->
+<div id="stage">
+
+  <!-- ══ S0 PORTADA ══ -->
+  <div class="sc active" id="s0">
+    <div class="cover">
+      <div class="cv-badge">🏫 Guía de Acción y Estudio Integral</div>
+      <div class="cv-icon">🛡️</div>
+      <div class="cv-title">Protocolo de<br><span>Atención al</span><br>Acoso Escolar</div>
+      <div class="cv-sub">Comunidades educativas seguras para todos. Aprende a detectar, notificar, intervenir y dar seguimiento.</div>
+      <div class="cv-timeline">
+        <span class="cvt-step"><span class="num">1</span>Detección</span>
+        <span class="cvt-arr">›</span>
+        <span class="cvt-step"><span class="num">2</span>Notificación</span>
+        <span class="cvt-arr">›</span>
+        <span class="cvt-step"><span class="num">3</span>Intervención</span>
+        <span class="cvt-arr">›</span>
+        <span class="cvt-step"><span class="num">4</span>Seguimiento</span>
+      </div>
+      <div class="cv-author">✏️ Prof. Francisco De Jesús Luna Benitez</div>
+      <button class="cv-btn" onclick="goTo(1)">Comenzar Estudio →</button>
+    </div>
+  </div>
+
+  <!-- ══ S1 EJE RECTOR ══ -->
+  <div class="sc" id="s1">
+    <div class="sch">
+      <div class="sch-row">
+        <span class="sch-ico">⚖️</span>
+        <div class="sch-text">
+          <div class="sch-title">El Eje Rector del Protocolo</div>
+          <div class="sch-sub">Principios innegociables que guían cada momento</div>
+        </div>
+      </div>
+    </div>
+    <div class="scb">
+
+      <div class="ts">
+        <div class="ts-item a"><span class="tsn">1.</span>Detección</div>
+        <div class="ts-item b"><span class="tsn">2.</span>Notificación</div>
+        <div class="ts-item c"><span class="tsn">3.</span>Intervención</div>
+        <div class="ts-item d"><span class="tsn">4.</span>Seguimiento</div>
+      </div>
+
+      <div class="hl navy-hl">
+        <h4>🧭 El Eje Rector — ¿Qué es?</h4>
+        <p>Toda atención, en sus <strong>cuatro momentos</strong>, está subordinada a dos principios innegociables que ninguna figura educativa puede omitir o ignorar bajo ninguna circunstancia:</p>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <h3>👧 Principio 1</h3>
+          <p>El <strong>interés superior de la niñez</strong>.<br>La protección del menor es siempre la primera prioridad en cada decisión.</p>
+        </div>
+        <div class="card teal">
+          <h3>🤝 Principio 2</h3>
+          <p>El <strong>respeto a la dignidad y los derechos humanos</strong> de todos los involucrados, incluyendo al agresor.</p>
+        </div>
+      </div>
+
+      <div class="hl orange-hl">
+        <h4>⚡ Responsabilidad Compartida</h4>
+        <p>El <strong>colegiado</strong> es el encargado de ejecutar los procedimientos, pero <strong>todas las figuras educativas deben participar</strong> ante la ausencia de la autoridad. Nadie puede evadir su responsabilidad.</p>
+      </div>
+
+      <div class="card orange">
+        <h3>🗓️ Los 4 Momentos del Protocolo</h3>
+        <ul>
+          <li><strong>Detección:</strong> Identificar indicadores de acoso en el estudiante.</li>
+          <li><strong>Notificación:</strong> Comunicar formalmente el caso y documentar.</li>
+          <li><strong>Intervención:</strong> Acciones inmediatas para detener el acoso.</li>
+          <li><strong>Seguimiento:</strong> Monitoreo continuo hasta restaurar la convivencia.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ S2 DETECCIÓN: INDICADORES ══ -->
+  <div class="sc" id="s2">
+    <div class="sch">
+      <div class="sch-row">
+        <span class="sch-ico">🔍</span>
+        <div class="sch-text">
+          <div class="sch-title">Momento 1 — Detección</div>
+          <div class="sch-sub">Los síntomas visibles que el docente debe conocer</div>
+        </div>
+      </div>
+    </div>
+    <div class="scb">
+
+      <div class="ts">
+        <div class="ts-item a"><span class="tsn">●</span>Detección</div>
+        <div class="ts-item"><span class="tsn">2.</span>Notificación</div>
+        <div class="ts-item"><span class="tsn">3.</span>Intervención</div>
+        <div class="ts-item"><span class="tsn">4.</span>Seguimiento</div>
+      </div>
+
+      <div class="hl orange-hl">
+        <h4>🧊 El Iceberg del Acoso</h4>
+        <p>Lo visible son los <strong>síntomas en el estudiante</strong>. Lo oculto son las <strong>causas específicas</strong> (tipo de acoso) que el personal debe investigar y documentar rigurosamente. No confundas el síntoma con el problema.</p>
+      </div>
+
+      <span class="lbl orange">Indicadores Generales — Síntomas Visibles</span>
+      <div class="ind-grid">
+        <div class="ind-item"><span class="ii">😨</span> Temor de ir al baño o negarse a asistir al plantel.</div>
+        <div class="ind-item"><span class="ii">🍽️</span> Cambios notorios en hábitos alimentarios.</div>
+        <div class="ind-item"><span class="ii">😢</span> Crisis de llanto sin explicación y sensibilidad extrema.</div>
+        <div class="ind-item"><span class="ii">🚽</span> Incontinencia urinaria.</div>
+        <div class="ind-item"><span class="ii">🏃</span> Evasión de participación en juegos o actividades físicas.</div>
+        <div class="ind-item"><span class="ii">📉</span> Descenso significativo del rendimiento escolar.</div>
+        <div class="ind-item"><span class="ii">😶</span> Cambios bruscos de estado de ánimo o tendencia a aislarse.</div>
+      </div>
+
+      <div class="hl red-hl">
+        <h4>🔴 Causas Ocultas — Lo que hay que investigar</h4>
+        <p>Las problemáticas específicas subyacentes (acoso físico, verbal, ciberacoso o socioemocional) que el personal debe investigar y documentar rigurosamente antes de actuar.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ S3 TIPOS DE ACOSO ══ -->
+  <div class="sc" id="s3">
+    <div class="sch">
+      <div class="sch-row">
+        <span class="sch-ico">📋</span>
+        <div class="sch-text">
+          <div class="sch-title">Los 4 Tipos de Acoso Escolar</div>
+          <div class="sch-sub">Clasificación para una detección precisa</div>
+        </div>
+      </div>
+    </div>
+    <div class="scb">
+
+      <div class="ts">
+        <div class="ts-item a"><span class="tsn">●</span>Detección</div>
+        <div class="ts-item"><span class="tsn">2.</span>Notificación</div>
+        <div class="ts-item"><span class="tsn">3.</span>Intervención</div>
+        <div class="ts-item"><span class="tsn">4.</span>Seguimiento</div>
+      </div>
+
+      <div class="tipo t1">
+        <h3>🛡️ Acoso Físico</h3>
+        <div class="sub">Agresiones a la persona:</div>
+        <ul>
+          <li>Golpes, empujones, jalones, escupir, obligar a pelear.</li>
+        </ul>
+        <div class="sub" style="margin-top:.35rem">Deterioro patrimonial:</div>
+        <ul>
+          <li>Robar pertenencias/dinero, esconder útiles, destruir cosas, quitar refrigerio.</li>
+        </ul>
+      </div>
+
+      <div class="tipo t2">
+        <h3>💬 Acoso Verbal</h3>
+        <div class="sub">Agresiones y descalificaciones directas:</div>
+        <ul>
+          <li>Burlas, insultos, groserías.</li>
+          <li>Gritos y apodos denigrantes.</li>
+          <li>Retos a pelear.</li>
+        </ul>
+      </div>
+
+      <div class="tipo t3">
+        <h3>🔒 Ciberacoso</h3>
+        <div class="sub">Difusión sin consentimiento:</div>
+        <ul>
+          <li>Difusión de información/imágenes personales.</li>
+          <li>Mensajes hirientes y publicaciones ofensivas.</li>
+          <li>Robo de contraseñas y creación de perfiles falsos.</li>
+        </ul>
+      </div>
+
+      <div class="tipo t4">
+        <h3>💔 Acoso Socioemocional</h3>
+        <div class="sub">Lesión de la autoestima:</div>
+        <ul>
+          <li>Criticar, ignorar, discriminar.</li>
+          <li>Marginar de juegos, fiestas o equipos de trabajo.</li>
+          <li>Divulgar rumores y dejar de hablar.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ S4 NOTIFICACIÓN – PRIMEROS RESPONDIENTES ══ -->
+  <div class="sc" id="s4">
+    <div class="sch">
+      <div class="sch-row">
+        <span class="sch-ico">📢</span>
+        <div class="sch-text">
+          <div class="sch-title">Momento 2 — Notificación</div>
+          <div class="sch-sub">Acciones de atención inmediata: Primeros Respondientes</div>
+        </div>
+      </div>
+    </div>
+    <div class="scb">
+
+      <div class="ts">
+        <div class="ts-item"><span class="tsn">1.</span>Detección</div>
+        <div class="ts-item b"><span class="tsn">●</span>Notificación</div>
+        <div class="ts-item"><span class="tsn">3.</span>Intervención</div>
+        <div class="ts-item"><span class="tsn">4.</span>Seguimiento</div>
+      </div>
+
+      <div class="hl navy-hl">
+        <h4>🚨 Regla de Oro de la Notificación</h4>
+        <p>Ante cualquier caso de acoso: <strong>detener la agresión de inmediato</strong>, solicitar apoyo de emergencia si hay peligro de vida, iniciar investigación <strong>sin prejuzgar</strong> a ningún involucrado, y documentar todo por escrito.</p>
+      </div>
+
+      <span class="lbl navy">Tabla de Roles y Responsabilidades</span>
+      <div class="roles-wrap">
+        <div class="roles-head">
+          <div class="rh">Figura</div>
+          <div class="rh">Detener agresión</div>
+          <div class="rh">Apoyo emergencia</div>
+          <div class="rh">Investigar</div>
+          <div class="rh">Seguimiento</div>
+        </div>
+        <div class="roles-row">
+          <div class="rc">👩‍🏫 Docente</div>
+          <div class="rc"><span class="dot-o">●</span></div>
+          <div class="rc"><span class="dot-o">●</span></div>
+          <div class="rc"><span class="dot-o">●</span></div>
+          <div class="rc" style="color:var(--gray3); font-size:.72rem;">—</div>
+        </div>
+        <div class="roles-row">
+          <div class="rc">🏛️ Director / Subdirector</div>
+          <div class="rc"><span class="dot-o">●</span></div>
+          <div class="rc"><span class="dot-o">●</span></div>
+          <div class="rc"><span class="dot-o">●</span></div>
+          <div class="rc"><span class="dot-o">●</span></div>
+        </div>
+        <div class="roles-row">
+          <div class="rc">📋 Personal Adm. / Apoyo</div>
+          <div class="rc"><span class="dot-o">●</span></div>
+          <div class="rc"><span class="dot-o">●</span></div>
+          <div class="rc" style="color:var(--gray3); font-size:.72rem;">—</div>
+          <div class="rc" style="color:var(--gray3); font-size:.72rem;">—</div>
+        </div>
+      </div>
+
+      <div class="card orange">
+        <h3>📌 Nota Importante</h3>
+        <p>El <strong>Director/Subdirector</strong> es la única figura con responsabilidad en los 4 pasos. Tiene además la obligación de <strong>conformar el colegiado</strong> y dar seguimiento continuo a estudiantes y familias.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ S5 RUTA DE NOTIFICACIÓN ══ -->
+  <div class="sc" id="s5">
+    <div class="sch">
+      <div class="sch-row">
+        <span class="sch-ico">🗺️</span>
+        <div class="sch-text">
+          <div class="sch-title">Ruta de Notificación y Documentación</div>
+          <div class="sch-sub">¿Qué hace el Plantel y qué hace la Familia?</div>
+        </div>
+      </div>
+    </div>
+    <div class="scb">
+
+      <div class="ts">
+        <div class="ts-item"><span class="tsn">1.</span>Detección</div>
+        <div class="ts-item b"><span class="tsn">●</span>Notificación</div>
+        <div class="ts-item"><span class="tsn">3.</span>Intervención</div>
+        <div class="ts-item"><span class="tsn">4.</span>Seguimiento</div>
+      </div>
+
+      <div class="ruta-wrap">
+        <div class="ruta-col">
+          <div class="ruta-head navy">🏫 Plantel (Docente/Director)</div>
+          <div class="ruta-step"><span class="rn">1.</span>Informar a la autoridad inmediata o director <strong>por escrito</strong>.</div>
+          <div class="ruta-step"><span class="rn">2.</span>Citar y notificar a las familias. Explicar hechos y acuerdos con respeto irrestricto a los derechos de ambas partes.</div>
+          <div class="ruta-step"><span class="rn">3.</span>Documentar todo el proceso de incidencia y resolución rigurosamente.</div>
+          <div class="ruta-step"><span class="rn">4.</span>Recibir y documentar la evidencia entregada por las familias.</div>
+        </div>
+        <div class="ruta-col">
+          <div class="ruta-head orange">👨‍👩‍👧 Familia (Madre, padre o tutor)</div>
+          <div class="ruta-step"><span class="rn" style="color:var(--orange)">1.</span>Informar a las autoridades del plantel educativo ante la mínima sospecha.</div>
+          <div class="ruta-step"><span class="rn" style="color:var(--orange)">2.</span>Entregar evidencias de acoso escolar, en caso de contar con ellas.</div>
+          <div class="ruta-step"><span class="rn" style="color:var(--orange)">3.</span><strong>Escalamiento:</strong> En caso de inacción de las autoridades del plantel, reportar la situación a otras instancias.</div>
+        </div>
+      </div>
+
+      <div class="hl green-hl">
+        <h4>📂 La Documentación es Clave</h4>
+        <p>Todo proceso de atención que no esté documentado, legalmente <strong>no existe</strong>. La documentación protege a la víctima, al agresor, a la familia y a las figuras educativas. Es un mandato ético y legal.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ S6 INTERVENCIÓN + SEGUIMIENTO ══ -->
+  <div class="sc" id="s6">
+    <div class="sch">
+      <div class="sch-row">
+        <span class="sch-ico">⚙️</span>
+        <div class="sch-text">
+          <div class="sch-title">Momentos 3 y 4 — Intervención y Seguimiento</div>
+          <div class="sch-sub">El Colegiado: sistema de atención central</div>
+        </div>
+      </div>
+    </div>
+    <div class="scb">
+
+      <div class="ts">
+        <div class="ts-item"><span class="tsn">1.</span>Detección</div>
+        <div class="ts-item"><span class="tsn">2.</span>Notificación</div>
+        <div class="ts-item c"><span class="tsn">●</span>Intervención</div>
+        <div class="ts-item d"><span class="tsn">●</span>Seguimiento</div>
+      </div>
+
+      <div class="hl teal-hl">
+        <h4>⚙️ ¿Qué es el Colegiado?</h4>
+        <p>El <strong>colegiado es el ejecutor central</strong> de los procedimientos de atención. Es el equipo responsable de coordinar la intervención, supervisar el seguimiento y garantizar la restauración de la convivencia escolar.</p>
+      </div>
+
+      <span class="lbl teal">Las 4 Acciones del Colegiado</span>
+      <div class="colegiado-grid">
+        <div class="cog">
+          <h4>📁 Registro y Cumplimiento</h4>
+          <p>Verificar cumplimiento de acuerdos e integrar en el expediente los documentos de atención especializada.</p>
+        </div>
+        <div class="cog">
+          <h4>🕊️ Prácticas Restaurativas</h4>
+          <p>Implementar resolución pacífica de conflictos para recuperar la convivencia armónica entre todas las partes y la comunidad escolar.</p>
+        </div>
+        <div class="cog">
+          <h4>👨‍👩‍👧 Vínculo Familiar</h4>
+          <p>Mantener comunicación con madres y padres sobre medidas de crianza y el progreso al interior del centro educativo.</p>
+        </div>
+        <div class="cog">
+          <h4>📊 Control del Progreso</h4>
+          <p>Establecer seguimiento puntual tanto a la víctima como al estudiante que ejerció la conducta de acoso.</p>
+        </div>
+      </div>
+
+      <div class="acc">
+        <div class="ah" onclick="tacc(this)">❓ ¿Qué son las Prácticas Restaurativas? <span class="aarr">▼</span></div>
+        <div class="ab"><div class="ab-in"><p>Son estrategias de resolución pacífica de conflictos que buscan <strong>reparar el daño</strong> causado, restaurar las relaciones y reintegrar a todos los involucrados a la comunidad escolar de forma armónica. No se trata de castigo, sino de <strong>sanación y aprendizaje</strong>.</p></div></div>
+      </div>
+
+      <div class="acc">
+        <div class="ah" onclick="tacc(this)">❓ ¿Solo se le da seguimiento a la víctima? <span class="aarr">▼</span></div>
+        <div class="ab"><div class="ab-in"><p>No. El protocolo establece que el seguimiento debe hacerse tanto a la <strong>víctima</strong> como al <strong>estudiante que ejerció la conducta de acoso</strong>. Ambos necesitan apoyo, orientación y monitoreo para garantizar que la situación no se repita.</p></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ S7 ENFOQUE INTEGRAL ══ -->
+  <div class="sc" id="s7">
+    <div class="sch">
+      <div class="sch-row">
+        <span class="sch-ico">🌐</span>
+        <div class="sch-text">
+          <div class="sch-title">El Enfoque Integral — La Red de Seguridad</div>
+          <div class="sch-sub">De la detección temprana a la convivencia restaurada</div>
+        </div>
+      </div>
+    </div>
+    <div class="scb">
+
+      <div class="hl green-hl">
+        <h4>🕸️ ¿Qué es la Red de Seguridad?</h4>
+        <p>La protección integral <strong>no es una acción aislada</strong>: es una maquinaria sincronizada y documentada. Desde los indicadores silenciosos hasta la restauración, <strong>cada figura educativa es un nodo vital en la red</strong>.</p>
+      </div>
+
+      <div class="g3">
+        <div class="mc">
+          <div class="ico">🟡</div>
+          <div class="name">Detección Temprana</div>
+          <div class="desc">Identificar los primeros indicadores antes de que el daño escale.</div>
+        </div>
+        <div class="mc">
+          <div class="ico">🕸️</div>
+          <div class="name">Intervención Documentada</div>
+          <div class="desc">Plantel + Familia coordinados en un mismo proceso.</div>
+        </div>
+        <div class="mc">
+          <div class="ico">🟢</div>
+          <div class="name">Convivencia Restaurada</div>
+          <div class="desc">El objetivo final: comunidad escolar sana y segura.</div>
+        </div>
+      </div>
+
+      <span class="lbl green">Claves del Éxito según el Protocolo</span>
+      <div class="card green">
+        <h3>🚫 No prejuzgar</h3>
+        <p>Investigar antes de concluir. Ningún estudiante, ni la víctima ni el agresor, debe ser juzgado sin una investigación rigurosa y documentada.</p>
+      </div>
+      <div class="card teal">
+        <h3>⚡ Accionar de inmediato</h3>
+        <p>La demora en actuar amplifica el daño. El protocolo establece que la detención de la agresión debe ser <strong>inmediata</strong>. No esperar, no dudar.</p>
+      </div>
+      <div class="card orange">
+        <h3>🤝 Confiar en el Colegiado</h3>
+        <p>El colegiado es el sistema diseñado para reconstruir el tejido escolar. Su funcionamiento coordinado garantiza que el proceso sea justo, documentado y efectivo.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ S8 AUTOEVALUACIÓN ══ -->
+  <div class="sc" id="s8">
+    <div class="sch">
+      <div class="sch-row">
+        <span class="sch-ico">✏️</span>
+        <div class="sch-text">
+          <div class="sch-title">Autoevaluación</div>
+          <div class="sch-sub">Pon a prueba tu conocimiento del protocolo</div>
+        </div>
+      </div>
+    </div>
+    <div class="scb">
+      <div id="qwrap"></div>
+    </div>
+  </div>
+
+  <!-- ══ S9 RESUMEN FINAL ══ -->
+  <div class="sc" id="s9">
+    <div class="sch">
+      <div class="sch-row">
+        <span class="sch-ico">📋</span>
+        <div class="sch-text">
+          <div class="sch-title">Resumen Final y Síntesis</div>
+          <div class="sch-sub">Lo esencial del protocolo en una sola vista</div>
+        </div>
+      </div>
+    </div>
+    <div class="scb">
+
+      <div class="final-q">
+        "El éxito radica en <span>no prejuzgar</span>, accionar de inmediato,<br>y confiar en el Colegiado para reconstruir el tejido escolar."
+      </div>
+
+      <div class="sum-grid">
+        <div class="si">
+          <div class="si-h sh1">🔍 Detección</div>
+          <ul>
+            <li>7 indicadores visibles de alerta</li>
+            <li>4 tipos de acoso: Físico, Verbal, Ciberacoso, Socioemocional</li>
+            <li>Distinguir síntoma de causa</li>
+          </ul>
+        </div>
+        <div class="si">
+          <div class="si-h sh2">📢 Notificación</div>
+          <ul>
+            <li>Detener la agresión inmediatamente</li>
+            <li>Apoyo de emergencia si hay peligro</li>
+            <li>Investigar sin prejuzgar</li>
+            <li>Documentar todo por escrito</li>
+          </ul>
+        </div>
+        <div class="si">
+          <div class="si-h sh3">⚙️ Intervención</div>
+          <ul>
+            <li>Colegiado como ejecutor central</li>
+            <li>Ruta plantel + familia coordinada</li>
+            <li>Evidencias documentadas</li>
+            <li>Prácticas restaurativas</li>
+          </ul>
+        </div>
+        <div class="si">
+          <div class="si-h sh4">📊 Seguimiento</div>
+          <ul>
+            <li>Control del progreso: víctima y agresor</li>
+            <li>Vínculo familiar continuo</li>
+            <li>Registro y cumplimiento de acuerdos</li>
+            <li>Meta: convivencia armónica</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="key-box">
+        <h4>🔑 Puntos Clave para el Examen</h4>
+        <div class="key-row"><strong>Eje Rector:</strong> Interés superior de la niñez + Dignidad y Derechos Humanos.</div>
+        <div class="key-row"><strong>Tipos de acoso:</strong> Físico, Verbal, Ciberacoso y Socioemocional (4 tipos).</div>
+        <div class="key-row"><strong>Director:</strong> Única figura con responsabilidad en los 4 pasos del protocolo.</div>
+        <div class="key-row"><strong>Colegiado:</strong> Ejecutor central: Registro, Prácticas Restaurativas, Vínculo Familiar, Control del Progreso.</div>
+        <div class="key-row"><strong>Documentar:</strong> Lo que no está documentado legalmente no existe.</div>
+        <div class="key-row"><strong>Seguimiento:</strong> Se da a la víctima Y al estudiante agresor.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<!-- BOTTOM NAV -->
+<div id="botnav">
+  <button class="nbtn prev" id="btnP" onclick="nav(-1)" disabled>← Anterior</button>
+  <div class="ndots" id="ndots"></div>
+  <button class="nbtn next" id="btnN" onclick="nav(1)">Siguiente →</button>
+</div>
+
+<!-- FOOTER -->
+<div id="foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez &nbsp;|&nbsp; Protocolo de Atención al Acoso Escolar – Red de Seguridad Escolar</div>
+
+</div><!-- /app -->
+
+<script>
+/* ── STATE ── */
+const TOTAL = 10;
+let cur = 0;
+
+/* ── QUIZ DATA ── */
+const QS = [
+  {
+    q: "¿Cuáles son los dos principios innegociables del Eje Rector del protocolo?",
+    opts: [
+      "La autoridad del director y la participación de los padres.",
+      "El interés superior de la niñez y el respeto a la dignidad y los derechos humanos.",
+      "La documentación del proceso y la intervención inmediata.",
+      "La confidencialidad del caso y la sanción al agresor."
+    ],
+    ans: 1,
+    fb: "✅ Correcto. Todo el protocolo está subordinado a estos dos principios que no pueden ignorarse bajo ninguna circunstancia."
+  },
+  {
+    q: "Un estudiante muestra llanto sin explicación, descenso en su rendimiento y se niega a ir al baño. Según el protocolo, ¿qué representan estos señales?",
+    opts: [
+      "Son causas ocultas del acoso que ya fueron identificadas.",
+      "Son indicadores generales (síntomas visibles) que requieren investigación.",
+      "Son suficientes para clasificar el tipo de acoso y actuar.",
+      "Son señales de problemas familiares, no de acoso escolar."
+    ],
+    ans: 1,
+    fb: "✅ Correcto. Son síntomas visibles (la parte del iceberg sobre el agua). El tipo de acoso específico debe investigarse y documentarse."
+  },
+  {
+    q: "¿Qué tipo de acoso ocurre cuando un estudiante difunde imágenes personales sin consentimiento y roba contraseñas?",
+    opts: ["Acoso Físico", "Acoso Verbal", "Ciberacoso", "Acoso Socioemocional"],
+    ans: 2,
+    fb: "✅ Correcto. El Ciberacoso incluye difusión de información/imágenes personales, mensajes hirientes y robo de contraseñas."
+  },
+  {
+    q: "¿Cuál es la ÚNICA figura educativa que tiene responsabilidad en los 4 pasos de la tabla de primeros respondientes?",
+    opts: ["El Docente", "El Personal Administrativo", "El Director / Subdirector", "El Colegiado"],
+    ans: 2,
+    fb: "✅ Correcto. El Director/Subdirector tiene responsabilidad en: detener la agresión, solicitar apoyo de emergencia, investigar y dar seguimiento conformando el colegiado."
+  },
+  {
+    q: "¿Qué debe hacer la familia si las autoridades del plantel no actúan ante un caso de acoso?",
+    opts: [
+      "Esperar a que el colegiado se conforme.",
+      "Documentar el proceso por su cuenta.",
+      "Escalar la situación y reportarla a otras instancias.",
+      "Resolver el conflicto directamente con el agresor y su familia."
+    ],
+    ans: 2,
+    fb: "✅ Correcto. El protocolo establece que ante la inacción de las autoridades del plantel, la familia debe escalar el caso a otras instancias."
+  },
+  {
+    q: "El seguimiento del Colegiado incluye control del progreso. ¿A quién(es) debe monitorear el colegiado?",
+    opts: [
+      "Solo a la víctima.",
+      "Solo al estudiante agresor.",
+      "Tanto a la víctima como al estudiante que ejerció la conducta de acoso.",
+      "A los padres de familia de ambas partes."
+    ],
+    ans: 2,
+    fb: "✅ Correcto. El protocolo es claro: el seguimiento se da tanto a la víctima como al estudiante que ejerció la conducta de acoso. Ambos necesitan acompañamiento."
+  }
+];
+
+let qs = { idx:0, score:0 };
+
+function initQ() { qs={idx:0,score:0}; renderQ(); }
+
+function renderQ() {
+  const w = document.getElementById('qwrap');
+  const q = QS[qs.idx];
+  if(!q){ renderScore(); return; }
+  w.innerHTML = `
+    <div class="qprog">Pregunta ${qs.idx+1} de ${QS.length} &nbsp;|&nbsp; Aciertos: ${qs.score}</div>
+    <div class="qcard">
+      <div class="qtext">${qs.idx+1}. ${q.q}</div>
+      <div class="opts">${q.opts.map((o,i)=>`<button class="opt" onclick="ansQ(${i})">${o}</button>`).join('')}</div>
+      <div class="qfb" id="qfb"></div>
+      <button class="qnext" id="qnxt" onclick="nextQ()">Siguiente →</button>
+    </div>`;
+}
+
+function ansQ(i) {
+  const q = QS[qs.idx];
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  const bs = document.querySelectorAll('.opt');
+  const fb = document.getElementById('qfb');
+  if(i===q.ans){
+    bs[i].classList.add('ok'); qs.score++;
+    fb.textContent=q.fb; fb.className='qfb ok show';
+  } else {
+    bs[i].classList.add('fail'); bs[q.ans].classList.add('ok');
+    fb.textContent='❌ Incorrecto. '+q.fb; fb.className='qfb fail show';
+  }
+  document.getElementById('qnxt').classList.add('show');
+}
+
+function nextQ(){ qs.idx++; renderQ(); }
+
+function renderScore(){
+  const p = Math.round(qs.score/QS.length*100);
+  const m = p===100?'🏆 ¡Dominas el protocolo! Excelente.':
+            p>=80?'👏 ¡Muy bien! Repasa los detalles.':
+            p>=60?'📖 Buen intento. Revisa el material.':
+                  '💪 Necesitas repasar toda la guía.';
+  document.getElementById('qwrap').innerHTML=`
+    <div class="score-box">
+      <div class="snum">${qs.score}/${QS.length}</div>
+      <div class="slbl">Respuestas correctas</div>
+      <div class="smsg">${p}% de acierto — ${m}</div>
+      <button class="retry" onclick="initQ()">🔄 Intentar de nuevo</button>
+    </div>`;
+}
+
+/* ── NAVIGATION ── */
+function goTo(n){
+  if(n<0||n>=TOTAL) return;
+  const prev=document.getElementById('s'+cur);
+  prev.classList.add('exit');
+  setTimeout(()=>{ prev.classList.remove('active','exit'); },340);
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  updateUI();
+  if(cur===8) initQ();
+}
+function nav(d){ goTo(cur+d); }
+
+function updateUI(){
+  document.getElementById('btnP').disabled=cur===0;
+  document.getElementById('btnN').disabled=cur===TOTAL-1;
+  document.getElementById('plabel').textContent=(cur+1)+'/'+TOTAL;
+  document.getElementById('pfill').style.width=((cur+1)/TOTAL*100)+'%';
+  document.querySelectorAll('.ndot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+}
+
+/* ── INIT DOTS ── */
+(function(){
+  const c=document.getElementById('ndots');
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='ndot'+(i===0?' on':'');
+    d.onclick=()=>goTo(i); c.appendChild(d);
+  }
+})();
+
+/* ── ACCORDION ── */
+function tacc(h){
+  const b=h.nextElementSibling, open=h.classList.contains('open');
+  const par=h.closest('.scb');
+  if(par){ par.querySelectorAll('.ah.open').forEach(x=>{ x.classList.remove('open'); x.nextElementSibling.classList.remove('open'); }); }
+  if(!open){ h.classList.add('open'); b.classList.add('open'); }
+}
+</script>
+</body>
+</html>

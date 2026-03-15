@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Programa Analítico - Nueva Escuela Mexicana</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .header .profesor {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #764ba2;
+            font-size: 16px;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .question-card {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 19px;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options-container {
+            margin-bottom: 25px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .option:hover:not(.disabled) {
+            background: #f0f0f0;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #e8eaf6;
+            border-color: #667eea;
+        }
+
+        .option.correct {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .option.incorrect {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .option-letter {
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .option.correct .option-letter {
+            background: #4caf50;
+        }
+
+        .option.incorrect .option-letter {
+            background: #f44336;
+        }
+
+        .option-text {
+            flex: 1;
+            color: #333;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .feedback {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .feedback.correct .feedback-title {
+            color: #2e7d32;
+        }
+
+        .feedback.incorrect .feedback-title {
+            color: #c62828;
+        }
+
+        .feedback-text {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .next-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .next-button.show {
+            display: block;
+        }
+
+        .next-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .results-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+        }
+
+        .results-title {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .results-score {
+            font-size: 48px;
+            color: #333;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .results-percentage {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .results-message {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .restart-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restart-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .question-text {
+                font-size: 17px;
+            }
+            
+            .option-text {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Simulador Programa Analítico</h1>
+            <p>Planos de Construcción: Contextualización, Metodológico y Codiseño de Contenidos</p>
+            <p style="margin-top: 8px; font-size: 14px;">Nueva Escuela Mexicana - Un libro sin recetas</p>
+            <p class="profesor">Profesor Francisco De Jesús Luna Benitez</p>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-info">
+                <span id="questionCounter">Pregunta 1 de 30</span>
+                <span id="scoreDisplay">Aciertos: 0/0</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="question-card" id="questionCard">
+            <div class="question-number" id="questionNumber"></div>
+            <div class="question-text" id="questionText"></div>
+            <div class="options-container" id="optionsContainer"></div>
+            <div class="feedback" id="feedback">
+                <div class="feedback-title" id="feedbackTitle"></div>
+                <div class="feedback-text" id="feedbackText"></div>
+            </div>
+            <button class="next-button" id="nextButton">Siguiente Pregunta →</button>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-title">✅ ¡Simulador Completado!</div>
+            <div class="results-score" id="finalScore"></div>
+            <div class="results-percentage" id="finalPercentage"></div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="restart-button" onclick="restartSimulator()">🔄 Reiniciar Simulador</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                question: "Se ejemplifica una situación del entorno escolar que corresponde al tercer plano: Codiseño de contenidos, en la construcción del programa analítico, cuando en el Consejo Técnico Escolar…",
+                options: [
+                    "…presentan los resultados de las encuestas aplicadas a las familias de las alumnas y los alumnos con la finalidad de determinar y analizar las características sociográficas de la región.",
+                    "…deciden la manera en la que se abordarán las problemáticas detectadas en la comunidad escolar sobre el uso responsable del agua, con base en los campos formativos.",
+                    "…trabajan en la creación de estrategias por fases para incluir el aprendizaje de la lengua de señas mexicana para los grupos que cuentan con alumnas y alumnos con discapacidad auditiva."
+                ],
+                correct: 2,
+                explanation: "El tercer plano, Codiseño de contenidos, implica la creación de estrategias didácticas específicas y situadas que atienden las necesidades particulares de la comunidad educativa. La inclusión de lengua de señas mexicana representa una estrategia pedagógica diseñada colaborativamente para atender necesidades específicas."
+            },
+            {
+                id: 2,
+                question: "Se identifica el primer plano de construcción del programa analítico: Contextualización curricular, cuando el colectivo docente…",
+                options: [
+                    "…analiza las condiciones socioeconómicas, culturales y lingüísticas de la comunidad para adaptar los contenidos del Plan de Estudios a su realidad local.",
+                    "…diseña secuencias didácticas innovadoras para trabajar los contenidos de manera interdisciplinaria.",
+                    "…elabora materiales educativos específicos para atender a estudiantes con necesidades educativas especiales."
+                ],
+                correct: 0,
+                explanation: "El primer plano, Contextualización curricular, consiste en analizar las características del contexto local (socioeconómicas, culturales, lingüísticas) para adaptar el currículo nacional a las particularidades de la comunidad educativa."
+            },
+            {
+                id: 3,
+                question: "Una situación que ejemplifica el segundo plano: Metodológico, en la construcción del programa analítico es cuando los docentes…",
+                options: [
+                    "…investigan las problemáticas ambientales de su región para integrarlas como ejes transversales.",
+                    "…definen las estrategias de enseñanza, los recursos didácticos y las formas de evaluación más pertinentes para abordar los contenidos con sus estudiantes.",
+                    "…consensan la distribución de contenidos por grado escolar considerando la progresión de aprendizajes."
+                ],
+                correct: 1,
+                explanation: "El segundo plano, Metodológico, se enfoca en definir el cómo enseñar: las estrategias didácticas, recursos, materiales y formas de evaluación que se utilizarán para desarrollar los contenidos curriculares."
+            },
+            {
+                id: 4,
+                question: "Se refleja el trabajo del tercer plano: Codiseño de contenidos, cuando en la escuela…",
+                options: [
+                    "…los docentes revisan los libros de texto gratuitos para identificar qué contenidos son prioritarios según su contexto.",
+                    "…se organiza un proyecto comunitario donde estudiantes, docentes y familias co-crean contenidos sobre la historia local para integrarlos al currículo.",
+                    "…el director establece los criterios de evaluación que todos los docentes deben aplicar."
+                ],
+                correct: 1,
+                explanation: "El Codiseño de contenidos implica la participación activa y colaborativa de diversos actores educativos (docentes, estudiantes, familias) en la creación de contenidos situados y pertinentes a su realidad, como en este proyecto comunitario."
+            },
+            {
+                id: 5,
+                question: "Una acción que corresponde al primer plano: Contextualización curricular, es cuando el Consejo Técnico Escolar…",
+                options: [
+                    "…realiza un diagnóstico de las lenguas indígenas presentes en la comunidad escolar para incorporarlas en el programa analítico.",
+                    "…define las técnicas de trabajo colaborativo que se implementarán durante el ciclo escolar.",
+                    "…elabora rúbricas de evaluación específicas para cada campo formativo."
+                ],
+                correct: 0,
+                explanation: "La Contextualización curricular requiere identificar las características específicas del contexto, como las lenguas indígenas presentes, para adaptar el currículo a la realidad sociocultural de la comunidad."
+            },
+            {
+                id: 6,
+                question: "Se ejemplifica el segundo plano: Metodológico, cuando los docentes de una escuela…",
+                options: [
+                    "…analizan los índices de marginación de la localidad para priorizar ciertos contenidos.",
+                    "…acuerdan implementar el aprendizaje basado en proyectos como estrategia principal para desarrollar los contenidos de todos los campos formativos.",
+                    "…diseñan nuevas unidades temáticas basadas en las festividades tradicionales de la región."
+                ],
+                correct: 1,
+                explanation: "El plano Metodológico define las estrategias y métodos de enseñanza. Acordar implementar el aprendizaje basado en proyectos como estrategia didáctica es una decisión metodológica sobre el cómo enseñar."
+            },
+            {
+                id: 7,
+                question: "Una situación que refleja el tercer plano: Codiseño de contenidos, es cuando…",
+                options: [
+                    "…los estudiantes investigan problemáticas de su comunidad y, junto con sus docentes, crean materiales educativos que se integran al programa de estudios.",
+                    "…el colectivo docente revisa las estadísticas educativas de la zona para identificar áreas de oportunidad.",
+                    "…se establecen horarios flexibles para atender la diversidad de ritmos de aprendizaje."
+                ],
+                correct: 0,
+                explanation: "El Codiseño implica la creación colaborativa de contenidos. La participación activa de estudiantes y docentes en la investigación y creación de materiales situados es un claro ejemplo de codiseño."
+            },
+            {
+                id: 8,
+                question: "Corresponde al primer plano: Contextualización curricular, cuando en el programa analítico…",
+                options: [
+                    "…se incluyen las actividades productivas de la región (agricultura, pesca, artesanías) como contextos para el aprendizaje de las matemáticas.",
+                    "…se definen los instrumentos de evaluación que se utilizarán durante el ciclo escolar.",
+                    "…se establecen acuerdos sobre cómo organizar el trabajo por proyectos integradores."
+                ],
+                correct: 0,
+                explanation: "La Contextualización curricular adapta los contenidos a la realidad local. Incorporar las actividades productivas regionales como contextos de aprendizaje es contextualizar el currículo a la realidad socioeconómica de la comunidad."
+            },
+            {
+                id: 9,
+                question: "Se identifica el segundo plano: Metodológico, cuando el colectivo docente…",
+                options: [
+                    "…identifica que en la comunidad existe alta migración y decide incorporar esta realidad en los contenidos.",
+                    "…determina que utilizarán principalmente el trabajo cooperativo y la resolución de problemas como metodologías de enseñanza.",
+                    "…crea nuevos contenidos sobre tradiciones orales de la comunidad en coordinación con adultos mayores."
+                ],
+                correct: 1,
+                explanation: "El plano Metodológico se centra en definir las estrategias y métodos de enseñanza. Determinar que se utilizarán el trabajo cooperativo y la resolución de problemas son decisiones metodológicas sobre el cómo enseñar."
+            },
+            {
+                id: 10,
+                question: "Una acción del tercer plano: Codiseño de contenidos, se observa cuando…",
+                options: [
+                    "…el supervisor escolar solicita reportes sobre el avance programático de cada grupo.",
+                    "…docentes, estudiantes y miembros de la comunidad colaboran en la elaboración de un herbario local que se integra como contenido del programa de ciencias naturales.",
+                    "…se revisan los resultados de las evaluaciones estandarizadas para ajustar las metas educativas."
+                ],
+                correct: 1,
+                explanation: "El Codiseño de contenidos implica la creación colaborativa entre diversos actores. La elaboración conjunta de un herbario local como contenido curricular es un claro ejemplo de codiseño participativo."
+            },
+            {
+                id: 11,
+                question: "Se ejemplifica el primer plano: Contextualización curricular, cuando…",
+                options: [
+                    "…se analizan las características del territorio (urbano, rural, indígena) para ajustar los tiempos y espacios de aprendizaje.",
+                    "…se acuerdan las estrategias de retroalimentación formativa que se implementarán.",
+                    "…se diseñan situaciones didácticas específicas para el aprendizaje de la lectoescritura."
+                ],
+                correct: 0,
+                explanation: "La Contextualización curricular implica analizar las características territoriales, sociales y culturales para adaptar el currículo. Analizar el tipo de territorio para ajustar tiempos y espacios es contextualizar."
+            },
+            {
+                id: 12,
+                question: "Una situación del segundo plano: Metodológico, es cuando los docentes…",
+                options: [
+                    "…investigan las problemáticas de salud más frecuentes en la comunidad para integrarlas como contenidos.",
+                    "…acuerdan implementar el portafolio de evidencias como principal instrumento de evaluación formativa en todos los grados.",
+                    "…invitan a artesanos locales para co-diseñar contenidos sobre técnicas tradicionales de producción."
+                ],
+                correct: 1,
+                explanation: "El plano Metodológico define las formas de evaluación y las estrategias didácticas. Acordar implementar el portafolio de evidencias como instrumento de evaluación es una decisión metodológica sobre el cómo evaluar."
+            },
+            {
+                id: 13,
+                question: "Corresponde al tercer plano: Codiseño de contenidos, cuando…",
+                options: [
+                    "…el colectivo docente identifica que el 60% de las familias trabaja en el sector informal y adapta horarios.",
+                    "…se decide trabajar con metodologías activas y participativas en lugar de clases expositivas.",
+                    "…estudiantes, docentes y familias crean conjuntamente un recetario tradicional de la región que se usa como material didáctico en diversos campos formativos."
+                ],
+                correct: 2,
+                explanation: "El Codiseño de contenidos implica la creación colaborativa de materiales y contenidos situados. La elaboración conjunta de un recetario tradicional como material didáctico es codiseño participativo."
+            },
+            {
+                id: 14,
+                question: "Se identifica el primer plano: Contextualización curricular, cuando en el Consejo Técnico Escolar…",
+                options: [
+                    "…se analizan las festividades y celebraciones tradicionales de la comunidad para incorporarlas como ejes articuladores del programa analítico.",
+                    "…se establecen los criterios para la conformación de equipos de trabajo en el aula.",
+                    "…se definen las ponderaciones de cada tipo de evaluación (diagnóstica, formativa, sumativa)."
+                ],
+                correct: 0,
+                explanation: "La Contextualización curricular adapta el currículo al contexto sociocultural. Incorporar las festividades tradicionales locales como ejes articuladores es contextualizar el programa a la realidad cultural de la comunidad."
+            },
+            {
+                id: 15,
+                question: "Una acción del segundo plano: Metodológico, se refleja cuando…",
+                options: [
+                    "…se identifican las necesidades educativas específicas de estudiantes con discapacidad para diseñar contenidos accesibles.",
+                    "…los docentes definen que utilizarán principalmente el aprendizaje situado y el método de casos como estrategias didácticas.",
+                    "…se elaboran materiales didácticos bilingües en español y lengua indígena en colaboración con hablantes nativos."
+                ],
+                correct: 1,
+                explanation: "El plano Metodológico define las estrategias de enseñanza. Determinar que se utilizarán el aprendizaje situado y el método de casos son decisiones metodológicas sobre el cómo enseñar."
+            },
+            {
+                id: 16,
+                question: "Se ejemplifica el tercer plano: Codiseño de contenidos, cuando…",
+                options: [
+                    "…se revisan los índices de reprobación y deserción para establecer acciones de mejora.",
+                    "…docentes y estudiantes investigan juntos sobre plantas medicinales tradicionales y crean un manual ilustrado que se integra como contenido de ciencias y prácticas sociales.",
+                    "…se analizan los resultados del diagnóstico inicial para conocer los conocimientos previos del alumnado."
+                ],
+                correct: 1,
+                explanation: "El Codiseño de contenidos implica la creación colaborativa de materiales situados. La investigación conjunta y creación de un manual sobre plantas medicinales tradicionales es un claro ejemplo de codiseño."
+            },
+            {
+                id: 17,
+                question: "Corresponde al primer plano: Contextualización curricular, cuando…",
+                options: [
+                    "…se identifican las problemáticas ambientales locales (contaminación del río, deforestación) para integrarlas como contenidos relevantes en el programa analítico.",
+                    "…se acuerdan las técnicas de evaluación entre pares que se implementarán en todos los grupos.",
+                    "…se diseña una planeación interdisciplinaria que vincula matemáticas con artes."
+                ],
+                correct: 0,
+                explanation: "La Contextualización curricular identifica las características y problemáticas del contexto local para adaptar los contenidos. Incorporar problemáticas ambientales específicas de la región es contextualizar."
+            },
+            {
+                id: 18,
+                question: "Una situación del segundo plano: Metodológico, es cuando los docentes…",
+                options: [
+                    "…realizan un estudio sobre los oficios y profesiones más comunes en la localidad.",
+                    "…establecen que implementarán el método de proyectos integradores y definen los criterios para el diseño de cada proyecto.",
+                    "…invitan a abuelos de la comunidad para que narren historias locales que se documentan y convierten en materiales de lectura."
+                ],
+                correct: 1,
+                explanation: "El plano Metodológico define las estrategias didácticas y sus criterios de implementación. Establecer que se usará el método de proyectos y definir los criterios es una decisión metodológica."
+            },
+            {
+                id: 19,
+                question: "Se identifica el tercer plano: Codiseño de contenidos, cuando…",
+                options: [
+                    "…el colectivo docente analiza las condiciones de infraestructura y recursos disponibles en la escuela.",
+                    "…se determinan las modalidades de trabajo (individual, parejas, equipos) más adecuadas para cada contenido.",
+                    "…la comunidad educativa (docentes, estudiantes, familias, autoridades locales) colabora en la creación de un museo escolar con objetos históricos de la región que se usa como recurso didáctico."
+                ],
+                correct: 2,
+                explanation: "El Codiseño de contenidos implica la participación colaborativa en la creación de recursos y contenidos situados. La creación comunitaria de un museo escolar como recurso didáctico es codiseño participativo."
+            },
+            {
+                id: 20,
+                question: "Corresponde al primer plano: Contextualización curricular, cuando en el programa analítico…",
+                options: [
+                    "…se incorporan los saberes comunitarios y las prácticas culturales locales (textiles, gastronomía, música) como contenidos relevantes.",
+                    "…se definen las modalidades de trabajo colaborativo que se priorizarán durante el ciclo.",
+                    "…se establecen los momentos y tipos de evaluación que se aplicarán en cada periodo."
+                ],
+                correct: 0,
+                explanation: "La Contextualización curricular integra los saberes y prácticas culturales locales al currículo. Incorporar textiles, gastronomía y música tradicional como contenidos es contextualizar el programa a la realidad cultural."
+            },
+            {
+                id: 21,
+                question: "Una acción del segundo plano: Metodológico, se observa cuando…",
+                options: [
+                    "…se mapean las organizaciones comunitarias que podrían apoyar en el desarrollo de proyectos educativos.",
+                    "…los docentes acuerdan implementar el aprendizaje basado en el juego y diseñan los criterios para planificar actividades lúdicas en todos los campos formativos.",
+                    "…se documentan las leyendas y mitos locales en colaboración con adultos mayores para crear materiales de lectura."
+                ],
+                correct: 1,
+                explanation: "El plano Metodológico define las estrategias didácticas. Acordar implementar el aprendizaje basado en el juego y establecer criterios para planificar actividades lúdicas es una decisión metodológica."
+            },
+            {
+                id: 22,
+                question: "Se ejemplifica el tercer plano: Codiseño de contenidos, cuando…",
+                options: [
+                    "…se revisa el calendario escolar para identificar fechas importantes de la comunidad.",
+                    "…estudiantes, docentes y familias co-crean un documental sobre las actividades productivas de la región que se utiliza como material didáctico en múltiples asignaturas.",
+                    "…se analiza la distribución de contenidos por grado para asegurar la progresión de aprendizajes."
+                ],
+                correct: 1,
+                explanation: "El Codiseño de contenidos implica la creación colaborativa de materiales situados. La co-creación de un documental sobre actividades productivas locales como recurso didáctico es un claro ejemplo de codiseño."
+            },
+            {
+                id: 23,
+                question: "Corresponde al primer plano: Contextualización curricular, cuando…",
+                options: [
+                    "…se analizan las características demográficas (edades, composición familiar, migración) de la comunidad escolar para adaptar los contenidos.",
+                    "…se definen las estrategias de diferenciación pedagógica que se implementarán.",
+                    "…se diseñan secuencias didácticas innovadoras para el aprendizaje de las matemáticas."
+                ],
+                correct: 0,
+                explanation: "La Contextualización curricular analiza las características del contexto para adaptar el currículo. Analizar las características demográficas para adaptar contenidos es contextualizar."
+            },
+            {
+                id: 24,
+                question: "Una situación del segundo plano: Metodológico, es cuando los docentes…",
+                options: [
+                    "…investigan las festividades religiosas de la comunidad para integrarlas al calendario escolar.",
+                    "…determinan que utilizarán principalmente el aprendizaje dialógico y establecen los protocolos para implementar círculos de diálogo en el aula.",
+                    "…trabajan con artistas locales para crear murales comunitarios que narran la historia del pueblo."
+                ],
+                correct: 1,
+                explanation: "El plano Metodológico define las estrategias de enseñanza y sus protocolos. Determinar que se usará el aprendizaje dialógico y establecer protocolos para círculos de diálogo es una decisión metodológica."
+            },
+            {
+                id: 25,
+                question: "Se identifica el tercer plano: Codiseño de contenidos, cuando…",
+                options: [
+                    "…se realiza un diagnóstico de las condiciones socioeconómicas de las familias.",
+                    "…se establecen acuerdos sobre cómo se abordarán los contenidos de manera interdisciplinaria.",
+                    "…la comunidad educativa organiza brigadas de limpieza del río local y documentan el proceso para crear materiales educativos sobre cuidado ambiental que se integran al currículo."
+                ],
+                correct: 2,
+                explanation: "El Codiseño de contenidos implica la creación colaborativa de materiales situados desde la práctica comunitaria. Documentar brigadas ambientales para crear materiales educativos es codiseño participativo."
+            },
+            {
+                id: 26,
+                question: "Corresponde al primer plano: Contextualización curricular, cuando en el Consejo Técnico Escolar…",
+                options: [
+                    "…se identifican las variantes lingüísticas presentes en la comunidad (náhuatl, mixteco, español) para diseñar estrategias de educación plurilingüe.",
+                    "…se definen los momentos de evaluación formativa que se aplicarán durante cada proyecto.",
+                    "…se elaboran rúbricas de coevaluación para que los estudiantes evalúen el trabajo de sus compañeros."
+                ],
+                correct: 0,
+                explanation: "La Contextualización curricular identifica las características lingüísticas del contexto. Identificar las variantes lingüísticas presentes para diseñar estrategias de educación plurilingüe es contextualizar."
+            },
+            {
+                id: 27,
+                question: "Una acción del segundo plano: Metodológico, se refleja cuando…",
+                options: [
+                    "…se mapean los espacios comunitarios que pueden usarse como ambientes de aprendizaje.",
+                    "…los docentes acuerdan implementar el método socrático y la mayéutica como estrategias principales para desarrollar el pensamiento crítico.",
+                    "…se crean guías de campo en colaboración con biólogos locales para estudiar la flora y fauna de la región."
+                ],
+                correct: 1,
+                explanation: "El plano Metodológico define las estrategias didácticas. Acordar implementar el método socrático y la mayéutica como estrategias de enseñanza es una decisión metodológica sobre el cómo enseñar."
+            },
+            {
+                id: 28,
+                question: "Se ejemplifica el tercer plano: Codiseño de contenidos, cuando…",
+                options: [
+                    "…se analizan los resultados de aprendizaje del ciclo anterior para identificar áreas de oportunidad.",
+                    "…estudiantes, docentes, familias y productores locales colaboran en la creación de un huerto escolar que se documenta y convierte en material didáctico interdisciplinario.",
+                    "…se revisan los materiales educativos oficiales para seleccionar los más pertinentes al contexto."
+                ],
+                correct: 1,
+                explanation: "El Codiseño de contenidos implica la creación colaborativa de recursos y contenidos situados. La creación comunitaria de un huerto escolar como material didáctico es codiseño participativo."
+            },
+            {
+                id: 29,
+                question: "Corresponde al primer plano: Contextualización curricular, cuando…",
+                options: [
+                    "…se analizan las problemáticas sociales relevantes de la comunidad (violencia, adicciones, migración) para abordarlas de manera transversal en el currículo.",
+                    "…se definen las técnicas de aprendizaje cooperativo que se implementarán en cada campo formativo.",
+                    "…se diseñan instrumentos de autoevaluación para que los estudiantes reflexionen sobre su proceso de aprendizaje."
+                ],
+                correct: 0,
+                explanation: "La Contextualización curricular identifica problemáticas sociales del contexto para integrarlas al currículo. Analizar problemáticas locales para abordarlas transversalmente es contextualizar."
+            },
+            {
+                id: 30,
+                question: "Una situación del segundo plano: Metodológico, es cuando los docentes…",
+                options: [
+                    "…identifican que en la comunidad se hablan tres lenguas diferentes y deciden crear materiales trilingües.",
+                    "…establecen que implementarán el aprendizaje experiencial y diseñan los criterios para organizar experiencias de aprendizaje fuera del aula en cada periodo.",
+                    "…colaboran con cronistas locales para documentar la historia oral del pueblo y crear un archivo digital comunitario."
+                ],
+                correct: 1,
+                explanation: "El plano Metodológico define las estrategias didácticas y sus criterios. Establecer que se usará el aprendizaje experiencial y diseñar criterios para experiencias fuera del aula es una decisión metodológica."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestion];
+            
+            document.getElementById('questionNumber').textContent = `Pregunta ${currentQuestion + 1} de ${questions.length}`;
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('questionCounter').textContent = `Pregunta ${currentQuestion + 1} de ${questions.length}`;
+            document.getElementById('scoreDisplay').textContent = `Aciertos: ${score}/${currentQuestion}`;
+            document.getElementById('progressBar').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.onclick = () => selectOption(index);
+                optionDiv.innerHTML = `
+                    <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('feedback').classList.remove('show', 'correct', 'incorrect');
+            document.getElementById('nextButton').classList.remove('show');
+        }
+
+        function selectOption(selectedIndex) {
+            if (answered) return;
+            
+            answered = true;
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach((option, index) => {
+                option.classList.add('disabled');
+                if (index === q.correct) {
+                    option.classList.add('correct');
+                }
+                if (index === selectedIndex && index !== q.correct) {
+                    option.classList.add('incorrect');
+                }
+                if (index === selectedIndex) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            const isCorrect = selectedIndex === q.correct;
+            if (isCorrect) score++;
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            document.getElementById('feedbackTitle').textContent = isCorrect ? '✅ ¡Correcto!' : '❌ Incorrecto';
+            document.getElementById('feedbackText').innerHTML = q.explanation;
+            
+            document.getElementById('nextButton').classList.add('show');
+            document.getElementById('scoreDisplay').textContent = `Aciertos: ${score}/${currentQuestion + 1}`;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('questionCard').style.display = 'none';
+            
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.classList.add('show');
+            
+            const percentage = ((score / questions.length) * 100).toFixed(1);
+            document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+            document.getElementById('finalPercentage').textContent = `${percentage}% de aciertos`;
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = '¡Excelente dominio de los planos de construcción del programa analítico! Demuestras un conocimiento sobresaliente de la Nueva Escuela Mexicana.';
+            } else if (percentage >= 80) {
+                message = '¡Muy buen trabajo! Tienes un sólido entendimiento de los planos de contextualización, metodológico y codiseño de contenidos.';
+            } else if (percentage >= 70) {
+                message = 'Buen desempeño. Te recomendamos revisar las diferencias entre los tres planos para fortalecer tu comprensión.';
+            } else {
+                message = 'Te sugerimos revisar el material "Un libro sin recetas para la maestra y el maestro" páginas 68-76 para profundizar en los planos de construcción del programa analítico.';
+            }
+            
+            document.getElementById('resultsMessage').textContent = message;
+        }
+
+        function restartSimulator() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('questionCard').style.display = 'block';
+            document.getElementById('resultsContainer').classList.remove('show');
+            
+            loadQuestion();
+        }
+
+        document.getElementById('nextButton').addEventListener('click', nextQuestion);
+
+        // Inicializar
+        loadQuestion();
+    </script>
+</body>
+</html>

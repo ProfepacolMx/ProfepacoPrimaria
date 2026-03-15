@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía De Estudio | Libro Sin Recetas Fase 4</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --terra: #8B3A2A;
+    --gold: #D4882A;
+    --sage: #5C7A5C;
+    --sky: #2E6B8A;
+    --cream: #F5EFE4;
+    --ink: #1A1A1A;
+    --muted: #7A6E62;
+    --card-bg: #FFFDF8;
+    --border: #E8DDD0;
+    --success: #4A7C59;
+    --error: #8B2A2A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* LAYOUT */
+  .app {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR NAV */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--ink);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 100;
+  }
+
+  .sidebar-header {
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    background: linear-gradient(135deg, #2A1A0E 0%, #1A1A1A 100%);
+  }
+
+  .sidebar-header .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-header .subtitle {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    padding: 16px 20px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    border-left: 3px solid transparent;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+  .nav-item.active { background: rgba(212,136,42,0.15); color: var(--gold); border-left-color: var(--gold); }
+
+  .nav-icon { font-size: 16px; min-width: 20px; text-align: center; }
+
+  .progress-bar {
+    margin: 20px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .progress-track {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--terra);
+  }
+
+  .topbar-badge {
+    background: var(--terra);
+    color: white;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--ink);
+  }
+
+  /* SECTIONS */
+  .section {
+    display: none;
+    padding: 32px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* HERO CARD */
+  .hero-card {
+    background: linear-gradient(135deg, var(--terra) 0%, #5C1F0F 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 36px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .hero-card::after {
+    content: '';
+    position: absolute;
+    right: 40px; top: 40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+
+  .hero-card h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 3vw, 32px);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .hero-card p {
+    font-size: 14px;
+    opacity: 0.85;
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  /* GRID LAYOUTS */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+
+  .mb-24 { margin-bottom: 24px; }
+  .mb-16 { margin-bottom: 16px; }
+
+  /* SECTION TITLE */
+  .sec-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--terra);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+
+  .card-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .card.accent-terra { border-top: 3px solid var(--terra); }
+  .card.accent-gold { border-top: 3px solid var(--gold); }
+  .card.accent-sage { border-top: 3px solid var(--sage); }
+  .card.accent-sky { border-top: 3px solid var(--sky); }
+
+  /* COMPARE TABLE */
+  .compare-table {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .compare-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .compare-table th {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .compare-table th:first-child { background: #E8DDD0; color: var(--muted); }
+  .compare-table th:nth-child(2) { background: #FDEBD0; color: var(--terra); }
+  .compare-table th:nth-child(3) { background: #D5E8D4; color: var(--sage); }
+
+  .compare-table td {
+    padding: 12px 20px;
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .compare-table td:first-child { font-weight: 600; color: var(--muted); background: #FAFAF8; }
+  .compare-table tr:hover td { background: #FFFBF5; }
+
+  /* ACCORDION */
+  .accordion-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s;
+    user-select: none;
+  }
+
+  .accordion-header:hover { background: #F5EFE4; }
+  .accordion-header.open { background: #FDEBD0; color: var(--terra); }
+
+  .acc-arrow {
+    font-size: 12px;
+    transition: transform 0.3s;
+  }
+
+  .accordion-header.open .acc-arrow { transform: rotate(180deg); }
+
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    padding: 0 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .accordion-body.open {
+    max-height: 600px;
+    padding: 0 20px 16px;
+  }
+
+  /* PILLAR CARDS */
+  .pillar {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pillar-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .pillar-num.c1 { color: var(--terra); }
+  .pillar-num.c2 { color: var(--gold); }
+  .pillar-num.c3 { color: var(--sage); }
+  .pillar-num.c4 { color: var(--sky); }
+
+  .pillar h3 { font-size: 14px; font-weight: 700; }
+  .pillar p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* FORMULA */
+  .formula-box {
+    background: var(--ink);
+    color: white;
+    border-radius: 14px;
+    padding: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .formula-piece {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    text-align: center;
+    min-width: 120px;
+  }
+
+  .formula-piece .label { font-size: 11px; opacity: 0.5; margin-bottom: 4px; }
+  .formula-piece .value { font-size: 13px; font-weight: 600; color: var(--gold); }
+  .formula-op { font-size: 24px; color: var(--gold); font-weight: 700; }
+
+  /* QUIZ */
+  .quiz-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-question {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .quiz-question span {
+    display: inline-block;
+    background: var(--terra);
+    color: white;
+    border-radius: 50%;
+    width: 24px; height: 24px;
+    text-align: center;
+    line-height: 24px;
+    font-size: 12px;
+    margin-right: 8px;
+  }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+
+  .quiz-option {
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    background: white;
+    text-align: left;
+  }
+
+  .quiz-option:hover:not(:disabled) { border-color: var(--gold); background: #FFFBF5; }
+  .quiz-option.correct { border-color: var(--success); background: #EAF5ED; color: var(--success); }
+  .quiz-option.wrong { border-color: var(--error); background: #FDEAEA; color: var(--error); }
+  .quiz-option:disabled { cursor: default; }
+
+  .quiz-feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: #EAF5ED; color: var(--success); border: 1px solid #B7D9BF; }
+  .quiz-feedback.wrong-fb { background: #FDEAEA; color: var(--error); border: 1px solid #D9B7B7; }
+
+  .quiz-score {
+    background: var(--ink);
+    color: white;
+    border-radius: 10px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .score-text { font-size: 15px; }
+  .score-num { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--gold); }
+
+  .btn {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--terra); color: white; }
+  .btn-primary:hover { background: #7A3020; }
+  .btn-gold { background: var(--gold); color: white; }
+  .btn-gold:hover { background: #B87620; }
+  .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--ink); }
+  .btn-outline:hover { border-color: var(--terra); color: var(--terra); }
+
+  /* FLASHCARDS */
+  .flashcard-container { perspective: 1200px; margin-bottom: 20px; }
+
+  .flashcard {
+    width: 100%;
+    max-width: 500px;
+    height: 180px;
+    margin: 0 auto;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    cursor: pointer;
+  }
+
+  .flashcard.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .card-front {
+    background: linear-gradient(135deg, var(--terra) 0%, #7A2A1A 100%);
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .card-back {
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.6;
+    transform: rotateY(180deg);
+  }
+
+  .flash-hint { font-size: 12px; opacity: 0.6; margin-top: 8px; text-align: center; }
+
+  .flash-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .flash-counter {
+    font-size: 13px;
+    color: var(--muted);
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* PROJECT TIMELINE */
+  .timeline { position: relative; padding-left: 32px; }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -26px; top: 18px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--gold);
+  }
+
+  .timeline-phase {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 4px;
+  }
+
+  .timeline-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .timeline-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* DRAG & DROP MATCH */
+  .match-game { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px; }
+
+  .match-col h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 10px; }
+
+  .match-item {
+    padding: 11px 14px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+  }
+
+  .match-item.selected { border-color: var(--gold); background: #FFFBF5; }
+  .match-item.matched { border-color: var(--success); background: #EAF5ED; cursor: default; color: var(--success); font-weight: 600; }
+  .match-item.wrong-match { border-color: var(--error); background: #FDEAEA; }
+
+  /* INFO TAGS */
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin: 2px;
+  }
+
+  .tag-terra { background: #FDEBD0; color: var(--terra); }
+  .tag-sage { background: #D5E8D4; color: var(--sage); }
+  .tag-sky { background: #D0E6F5; color: var(--sky); }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    border-left: 4px solid var(--gold);
+    background: #FFFBF5;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+
+  .highlight strong { color: var(--terra); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      transform: translateX(-100%);
+    }
+
+    .sidebar.open { transform: translateX(0); }
+
+    .menu-btn { display: block; }
+
+    .section { padding: 20px 16px; }
+
+    .hero-card { padding: 24px 20px; }
+
+    .topbar { padding: 12px 16px; }
+
+    .match-game { grid-template-columns: 1fr; }
+
+    .formula-box { gap: 8px; }
+
+    .formula-piece { min-width: 100px; padding: 10px 12px; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 90;
+  }
+
+  .overlay.show { display: block; }
+
+  /* SCORE BADGE */
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gold);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">Guía De Estudio<br>Interdisciplina NEM</div>
+      <div class="subtitle">Libro Sin Recetas · Fase 4</div>
+    </div>
+
+    <div class="nav-label">Contenido</div>
+
+    <div class="nav-item active" onclick="showSection('intro', this)">
+      <span class="nav-icon">🏠</span> Introducción
+    </div>
+    <div class="nav-item" onclick="showSection('conceptos', this)">
+      <span class="nav-icon">📚</span> Conceptos Clave
+    </div>
+    <div class="nav-item" onclick="showSection('pilares', this)">
+      <span class="nav-icon">🏛️</span> Los 4 Pilares
+    </div>
+    <div class="nav-item" onclick="showSection('curriculum', this)">
+      <span class="nav-icon">🧩</span> Tejido Curricular
+    </div>
+    <div class="nav-item" onclick="showSection('proyecto', this)">
+      <span class="nav-icon">💡</span> Proyecto Práctico
+    </div>
+    <div class="nav-item" onclick="showSection('flashcards', this)">
+      <span class="nav-icon">🃏</span> Flashcards
+    </div>
+    <div class="nav-item" onclick="showSection('quiz', this)">
+      <span class="nav-icon">✏️</span> Evaluación
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-label">
+        <span>Progreso</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-title" id="topbar-title">Introducción</div>
+      <div class="topbar-badge">Prof. Luna Benitez</div>
+    </div>
+
+    <!-- INTRO -->
+    <div class="section active" id="section-intro">
+      <div class="hero-card mb-24">
+        <div class="hero-tag">📖 Guía de Estudio Interactiva</div>
+        <h1>Interdisciplina en la Nueva Escuela Mexicana</h1>
+        <p>Una propuesta pedagógica que supera la fragmentación del conocimiento para conectar los saberes con la realidad comunitaria y transformar la práctica docente.</p>
+      </div>
+
+      <h2 class="sec-title">🔍 ¿De qué trata esta guía?</h2>
+      <div class="highlight">
+        La <strong>Nueva Escuela Mexicana (NEM)</strong> no busca legitimar un discurso político superficial. Propone un referente epistemológico real para resignificar la práctica docente: <strong>comprender y transformar la realidad</strong> mediante una verdadera red de saberes.
+      </div>
+
+      <div class="grid-2 mb-24">
+        <div class="card accent-terra">
+          <span class="card-icon">⚠️</span>
+          <h3>El Pasado Educativo</h3>
+          <p>Décadas de conceptos trivializados que simulaban modernidad pero fragmentaban el conocimiento y perpetuaban desigualdades estructurales. Competencias, calidad y "modernidades" como burbujas vacías.</p>
+        </div>
+        <div class="card accent-sage">
+          <span class="card-icon">🌱</span>
+          <h3>La Propuesta NEM</h3>
+          <p>Un referente epistemológico real. La interdisciplina no como moda, sino como herramienta para resignificar la práctica docente y conectar el conocimiento con la vida comunitaria.</p>
+        </div>
+      </div>
+
+      <h2 class="sec-title">🎯 Objetivos de aprendizaje</h2>
+      <div class="grid-3">
+        <div class="card">
+          <span class="card-icon">🧠</span>
+          <h3>Comprender</h3>
+          <p>Qué es la interdisciplina emancipadora y en qué se diferencia de la instrumental.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">🔗</span>
+          <h3>Relacionar</h3>
+          <p>Los pilares, campos formativos y ejes articuladores como sistema integrado.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">✅</span>
+          <h3>Aplicar</h3>
+          <p>La fórmula de la NEM en proyectos concretos vinculados a problemas reales.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPTOS -->
+    <div class="section" id="section-conceptos">
+      <div class="hero-card mb-24" style="background: linear-gradient(135deg, #2E6B8A 0%, #1A3D50 100%);">
+        <div class="hero-tag">📚 Conceptos Fundamentales</div>
+        <h1>¿Qué es la Interdisciplina?</h1>
+        <p>No es una suma de asignaturas. Es una <strong>ecología de saberes</strong> que relaciona objetos de estudio, métodos y técnicas para dar sentido a la realidad de la comunidad.</p>
+      </div>
+
+      <h2 class="sec-title">⚖️ Dos tipos de interdisciplina</h2>
+      <div class="compare-table mb-24">
+        <table>
+          <thead>
+            <tr>
+              <th>Dimensión</th>
+              <th>❌ Instrumental</th>
+              <th>✅ Emancipadora</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Definición</td>
+              <td>Yuxtaposición de materias sin conexión real</td>
+              <td>Ecología de saberes integrados con propósito</td>
+            </tr>
+            <tr>
+              <td>Aprendizaje</td>
+              <td>Memorizar sin contexto (saber hacer sin saber ser)</td>
+              <td>Relacionar, cuestionar y transformar la realidad</td>
+            </tr>
+            <tr>
+              <td>Centro</td>
+              <td>Asignaturas aisladas (Matemáticas, Español, Ciencias)</td>
+              <td>La Realidad Comunitaria como núcleo integrador</td>
+            </tr>
+            <tr>
+              <td>Propósito</td>
+              <td>Aprobar exámenes y obtener calificaciones</td>
+              <td>Resolver problemas reales y transformar la comunidad</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="sec-title">📖 Conceptos esenciales</h2>
+      <div id="accordions">
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            🌍 Problematización de la Realidad <span class="acc-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            Es el <strong>motor del cambio</strong>: el elemento disruptivo que quiebra la educación memorística. Consiste en ver lo cotidiano con una mirada crítica. <br><br>
+            <strong>Ejemplo:</strong> En lugar de memorizar que el agua es líquida, sólida o gaseosa (mirada tradicional), la mirada problematizada pregunta: ¿Por qué la escasez de agua afecta a los pueblos indígenas? ¿Qué relación hay entre el agua, la electricidad y la desigualdad en nuestra comunidad?
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            🧩 Campos Formativos <span class="acc-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            No son la suma de contenidos. Son la <strong>pluralidad de saberes y disciplinas</strong> con los cuales nos acercamos a estudiar la realidad. Actúan como el "telón de fondo" del aprendizaje.<br><br>
+            Los cuatro campos son: <strong>Saberes y pensamiento científico · Lenguajes · Ética, naturaleza y sociedades · De lo humano y lo comunitario</strong>.
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            🔗 Ejes Articuladores <span class="acc-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            Son los "hilos conductores" del currículo. <strong>Conectan los contenidos de diferentes disciplinas</strong> y vinculan la enseñanza con la vida cotidiana de los estudiantes.<br><br>
+            Entre ellos destacan: Pensamiento Crítico · Apropiación de las culturas a través de la lectura y la escritura · Inclusión · Vida saludable · Igualdad de género.
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            🎓 Aprendizaje In Situ <span class="acc-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            El destino del proceso educativo en la NEM. Combina alta <strong>actividad social</strong> y alta <strong>relevancia cultural</strong>. Incluye simulaciones situadas, análisis colaborativo de datos reales del entorno comunitario.<br><br>
+            Se debe evitar: lecturas descontextualizadas y análisis de datos inventados (baja actividad social + baja relevancia cultural).
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            🏫 Autonomía Profesional Docente <span class="acc-arrow">▼</span>
+          </div>
+          <div class="accordion-body">
+            La <strong>libertad y responsabilidad ética del docente</strong> para decidir cómo tejer los saberes. No es libertad sin rumbo; es la capacidad de articular la realidad comunitaria con el conocimiento organizado de manera crítica y contextualizada.<br><br>
+            <em>"La verdadera interdisciplina ocurre mediante el ejercicio efectivo de la autonomía profesional y el compromiso ético de las y los docentes."</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILARES -->
+    <div class="section" id="section-pilares">
+      <div class="hero-card mb-24" style="background: linear-gradient(135deg, var(--sage) 0%, #3A5C3A 100%);">
+        <div class="hero-tag">🏛️ Fundamentos</div>
+        <h1>Los 4 Pilares de la Interdisciplina</h1>
+        <p>Cuatro principios que sostienen y articulan la práctica interdisciplinar en la NEM.</p>
+      </div>
+
+      <div class="grid-2 mb-24">
+        <div class="pillar">
+          <div class="pillar-num c1">01</div>
+          <h3>Integración Curricular</h3>
+          <p>Vincular los procesos formativos con el contexto comunitario. El currículo no opera en el vacío; se ancla en la realidad donde viven los estudiantes.</p>
+          <div style="margin-top:8px"><span class="tag tag-terra">Contexto</span><span class="tag tag-terra">Comunidad</span></div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num c2">02</div>
+          <h3>Autonomía Profesional</h3>
+          <p>La libertad y responsabilidad ética del docente para decidir cómo tejer los saberes. El maestro como articulador activo, no como ejecutor de recetas.</p>
+          <div style="margin-top:8px"><span class="tag tag-sky">Libertad</span><span class="tag tag-sky">Ética</span></div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num c3">03</div>
+          <h3>Comunidad como Centro</h3>
+          <p>El núcleo integrador y destino final del aprendizaje. Lo que ocurre en el aula debe tener impacto real en la comunidad donde se inserta la escuela.</p>
+          <div style="margin-top:8px"><span class="tag tag-sage">Impacto</span><span class="tag tag-sage">Transformación</span></div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num c4">04</div>
+          <h3>Derecho Humano a la Educación</h3>
+          <p>Garantizar una formación crítica y equitativa para todas y todos. La interdisciplina como herramienta de justicia educativa y emancipación social.</p>
+          <div style="margin-top:8px"><span class="tag tag-terra">Equidad</span><span class="tag tag-terra">Justicia</span></div>
+        </div>
+      </div>
+
+      <h2 class="sec-title">🔄 Cambio de Paradigma</h2>
+      <div class="compare-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Dimensión</th>
+              <th>❌ Educación Tradicional</th>
+              <th>✅ Interdisciplina NEM</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Propósito</td>
+              <td>Aprobar exámenes y obtener calificaciones</td>
+              <td>Resolver problemas reales y transformar la comunidad</td>
+            </tr>
+            <tr>
+              <td>Estructura</td>
+              <td>Asignaturas fragmentadas y jerárquicas</td>
+              <td>Ecología de saberes integrada por Campos y Ejes</td>
+            </tr>
+            <tr>
+              <td>Rol de la Realidad</td>
+              <td>Abstracta, ficticia o ignorada</td>
+              <td>Centro disruptivo y punto de partida del aprendizaje</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TEJIDO CURRICULAR -->
+    <div class="section" id="section-curriculum">
+      <div class="hero-card mb-24" style="background: linear-gradient(135deg, #7A4A2A 0%, #4A2A0E 100%);">
+        <div class="hero-tag">🧩 Arquitectura Curricular</div>
+        <h1>El Tejido Curricular: Campos y Ejes</h1>
+        <p>La problematización de la realidad es el núcleo que activa campos formativos y ejes articuladores.</p>
+      </div>
+
+      <h2 class="sec-title">📐 La Fórmula de la NEM</h2>
+      <div class="formula-box mb-24">
+        <div class="formula-piece">
+          <div class="label">Elemento 1</div>
+          <div class="value">Realidad Comunitaria</div>
+        </div>
+        <div class="formula-op">+</div>
+        <div class="formula-piece">
+          <div class="label">Elemento 2</div>
+          <div class="value">Problematización</div>
+        </div>
+        <div class="formula-op">×</div>
+        <div class="formula-piece">
+          <div class="label">Elemento 3</div>
+          <div class="value">Campos + Ejes</div>
+        </div>
+        <div class="formula-op">=</div>
+        <div class="formula-piece" style="background: rgba(212,136,42,0.2); border-color: var(--gold);">
+          <div class="label">Resultado</div>
+          <div class="value" style="color: white;">Interdisciplina Emancipadora</div>
+        </div>
+      </div>
+
+      <div class="highlight mb-24">
+        <strong>Clave:</strong> El conocimiento sin contexto es información vacía. El contexto sin conocimiento organizado es activismo ciego. La NEM une ambos mediante la autonomía del docente.
+      </div>
+
+      <h2 class="sec-title">🌐 Los 4 Campos Formativos</h2>
+      <div class="grid-2 mb-24">
+        <div class="card accent-terra">
+          <span class="card-icon">🔬</span>
+          <h3>Saberes y Pensamiento Científico</h3>
+          <p>Matemáticas aplicadas, ciencias naturales. Calcular, medir, analizar datos de la realidad. Ejemplo: sumas y fracciones para calcular costos de energía familiar.</p>
+        </div>
+        <div class="card accent-gold">
+          <span class="card-icon">💬</span>
+          <h3>Lenguajes</h3>
+          <p>Comunicación crítica. Analizar información y proponer su difusión comunitaria de manera clara. Redactar propuestas, investigar y registrar datos reales.</p>
+        </div>
+        <div class="card accent-sage">
+          <span class="card-icon">🌱</span>
+          <h3>Ética, Naturaleza y Sociedades</h3>
+          <p>Consumo sustentable. Analizar críticamente cómo la satisfacción de necesidades impacta la biodiversidad y el medio ambiente.</p>
+        </div>
+        <div class="card accent-sky">
+          <span class="card-icon">🤝</span>
+          <h3>De lo Humano y lo Comunitario</h3>
+          <p>Toma de decisiones. Diseñar estrategias consensuadas para el aprovechamiento responsable de los recursos de la comunidad.</p>
+        </div>
+      </div>
+
+      <h2 class="sec-title">🧵 Ejes Articuladores Principales</h2>
+      <div class="grid-3">
+        <div class="card">
+          <span class="card-icon">🔎</span>
+          <h3>Pensamiento Crítico</h3>
+          <p>Cuestionar el porqué de los fenómenos, no solo describirlos. Ver la realidad con mirada analítica y propositiva.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">📖</span>
+          <h3>Lectura y Escritura</h3>
+          <p>Apropiación de las culturas a través del lenguaje. Investigar, registrar y comunicar para transformar.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">⚖️</span>
+          <h3>Inclusión y Equidad</h3>
+          <p>Garantizar que todos los estudiantes participen activamente en la construcción del conocimiento comunitario.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROYECTO -->
+    <div class="section" id="section-proyecto">
+      <div class="hero-card mb-24" style="background: linear-gradient(135deg, #4A6B3A 0%, #2A4A1A 100%);">
+        <div class="hero-tag">💡 Aplicación Práctica</div>
+        <h1>Proyecto: "¡Ahorramos en Familia!"</h1>
+        <p>Escuela República, Acapulco, Guerrero · Maestra Carolina Cruz Santos · Un ejemplo real de interdisciplina emancipadora en acción.</p>
+      </div>
+
+      <div class="timeline mb-24">
+        <div class="timeline-item">
+          <div class="timeline-phase">Fase 1</div>
+          <div class="timeline-title">🏘️ El Problema de la Realidad</div>
+          <div class="timeline-desc">Exceso en el consumo de agua, electricidad y gas en los hogares de las familias de la colonia, impactando severamente la economía familiar. El problema emerge de la propia comunidad.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-phase">Fase 2</div>
+          <div class="timeline-title">🎯 Intencionalidad Pedagógica</div>
+          <div class="timeline-desc"><strong>La Meta:</strong> Aplicar las operaciones matemáticas básicas para disminuir el consumo de agua, electricidad y gas y mejorar la economía familiar. Convertir la angustia económica en un proyecto educativo estructurado.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-phase">Fase 3</div>
+          <div class="timeline-title">🔗 Integrando los Campos Formativos</div>
+          <div class="timeline-desc">
+            <strong>Ciencias:</strong> Suma, resta, multiplicación y división con números fraccionarios para calcular costos.<br>
+            <strong>Ética:</strong> Analizar cómo el consumo impacta la biodiversidad.<br>
+            <strong>Lenguajes:</strong> Redactar propuestas de ahorro y difundirlas.<br>
+            <strong>Comunitario:</strong> Diseñar estrategias consensuadas en familia.
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-phase">Fase 4</div>
+          <div class="timeline-title">🧵 Los Ejes que Entrelazan</div>
+          <div class="timeline-desc">
+            <strong>Pensamiento Crítico:</strong> Los alumnos no solo suman, cuestionan por qué gastan tanto y cómo cambiar sus hábitos.<br>
+            <strong>Lectura y Escritura:</strong> Al investigar y redactar propuestas, los alumnos se apropian de su realidad.
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>Mensaje clave:</strong> Los cuadros, ejes y proyectos son solo la estructura. La verdadera interdisciplina ocurre mediante el ejercicio efectivo de la <strong>autonomía profesional</strong> y el <strong>compromiso ético</strong> de las y los docentes.
+      </div>
+    </div>
+
+    <!-- FLASHCARDS -->
+    <div class="section" id="section-flashcards">
+      <div class="hero-card mb-24" style="background: linear-gradient(135deg, #8B3A2A 0%, #5A1A0A 100%);">
+        <div class="hero-tag">🃏 Repaso Activo</div>
+        <h1>Flashcards de Conceptos</h1>
+        <p>Haz clic en la tarjeta para revelar la definición. Navega por todos los conceptos clave.</p>
+      </div>
+
+      <div class="flashcard-container mb-16">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+          <div class="card-face card-front" id="card-front"></div>
+          <div class="card-face card-back" id="card-back"></div>
+        </div>
+      </div>
+      <p class="flash-hint">👆 Toca la tarjeta para voltearla</p>
+
+      <div class="flash-nav">
+        <button class="btn btn-outline" onclick="prevCard()">← Anterior</button>
+        <span class="flash-counter" id="flash-counter">1 / 8</span>
+        <button class="btn btn-outline" onclick="nextCard()">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="section" id="section-quiz">
+      <div class="hero-card mb-24" style="background: linear-gradient(135deg, #1A3D50 0%, #0A1E28 100%);">
+        <div class="hero-tag">✏️ Evaluación</div>
+        <h1>Evaluación Formativa</h1>
+        <p>Pon a prueba tu comprensión sobre la Interdisciplina en la NEM. ¡Selecciona la respuesta correcta!</p>
+      </div>
+
+      <div id="quiz-container"></div>
+
+      <div class="quiz-score">
+        <div>
+          <div class="score-text">Puntaje actual</div>
+          <div class="score-num" id="score-display">0 / 6</div>
+        </div>
+        <button class="btn btn-gold" onclick="resetQuiz()">🔄 Reiniciar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── NAVIGATION ──────────────────────────────────────────────
+const sections = ['intro','conceptos','pilares','curriculum','proyecto','flashcards','quiz'];
+const titles = {
+  intro: 'Introducción',
+  conceptos: 'Conceptos Clave',
+  pilares: 'Los 4 Pilares',
+  curriculum: 'Tejido Curricular',
+  proyecto: 'Proyecto Práctico',
+  flashcards: 'Flashcards',
+  quiz: 'Evaluación'
+};
+let visited = new Set(['intro']);
+
+function showSection(id, navEl) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  document.getElementById('topbar-title').textContent = titles[id];
+  visited.add(id);
+  updateProgress();
+  // Close sidebar on mobile
+  if (window.innerWidth < 768) toggleSidebar(true);
+}
+
+function updateProgress() {
+  const pct = Math.round((visited.size / sections.length) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+}
+
+function toggleSidebar(forceClose) {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('overlay');
+  if (forceClose || sb.classList.contains('open')) {
+    sb.classList.remove('open');
+    ov.classList.remove('show');
+  } else {
+    sb.classList.add('open');
+    ov.classList.add('show');
+  }
+}
+
+// ── ACCORDION ───────────────────────────────────────────────
+function toggleAccordion(header) {
+  const body = header.nextElementSibling;
+  const isOpen = header.classList.contains('open');
+  document.querySelectorAll('.accordion-header').forEach(h => {
+    h.classList.remove('open');
+    h.nextElementSibling.classList.remove('open');
+  });
+  if (!isOpen) {
+    header.classList.add('open');
+    body.classList.add('open');
+  }
+}
+
+// ── FLASHCARDS ───────────────────────────────────────────────
+const cards = [
+  { q: 'Interdisciplina Emancipadora', a: 'Relaciona objetos de estudio, métodos y técnicas para dar sentido a la realidad de la comunidad. No es una suma de asignaturas, es una ecología de saberes.' },
+  { q: 'Problematización de la Realidad', a: 'El motor del cambio: ver lo cotidiano con mirada crítica. No memorizar hechos, sino cuestionar las causas y consecuencias que afectan a la comunidad.' },
+  { q: 'Campos Formativos', a: 'Pluralidad de saberes y disciplinas para acercarse a la realidad. Son 4: Saberes científicos, Lenguajes, Ética/Naturaleza/Sociedades y De lo Humano/Comunitario.' },
+  { q: 'Ejes Articuladores', a: 'Hilos conductores que conectan contenidos de diferentes disciplinas con la vida cotidiana. El principal es el Pensamiento Crítico.' },
+  { q: 'Autonomía Profesional', a: 'La libertad y responsabilidad ética del docente para decidir cómo tejer los saberes. Es la pieza clave que activa la verdadera interdisciplina.' },
+  { q: 'Aprendizaje In Situ', a: 'Aprendizaje con alta actividad social Y alta relevancia cultural. Simulaciones situadas con datos reales del entorno. Es el destino pedagógico ideal.' },
+  { q: 'Interdisciplina Instrumental', a: 'La falsa interdisciplina: yuxtaposición de materias sin conexión real. Prioriza el saber hacer sin saber ser. Es lo que la NEM busca superar.' },
+  { q: 'La Fórmula de la NEM', a: 'Realidad Comunitaria + Problematización × (Campos Formativos + Ejes Articuladores) = Interdisciplina Emancipadora' },
+];
+
+let currentCard = 0;
+let isFlipped = false;
+
+function renderCard() {
+  const c = cards[currentCard];
+  document.getElementById('card-front').textContent = c.q;
+  document.getElementById('card-back').textContent = c.a;
+  document.getElementById('flash-counter').textContent = (currentCard + 1) + ' / ' + cards.length;
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+  isFlipped = false;
+}
+
+function flipCard() {
+  const fc = document.getElementById('flashcard');
+  isFlipped = !isFlipped;
+  fc.classList.toggle('flipped', isFlipped);
+}
+
+function nextCard() {
+  currentCard = (currentCard + 1) % cards.length;
+  renderCard();
+}
+
+function prevCard() {
+  currentCard = (currentCard - 1 + cards.length) % cards.length;
+  renderCard();
+}
+
+renderCard();
+
+// ── QUIZ ────────────────────────────────────────────────────
+const questions = [
+  {
+    q: '¿Qué es la interdisciplina según la NEM?',
+    opts: ['Una suma de asignaturas', 'Una ecología de saberes que relaciona métodos para comprender la realidad', 'Un método para memorizar contenidos', 'Un sistema de evaluación por competencias'],
+    ans: 1,
+    fb: '✅ Correcto. La interdisciplina NO es yuxtaposición de materias, sino una ecología de saberes integrada con propósito comunitario.'
+  },
+  {
+    q: '¿Cuál es el núcleo central del aprendizaje en la NEM?',
+    opts: ['El libro de texto', 'La evaluación estandarizada', 'La realidad comunitaria', 'El programa de estudios nacional'],
+    ans: 2,
+    fb: '✅ Correcto. La realidad comunitaria es el centro disruptivo y punto de partida de todo aprendizaje en la NEM.'
+  },
+  {
+    q: '¿Qué distingue a la interdisciplina emancipadora de la instrumental?',
+    opts: ['Usa más materias en el mismo proyecto', 'Relaciona saberes con propósito transformador vs. yuxtaposición sin contexto', 'Elimina la evaluación tradicional', 'Solo se aplica en secundaria'],
+    ans: 1,
+    fb: '✅ Correcto. La emancipadora busca transformar la realidad; la instrumental solo coloca materias una junto a otra sin integración real.'
+  },
+  {
+    q: '¿Cuáles son los 4 Pilares de la Interdisciplina en la NEM?',
+    opts: [
+      'Memorización, evaluación, disciplina y orden',
+      'Integración curricular, autonomía profesional, comunidad y derecho humano a la educación',
+      'Matemáticas, lenguaje, ciencias y artes',
+      'Planeación, ejecución, evaluación y retroalimentación'
+    ],
+    ans: 1,
+    fb: '✅ Correcto. Los 4 pilares son: Integración Curricular, Autonomía Profesional, Comunidad como centro y Derecho Humano a la Educación.'
+  },
+  {
+    q: 'En el proyecto "¡Ahorramos en familia!", ¿cuál fue el punto de partida?',
+    opts: ['Enseñar operaciones matemáticas del programa', 'El exceso de consumo de energía que afecta la economía familiar', 'Un concurso de ahorro escolar', 'Una evaluación diagnóstica de matemáticas'],
+    ans: 1,
+    fb: '✅ Correcto. El problema real de la comunidad (recibos caros) fue el detonador pedagógico, no un contenido curricular abstracto.'
+  },
+  {
+    q: '¿Qué rol tiene la autonomía profesional del docente en la NEM?',
+    opts: [
+      'Seguir el libro de texto al pie de la letra',
+      'Elegir qué materias incluir en el horario',
+      'Decidir con libertad y responsabilidad ética cómo tejer los saberes con la realidad comunitaria',
+      'Diseñar exámenes más creativos'
+    ],
+    ans: 2,
+    fb: '✅ Correcto. La autonomía profesional es la pieza clave: la libertad con compromiso ético para articular saberes con la vida real de los estudiantes.'
+  }
+];
+
+let score = 0;
+let answered = new Array(questions.length).fill(false);
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = questions.map((q, qi) => `
+    <div class="quiz-card" id="qcard-${qi}">
+      <div class="quiz-question"><span>${qi+1}</span>${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o, oi) => `
+          <button class="quiz-option" id="opt-${qi}-${oi}" onclick="checkAnswer(${qi}, ${oi})">
+            ${String.fromCharCode(65+oi)}. ${o}
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${qi}"></div>
+    </div>
+  `).join('');
+}
+
+function checkAnswer(qi, oi) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  const q = questions[qi];
+  const isCorrect = oi === q.ans;
+  if (isCorrect) score++;
+
+  for (let i = 0; i < q.opts.length; i++) {
+    const btn = document.getElementById(`opt-${qi}-${i}`);
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    else if (i === oi && !isCorrect) btn.classList.add('wrong');
+  }
+
+  const fb = document.getElementById(`fb-${qi}`);
+  fb.classList.add('show');
+  if (isCorrect) {
+    fb.classList.add('correct-fb');
+    fb.textContent = q.fb;
+  } else {
+    fb.classList.add('wrong-fb');
+    fb.textContent = `❌ La respuesta correcta es: ${q.opts[q.ans]}. ${q.fb}`;
+  }
+
+  document.getElementById('score-display').textContent = score + ' / ' + questions.length;
+}
+
+function resetQuiz() {
+  score = 0;
+  answered = new Array(questions.length).fill(false);
+  document.getElementById('score-display').textContent = '0 / ' + questions.length;
+  buildQuiz();
+}
+
+buildQuiz();
+updateProgress();
+</script>
+</body>
+</html>

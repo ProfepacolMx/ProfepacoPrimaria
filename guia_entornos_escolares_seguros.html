@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Entornos Escolares Seguros – Guía Ejecutiva</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap');
+
+:root {
+  --blue:   #4a6fa5;
+  --dblue:  #2c4a7c;
+  --amber:  #d4840a;
+  --gold:   #e8a020;
+  --lgold:  #f5c84a;
+  --rust:   #c0503a;
+  --green:  #2e7d5a;
+  --lav:    #7b6fb5;
+  --cream:  #f8f5f0;
+  --white:  #ffffff;
+  --navy:   #1a2840;
+  --muted:  #6b7080;
+  --light:  #eeeae2;
+  --shadow: 0 4px 22px rgba(26,40,64,0.10);
+  --r:      15px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; height:100%; overflow:hidden;
+  font-family:'Inter', sans-serif;
+  background:var(--cream); color:var(--navy);
+}
+
+#app { width:100vw; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ── PROGRESS ── */
+#pbar {
+  position:fixed; top:0; left:0; height:4px; z-index:100;
+  background:linear-gradient(90deg,var(--amber),var(--blue),var(--lav),var(--rust));
+  transition:width .4s ease;
+}
+
+/* ── TOP NAV ── */
+#topnav {
+  flex-shrink:0; display:flex; align-items:center; justify-content:space-between;
+  padding:9px 18px;
+  background:linear-gradient(135deg, var(--navy) 0%, var(--dblue) 100%);
+  box-shadow:0 2px 14px rgba(0,0,0,0.22); z-index:10;
+}
+.dots { display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
+.dot {
+  width:9px; height:9px; border-radius:50%;
+  background:rgba(255,255,255,0.2); cursor:pointer;
+  transition:all .3s; border:2px solid transparent;
+}
+.dot.active  { background:var(--gold); transform:scale(1.5); border-color:rgba(255,255,255,0.35); }
+.dot.visited { background:rgba(255,255,255,0.5); }
+.ntitle { font-size:clamp(10px,1.8vw,13px); font-weight:700; color:rgba(255,255,255,.80); text-align:center; flex:1; padding:0 8px; }
+.nctr   { font-size:11px; color:rgba(255,255,255,.45); font-weight:700; white-space:nowrap; }
+
+/* ── SCREENS ── */
+#swrap { flex:1; overflow:hidden; position:relative; }
+.screen {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  padding:14px 18px 8px;
+  opacity:0; pointer-events:none; overflow:hidden;
+}
+.screen.active    { opacity:1; pointer-events:all; }
+.enter-right      { opacity:0; transform:translateX(58px); }
+.enter-left       { opacity:0; transform:translateX(-58px); }
+.exit-sl          { opacity:0; transform:translateX(-58px); transition:opacity .3s ease,transform .3s ease; }
+.exit-sr          { opacity:0; transform:translateX(58px);  transition:opacity .3s ease,transform .3s ease; }
+.anim-in          { transition:opacity .3s ease,transform .3s ease; }
+
+/* ── BOTTOM NAV ── */
+#botnav {
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  gap:10px; padding:9px 18px;
+  background:var(--white); box-shadow:0 -2px 10px rgba(0,0,0,.07);
+}
+.btn {
+  display:flex; align-items:center; gap:6px;
+  padding:9px 22px; border-radius:50px; border:none;
+  font-family:'Inter',sans-serif; font-weight:700;
+  font-size:13px; cursor:pointer; transition:all .2s;
+}
+.bp { background:var(--blue); color:var(--white); }
+.bp:hover { background:var(--dblue); transform:scale(1.03); }
+.bs { background:var(--light); color:var(--navy); }
+.bs:hover { background:#ddd9ce; transform:scale(1.03); }
+.btn:disabled { opacity:.35; pointer-events:none; }
+
+/* ── FOOTER ── */
+#foot {
+  flex-shrink:0; text-align:center;
+  font-size:10px; color:var(--muted); font-weight:600;
+  padding:4px 10px; background:var(--white); border-top:1px solid var(--light);
+}
+
+/* ── SCREEN HEADER ── */
+.sh { margin-bottom:11px; flex-shrink:0; }
+.badge {
+  display:inline-block; font-size:11px; font-weight:800;
+  text-transform:uppercase; letter-spacing:1.4px;
+  padding:3px 11px; border-radius:20px; color:var(--white); margin-bottom:5px;
+}
+.stitle {
+  font-family:'Playfair Display',serif; font-weight:800;
+  font-size:clamp(19px,3.8vw,26px); line-height:1.2; color:var(--navy);
+}
+.ssub { font-size:clamp(12px,2vw,14px); color:var(--muted); margin-top:3px; font-weight:500; }
+
+/* ── LAYOUT ── */
+.ca  { flex:1; overflow:hidden; display:flex; flex-direction:column; gap:9px; }
+.g2  { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.g3  { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+.g4  { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; }
+.row { display:flex; gap:9px; }
+.grow{ flex:1; }
+
+/* ── CARDS ── */
+.card {
+  background:var(--white); border-radius:var(--r);
+  padding:13px 15px; box-shadow:var(--shadow); transition:transform .2s;
+}
+.card:hover { transform:translateY(-2px); }
+.ci  { font-size:26px; margin-bottom:5px; }
+.ct  { font-family:'Playfair Display',serif; font-weight:700; font-size:clamp(13px,2.3vw,16px); margin-bottom:3px; }
+.cd  { font-size:clamp(11px,1.9vw,13px); color:#4a4a5a; line-height:1.6; font-weight:500; }
+.card.cn { color:var(--white); }
+.card.cn .cd,.card.cn .ct { color:var(--white); }
+.card.cn .cd { color:rgba(255,255,255,.88); }
+
+.hl  { border-left:5px solid; padding:9px 13px; border-radius:0 12px 12px 0; font-size:clamp(12px,2vw,14px); font-weight:600; line-height:1.6; }
+
+/* ── ACCORDION ── */
+.acc { border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow); }
+.ai  { border-bottom:1px solid #ede9e1; }
+.ai:last-child { border-bottom:none; }
+.ab  {
+  width:100%; text-align:left; padding:11px 15px;
+  background:var(--white); border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:'Inter',sans-serif; font-weight:700;
+  font-size:clamp(13px,2.1vw,15px); color:var(--navy); transition:background .2s;
+}
+.ab:hover { background:#faf7f2; }
+.ab .arr { transition:transform .3s; font-size:14px; color:var(--muted); }
+.ab.open .arr { transform:rotate(180deg); }
+.abody { max-height:0; overflow:hidden; transition:max-height .35s ease; background:#faf7f2; }
+.abody.open { max-height:200px; }
+.abinner { padding:9px 15px 13px; font-size:clamp(11px,1.8vw,13px); color:#444; line-height:1.65; font-weight:500; }
+
+/* ── TABS ── */
+.th {
+  display:flex; gap:4px; flex-wrap:nowrap;
+  background:var(--light); border-radius:12px; padding:4px; flex-shrink:0;
+}
+.tbtn {
+  flex:1; padding:7px 5px; border-radius:9px; border:none;
+  font-family:'Inter',sans-serif; font-weight:700;
+  font-size:clamp(10px,1.7vw,12px); cursor:pointer;
+  background:transparent; color:var(--muted); transition:all .25s; white-space:nowrap;
+}
+.tbtn.active { background:var(--white); color:var(--navy); box-shadow:0 2px 9px rgba(0,0,0,.1); }
+.tc { display:none; flex:1; overflow:hidden; flex-direction:column; gap:8px; }
+.tc.active { display:flex; }
+
+/* ── QUIZ ── */
+.qq { font-family:'Playfair Display',serif; font-weight:700; font-size:clamp(14px,2.5vw,18px); margin-bottom:11px; line-height:1.35; }
+.qopts { display:flex; flex-direction:column; gap:7px; }
+.qopt {
+  padding:10px 15px; border-radius:11px; border:2px solid #ddd8ce;
+  background:var(--white); cursor:pointer; text-align:left;
+  font-family:'Inter',sans-serif; font-weight:600;
+  font-size:clamp(12px,2vw,14px); transition:all .2s;
+  display:flex; align-items:center; gap:9px;
+}
+.qopt:hover { border-color:var(--blue); background:#f0f4fa; }
+.qopt.ok  { border-color:var(--green); background:#f0faf5; color:#1a4d30; }
+.qopt.err { border-color:var(--rust);  background:#fff0ec; color:#7a2414; }
+.qopt.dis { pointer-events:none; }
+.qfb {
+  padding:9px 14px; border-radius:11px; font-weight:700;
+  font-size:clamp(11px,1.9vw,13px); margin-top:8px; display:none; line-height:1.5;
+}
+.qfb.show { display:block; }
+.qfb.ok  { background:#f0faf5; color:#1a4d30; border:2px solid var(--green); }
+.qfb.err { background:#fff0ec; color:#7a2414; border:2px solid var(--rust); }
+.qnav { display:flex; gap:8px; margin-top:8px; }
+
+/* ── STEPS ── */
+.steps { display:flex; flex-direction:column; gap:8px; }
+.step  { display:flex; gap:11px; align-items:flex-start; }
+.snum  { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:13px; color:var(--white); }
+.stb   { flex:1; }
+.stt   { font-weight:800; font-size:clamp(13px,2.1vw,15px); margin-bottom:2px; }
+.std   { font-size:clamp(11px,1.8vw,13px); color:#555; line-height:1.5; font-weight:500; }
+
+/* ── COVER ── */
+#s0 {
+  align-items:center; justify-content:center; text-align:center; padding:24px;
+  background:radial-gradient(ellipse at 30% 40%, #4a6fa5 0%, #2c4a7c 45%, #1a2840 100%);
+}
+.ctag {
+  display:inline-block; background:rgba(255,255,255,.15); color:rgba(255,255,255,.92);
+  border-radius:30px; padding:5px 18px; font-size:clamp(10px,1.8vw,12px); font-weight:700;
+  letter-spacing:1.4px; text-transform:uppercase; margin-bottom:14px;
+  border:1px solid rgba(255,255,255,.22);
+}
+.ctitle { font-family:'Playfair Display',serif; font-weight:800; font-size:clamp(22px,4.5vw,40px); color:var(--white); line-height:1.15; margin-bottom:8px; }
+.csub   { font-size:clamp(12px,2.2vw,16px); color:rgba(255,255,255,.78); font-weight:600; margin-bottom:7px; }
+.cauthor{ font-size:clamp(11px,2vw,14px); color:rgba(255,255,255,.58); font-weight:600; margin-bottom:22px; }
+.cstart {
+  background:var(--gold); color:var(--navy); border:none; border-radius:50px;
+  padding:12px 30px; font-family:'Inter',sans-serif; font-weight:800;
+  font-size:clamp(13px,2.3vw,16px); cursor:pointer;
+  box-shadow:0 6px 22px rgba(0,0,0,.28); transition:transform .2s, box-shadow .2s;
+}
+.cstart:hover { transform:scale(1.05); box-shadow:0 8px 26px rgba(0,0,0,.35); }
+.cico { font-size:clamp(44px,8vw,64px); margin-bottom:16px; animation:pulse 2.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+/* ── COLOR UTILITIES ── */
+.bg-blue  { background:var(--blue)!important; }
+.bg-dblue { background:var(--dblue)!important; }
+.bg-amber { background:var(--amber)!important; }
+.bg-gold  { background:var(--gold)!important; }
+.bg-rust  { background:var(--rust)!important; }
+.bg-green { background:var(--green)!important; }
+.bg-lav   { background:var(--lav)!important; }
+.bg-navy  { background:var(--navy)!important; }
+
+.bl-blue  { border-color:var(--blue)!important; background:#f0f4fa; }
+.bl-amber { border-color:var(--amber)!important; background:#fdf8ec; }
+.bl-rust  { border-color:var(--rust)!important;  background:#fff0ec; }
+.bl-green { border-color:var(--green)!important; background:#f0faf5; }
+.bl-lav   { border-color:var(--lav)!important;   background:#f5f0ff; }
+
+/* ── COMPARISON TABLE ── */
+.cmp { width:100%; border-collapse:collapse; font-size:clamp(11px,1.8vw,13px); background:var(--white); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow); }
+.cmp th { padding:10px 13px; font-weight:800; font-size:clamp(12px,2vw,14px); border-bottom:2px solid var(--light); }
+.cmp td { padding:9px 13px; border-bottom:1px solid var(--light); line-height:1.45; font-weight:500; }
+.cmp tr:last-child td { border-bottom:none; }
+.cmp .rh { font-weight:800; font-size:clamp(11px,1.8vw,13px); color:var(--navy); background:#f8f5f0; }
+.th-bad  { background:#fff0ec; color:var(--rust); text-align:center; }
+.th-good { background:#f0faf5; color:var(--green); text-align:center; }
+.td-bad  { color:#7a2414; font-size:clamp(10px,1.6vw,12px); }
+.td-good { color:#1a4d30; font-size:clamp(10px,1.6vw,12px); }
+
+/* ── SCORE ── */
+.score-c {
+  width:78px; height:78px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-weight:700; font-size:26px;
+  color:var(--white); background:var(--blue); margin:0 auto 10px;
+  box-shadow:0 4px 14px rgba(74,111,165,.35);
+}
+
+/* ── SUMMARY ── */
+.sumwrap { display:grid; grid-template-columns:1fr 1fr; gap:8px; flex:1; overflow-y:auto; }
+.sumwrap::-webkit-scrollbar { width:4px; }
+.sumwrap::-webkit-scrollbar-thumb { background:#ccc; border-radius:8px; }
+.sumi { background:var(--white); border-radius:13px; padding:12px 14px; box-shadow:var(--shadow); border-left:5px solid; }
+.sumit { font-weight:800; font-size:clamp(12px,2vw,14px); margin-bottom:3px; }
+.sumd  { font-size:clamp(10px,1.7vw,12px); color:#555; font-weight:500; line-height:1.45; }
+
+.scr { overflow-y:auto; flex:1; }
+.scr::-webkit-scrollbar { width:4px; }
+.scr::-webkit-scrollbar-thumb { background:#ccc; border-radius:8px; }
+
+/* ── FLOWCHART ── */
+.flow-box {
+  border-radius:var(--r); padding:11px 14px;
+  font-size:clamp(12px,2vw,14px); font-weight:600; line-height:1.5; text-align:center;
+}
+.flow-diamond {
+  background:var(--light); border:2px solid var(--blue);
+  border-radius:12px; padding:10px 14px;
+  font-size:clamp(12px,2vw,14px); font-weight:700; text-align:center; color:var(--navy);
+}
+.flow-arrow { text-align:center; font-size:20px; color:var(--muted); line-height:1.2; }
+
+/* ── ALERT BOX ── */
+.alert-box {
+  border-radius:var(--r); padding:11px 15px;
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:clamp(12px,2vw,14px); font-weight:600; line-height:1.55;
+}
+.alert-box .ai2 { font-size:20px; flex-shrink:0; margin-top:1px; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .g2,.cmp { grid-template-columns:1fr; }
+  .g3 { grid-template-columns:1fr 1fr; }
+  .g4 { grid-template-columns:1fr 1fr; }
+  .sumwrap { grid-template-columns:1fr; }
+  .row { flex-direction:column; }
+  .th  { overflow-x:auto; }
+}
+@media(max-width:400px){ .g3 { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div id="app">
+<div id="pbar" style="width:0%"></div>
+
+<!-- TOP NAV -->
+<div id="topnav">
+  <div class="dots" id="dots"></div>
+  <div class="ntitle" id="ntitle">Portada</div>
+  <div class="nctr" id="nctr">1 / 11</div>
+</div>
+
+<div id="swrap">
+
+  <!-- S0 PORTADA -->
+  <div class="screen active" id="s0">
+    <div class="cico">🛡️</div>
+    <div class="ctag">Protocolos de Seguridad · Atención Empática</div>
+    <div class="ctitle">Entornos Escolares Seguros:<br>Guía Ejecutiva de Actuación</div>
+    <div class="csub">Protocolos de protección física y atención empática<br>para el personal docente</div>
+    <div class="cauthor">👨‍🏫 Prof. Francisco De Jesús Luna Benitez</div>
+    <button class="cstart" onclick="goTo(1)">Iniciar Guía ▶</button>
+  </div>
+
+  <!-- S1 EL MANDATO DUAL -->
+  <div class="screen" id="s1">
+    <div class="sh">
+      <div class="badge bg-dblue">Introducción</div>
+      <div class="stitle">El Mandato Dual del Docente</div>
+      <div class="ssub">Dos funciones complementarias para garantizar la seguridad escolar</div>
+    </div>
+    <div class="ca">
+      <div class="g2" style="flex:1">
+        <div class="card" style="border-top:5px solid var(--amber);">
+          <div class="ci">🛡️</div>
+          <div class="ct" style="color:var(--amber)">El Escudo: Riesgo Externo</div>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
+            <div class="hl bl-amber"><strong>Concepto:</strong> Protección física ante amenazas inminentes (balaceras, disturbios).</div>
+            <div class="hl bl-amber"><strong>Enfoque:</strong> Reacción rápida, disciplina, endurecimiento del entorno.</div>
+            <div class="hl bl-amber"><strong>Estado mental:</strong> Calma táctica.</div>
+          </div>
+        </div>
+        <div class="card" style="border-top:5px solid var(--lav);">
+          <div class="ci">🔍</div>
+          <div class="ct" style="color:var(--lav)">El Radar: Riesgo Interno</div>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
+            <div class="hl bl-lav"><strong>Concepto:</strong> Detección proactiva de violencia o abuso familiar/social.</div>
+            <div class="hl bl-lav"><strong>Enfoque:</strong> Observación continua, confidencialidad, sensibilización.</div>
+            <div class="hl bl-lav"><strong>Estado mental:</strong> Empatía activa.</div>
+          </div>
+        </div>
+      </div>
+      <div class="hl bl-blue" style="flex-shrink:0">
+        🎯 <strong>Principio clave:</strong> El Escudo y el Radar no son opuestos; son complementarios. Juntos conforman al <strong>docente como Puerto Seguro</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 EL ESCUDO: 4 PILARES -->
+  <div class="screen" id="s2">
+    <div class="sh">
+      <div class="badge bg-amber">El Escudo</div>
+      <div class="stitle">4 Pilares de Acción Inmediata</div>
+      <div class="ssub">Protocolo ante balaceras o disturbios externos</div>
+    </div>
+    <div class="ca">
+      <div class="g4" style="flex:1">
+        <div class="card cn bg-amber">
+          <div style="font-size:30px; margin-bottom:6px">✋</div>
+          <div class="ct">1. Calma</div>
+          <div class="cd">Mantener la serenidad. Hablar con voz tranquila pero segura. Indicar a los estudiantes que escuchen las órdenes para evitar el pánico.</div>
+        </div>
+        <div class="card cn bg-rust">
+          <div style="font-size:30px; margin-bottom:6px">🏃</div>
+          <div class="ct">2. Resguardo</div>
+          <div class="cd">Todos al piso boca abajo, en silencio y lejos de ventanas. Ayudar a quienes tengan discapacidad. Desalojar áreas de riesgo.</div>
+        </div>
+        <div class="card cn bg-dblue">
+          <div style="font-size:30px; margin-bottom:6px">🔒</div>
+          <div class="ct">3. Cierre</div>
+          <div class="cd">Permanecer en el aula. Cerrar y obstaculizar puertas y ventanas. Verificar que todos los estudiantes estén dentro.</div>
+        </div>
+        <div class="card cn bg-navy">
+          <div style="font-size:30px; margin-bottom:6px">⏰</div>
+          <div class="ct">4. Espera</div>
+          <div class="cd">Llamar al 911 en cuanto sea seguro. Por ningún motivo permitir la salida del salón hasta que las autoridades o el director lo indiquen.</div>
+        </div>
+      </div>
+      <div class="alert-box" style="background:#fff8ec; border:2px solid var(--amber); flex-shrink:0">
+        <div class="ai2">⚠️</div>
+        <div>Estos 4 pilares deben ejecutarse en <strong>secuencia y sin improvisaciones</strong>. La disciplina del protocolo salva vidas.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 MATRIZ DECISIONES CRÍTICAS -->
+  <div class="screen" id="s3">
+    <div class="sh">
+      <div class="badge bg-dblue">El Escudo · Decisiones</div>
+      <div class="stitle">Instinto vs. Protocolo</div>
+      <div class="ssub">Matriz de Decisiones Críticas en Emergencias</div>
+    </div>
+    <div class="ca">
+      <div style="flex:1; overflow:hidden; border-radius:var(--r); box-shadow:var(--shadow);">
+        <table class="cmp" style="height:100%">
+          <thead>
+            <tr>
+              <th style="background:#f8f5f0; text-align:left; width:22%">Situación</th>
+              <th class="th-bad">❌ Instinto (Peligro)</th>
+              <th class="th-good">✅ Protocolo (Seguridad)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="rh">👁️ Visibilidad</td>
+              <td class="td-bad">Asomarse por la ventana para ver qué está pasando.</td>
+              <td class="td-good">Mantenerse boca abajo en el piso. El contacto visual <strong>expone a las víctimas</strong>.</td>
+            </tr>
+            <tr>
+              <td class="rh">📸 Documentación</td>
+              <td class="td-bad">Querer tomar fotografías o grabar videos con el celular.</td>
+              <td class="td-good">Evitar el uso de cámaras. El agresor puede considerar la grabación como una <strong>provocación directa</strong>.</td>
+            </tr>
+            <tr>
+              <td class="rh">ℹ️ Información</td>
+              <td class="td-bad">Salir del salón para buscar información o a otros compañeros.</td>
+              <td class="td-good">Permitir (con precaución) la entrada de estudiantes fuera, pero <strong>nunca salir</strong> hasta controlar la situación.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hl" style="border-color:var(--rust); background:#fff0ec; flex-shrink:0">
+        🔑 <strong>Regla de oro:</strong> En una emergencia activa, el instinto dice "quiero ver/grabar/actuar". El protocolo dice "protégete primero". Siempre sigue el protocolo.
+      </div>
+    </div>
+  </div>
+
+  <!-- S4 EL RADAR: ICEBERG DE LA VIOLENCIA -->
+  <div class="screen" id="s4">
+    <div class="sh">
+      <div class="badge bg-lav">El Radar</div>
+      <div class="stitle">El Iceberg de la Violencia</div>
+      <div class="ssub">La mayor parte de la violencia se manifiesta en la conducta, no en marcas físicas</div>
+    </div>
+    <div class="ca">
+      <div class="g2" style="flex-shrink:0">
+        <div class="card" style="border-top:4px solid var(--blue)">
+          <div class="ci">🗻</div>
+          <div class="ct">Punta del Iceberg — Visible/Físico</div>
+          <div class="cd">Pocas víctimas piden ayuda directamente. Lo más evidente son las <strong>marcas físicas</strong>: moretones, rasguños, huesos rotos, costras.</div>
+        </div>
+        <div class="card" style="border-top:4px solid var(--lav)">
+          <div class="ci">🌊</div>
+          <div class="ct">Bajo el Agua — Lo Invisible</div>
+          <div class="cd">La mayoría de señales son conductuales y pasan desapercibidas si el docente no tiene el <strong>radar activo</strong>.</div>
+        </div>
+      </div>
+      <div class="card" style="flex:1; border-top:4px solid var(--lav)">
+        <div class="ct" style="margin-bottom:8px; color:var(--lav)">🔦 Señales conductuales a observar:</div>
+        <div class="g2" style="height:calc(100% - 34px)">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div class="hl bl-lav">😨 Miedo a ir a la escuela</div>
+            <div class="hl bl-lav">💤 Pesadillas recurrentes</div>
+            <div class="hl bl-lav">🤢 Somatización (dolores de estómago/cabeza)</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div class="hl bl-blue">🚶 Aislamiento social</div>
+            <div class="hl bl-blue">📉 Bajo rendimiento académico</div>
+            <div class="hl bl-blue">🎁 Regalar pertenencias</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 ALERTAS TEMPRANAS -->
+  <div class="screen" id="s5">
+    <div class="sh">
+      <div class="badge bg-lav">El Radar · Diagnóstico</div>
+      <div class="stitle">Matriz de Alertas Tempranas</div>
+      <div class="ssub">Tres categorías de señales que el docente debe observar</div>
+    </div>
+    <div class="ca">
+      <div class="g3" style="flex:1">
+        <div class="card" style="border-top:5px solid var(--blue)">
+          <div class="ci">🩺</div>
+          <div class="ct" style="color:var(--blue)">Físicas y Psicosomáticas</div>
+          <div style="margin-top:6px; display:flex; flex-direction:column; gap:5px;">
+            <div class="hl bl-blue">Lesiones sin explicación (moretones, costras).</div>
+            <div class="hl bl-blue">Dolores de cabeza o estómago recurrentes.</div>
+            <div class="hl bl-blue">Alteraciones del sueño (no dormir bien, pesadillas).</div>
+          </div>
+        </div>
+        <div class="card" style="border-top:5px solid var(--lav)">
+          <div class="ci">📚</div>
+          <div class="ct" style="color:var(--lav)">Académicas y Sociales</div>
+          <div style="margin-top:6px; display:flex; flex-direction:column; gap:5px;">
+            <div class="hl bl-lav">Ausentismo constante o miedo de participar en eventos.</div>
+            <div class="hl bl-lav">Bajo rendimiento académico repentino.</div>
+            <div class="hl bl-lav">Pérdida de amistades, dificultad para relacionarse.</div>
+          </div>
+        </div>
+        <div class="card" style="border-top:5px solid var(--rust)">
+          <div class="ci">🧠</div>
+          <div class="ct" style="color:var(--rust)">Conductuales y Materiales</div>
+          <div style="margin-top:6px; display:flex; flex-direction:column; gap:5px;">
+            <div class="hl bl-rust">Ansiedad, agresividad o arrebatos de ira.</div>
+            <div class="hl bl-rust">Angustia sin explicación tras usar internet o teléfono.</div>
+            <div class="hl bl-rust">Ropa/aparatos rotos; pedir dinero constantemente.</div>
+          </div>
+        </div>
+      </div>
+      <div class="hl" style="border-color:var(--amber); background:#fdf8ec; flex-shrink:0">
+        ⚡ <strong>Punto clave:</strong> Una sola señal puede ser normal. La <strong>combinación de señales</strong> y su persistencia en el tiempo activan el protocolo de intervención.
+      </div>
+    </div>
+  </div>
+
+  <!-- S6 EL ESPACIO SEGURO: ATENCIÓN EMPÁTICA -->
+  <div class="screen" id="s6">
+    <div class="sh">
+      <div class="badge bg-blue">El Radar · Atención</div>
+      <div class="stitle">El Espacio Seguro</div>
+      <div class="ssub">Guía de Atención Empática en 3 pasos</div>
+    </div>
+    <div class="ca">
+      <div class="steps scr">
+        <div class="step">
+          <div class="snum" style="background:var(--blue); font-size:18px">1</div>
+          <div class="stb">
+            <div class="stt" style="color:var(--blue)">Escucha Libre</div>
+            <div class="std">Garantizar privacidad y confidencialidad. Escuchar <strong>respetuosamente</strong>, permitiendo la expresión libre de emociones <em>sin interrupciones</em>. El niño/a debe sentir que tiene todo el espacio y el tiempo.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum" style="background:var(--lav); font-size:18px">2</div>
+          <div class="stb">
+            <div class="stt" style="color:var(--lav)">Contención</div>
+            <div class="std">Aplicar la <strong>empatía activa</strong>. Prever que la niña, niño o adolescente (NNA) puede sufrir una crisis emocional al relatar. Dar confianza sobre el trato que recibirá la información compartida.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum" style="background:var(--amber); font-size:18px">3</div>
+          <div class="stb">
+            <div class="stt" style="color:var(--amber)">Información Mínima</div>
+            <div class="std">Al finalizar el relato libre, preguntar <em>únicamente</em> la información faltante estrictamente necesaria para proponer acciones y canalizar. <strong>No juzgar, no investigar de más.</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="alert-box" style="background:#f0f4fa; border:2px solid var(--blue); flex-shrink:0">
+        <div class="ai2">💡</div>
+        <div>El rol del docente es <strong>escuchar y canalizar</strong>, no investigar ni resolver el caso. Investigar de más puede comprometer la integridad del NNA y la investigación legal.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7 FLUJOGRAMA CANALIZACIÓN -->
+  <div class="screen" id="s7">
+    <div class="sh">
+      <div class="badge bg-green">Canalización</div>
+      <div class="stitle">Flujograma de Canalización y Resolución</div>
+      <div class="ssub">¿Qué hacer después de detectar o recibir una denuncia?</div>
+    </div>
+    <div class="ca">
+      <div class="flow-box" style="background:var(--navy); color:white; flex-shrink:0; font-size:clamp(13px,2.2vw,15px)">
+        🚨 Detección o denuncia de un acto de violencia
+      </div>
+      <div class="flow-arrow" style="flex-shrink:0">▼</div>
+      <div class="flow-diamond" style="flex-shrink:0">
+        ❓ ¿La conducta es un <strong>delito tipificado</strong>?<br><span style="font-size:12px; font-weight:500">(abuso sexual, violación, lesiones graves)</span>
+      </div>
+      <div class="g2" style="flex-shrink:0; font-size:12px; text-align:center">
+        <div style="color:var(--muted); font-weight:700">⬇ NO (Conflicto Escolar)</div>
+        <div style="color:var(--muted); font-weight:700">⬇ SÍ (Delito Grave)</div>
+      </div>
+      <div class="g2" style="flex:1">
+        <div class="card" style="border:2px solid var(--green); background:#f0faf5;">
+          <div class="ct" style="color:var(--green)">✅ Resolver al interior del plantel</div>
+          <div class="cd"><strong>Método: Justicia Restaurativa.</strong> Enfoque de disciplina positiva centrado en reparar el daño y "aprender de los errores". No castigar ni humillar.</div>
+        </div>
+        <div class="card" style="border:2px solid var(--rust); background:#fff0ec;">
+          <div class="ct" style="color:var(--rust)">🚫 PROHIBIDA la resolución interna</div>
+          <div class="cd"><strong>Acción inmediata:</strong> Dar vista a la Procuraduría de Protección de Niñas, Niños y Adolescentes de la entidad federativa, autoridades ministeriales o <strong>911</strong>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8 TABS INTEGRACIÓN ESCUDO + RADAR -->
+  <div class="screen" id="s8">
+    <div class="sh">
+      <div class="badge bg-navy">Síntesis Operativa</div>
+      <div class="stitle">El Docente como Puerto Seguro</div>
+      <div class="ssub">Integración de los protocolos del Escudo y el Radar</div>
+    </div>
+    <div class="ca">
+      <div class="th" style="flex-shrink:0">
+        <button class="tbtn active" onclick="swTab(this,'ts1')" style="color:var(--amber)">🛡️ El Escudo</button>
+        <button class="tbtn" onclick="swTab(this,'ts2')" style="color:var(--lav)">🔍 El Radar</button>
+        <button class="tbtn" onclick="swTab(this,'ts3')" style="color:var(--green)">🤝 Integración</button>
+      </div>
+      <div class="tc active" id="ts1">
+        <div class="hl bl-amber">Ante <strong>riesgo externo</strong> (balaceras, disturbios), el docente activa el estado mental de <strong>calma táctica</strong>.</div>
+        <div class="hl bl-amber">El protocolo es: <strong>Calma → Resguardo → Cierre → Espera</strong>. Cuatro pasos en secuencia estricta.</div>
+        <div class="hl bl-amber">El instinto natural es peligroso. <strong>Siempre seguir el protocolo</strong>, nunca improvisar en una emergencia activa.</div>
+        <div class="hl bl-amber">Después de la emergencia, atender el estado emocional de los estudiantes con el protocolo de <strong>Espacio Seguro</strong>.</div>
+      </div>
+      <div class="tc" id="ts2">
+        <div class="hl bl-lav">Ante <strong>riesgo interno</strong> (violencia familiar, abuso), el docente activa la <strong>empatía activa</strong> y la observación continua.</div>
+        <div class="hl bl-lav">La violencia es como un iceberg: la parte visible (marcas físicas) es menor. La parte invisible (conductas) es la más importante.</div>
+        <div class="hl bl-lav">El proceso de atención es: <strong>Escucha Libre → Contención → Información Mínima</strong>. No investigar de más.</div>
+        <div class="hl bl-lav">La <strong>confidencialidad</strong> es fundamental. El NNA debe tener la certeza de que la información será tratada con respeto.</div>
+      </div>
+      <div class="tc" id="ts3">
+        <div class="card cn bg-navy">
+          <div class="ct">⚙️ La Seguridad es un Ecosistema</div>
+          <div class="cd">La disciplina del Escudo (protección física) y la empatía del Radar (detección conductual) operan bajo un mismo principio: <strong style="color:white">garantizar el bienestar de los estudiantes</strong>.</div>
+        </div>
+        <div class="hl" style="border-color:var(--gold); background:#fdf8ec">
+          <em>"Para que las niñas, niños, adolescentes y jóvenes tengan la confianza de denunciar, deben tener la certeza de que el mecanismo es efectivo para resguardar su integridad física y emocional."</em>
+        </div>
+        <div class="hl bl-green">
+          ✅ <strong>Todo incidente</strong> debe tratarse de forma <strong>inmediata, confidencial y segura</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9 AUTOEVALUACIÓN -->
+  <div class="screen" id="s9">
+    <div class="sh">
+      <div class="badge bg-rust">Autoevaluación</div>
+      <div class="stitle">¿Cuánto aprendiste? 🧠</div>
+      <div class="ssub">Preguntas de repaso sobre los protocolos de seguridad escolar</div>
+    </div>
+    <div class="ca">
+      <div class="card" id="qcard" style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="font-size:12px; color:var(--muted); font-weight:700; margin-bottom:8px;" id="qnum">Pregunta 1 de 6</div>
+          <div class="qq" id="qtext"></div>
+          <div class="qopts" id="qopts"></div>
+          <div class="qfb" id="qfb"></div>
+        </div>
+        <div class="qnav">
+          <button class="btn bp" id="qnext" onclick="nextQ()" style="display:none">Siguiente ▶</button>
+          <button class="btn bs" id="qretry" onclick="startQ()" style="display:none">🔄 Reintentar</button>
+        </div>
+      </div>
+      <div id="qresult" style="display:none; flex-direction:column; align-items:center; gap:10px;">
+        <div class="score-c" id="qscore">0/6</div>
+        <div style="font-family:'Playfair Display',serif; font-size:19px; font-weight:700; text-align:center;" id="qmsg"></div>
+        <button class="btn bp" onclick="startQ()">🔄 Volver a intentar</button>
+        <button class="btn bs" onclick="goTo(10)">Ver Resumen Final ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- S10 RESUMEN FINAL -->
+  <div class="screen" id="s10">
+    <div class="sh">
+      <div class="badge bg-green">Resumen Final</div>
+      <div class="stitle">Todo en un vistazo 📌</div>
+      <div class="ssub">Guía ejecutiva de referencia rápida para el docente</div>
+    </div>
+    <div class="ca">
+      <div class="sumwrap scr">
+        <div class="sumi" style="border-color:var(--amber)">
+          <div class="sumit">🛡️ El Escudo (Riesgo Externo)</div>
+          <div class="sumd">Estado mental: Calma táctica. Protocolo secuencial: <strong>Calma → Resguardo → Cierre → Espera</strong>. Nunca improvisar. El protocolo salva vidas.</div>
+        </div>
+        <div class="sumi" style="border-color:var(--lav)">
+          <div class="sumit">🔍 El Radar (Riesgo Interno)</div>
+          <div class="sumd">Estado mental: Empatía activa. Detectar señales conductuales del iceberg de la violencia. Observación continua y confidencial.</div>
+        </div>
+        <div class="sumi" style="border-color:var(--rust)">
+          <div class="sumit">❌ Instinto vs ✅ Protocolo</div>
+          <div class="sumd">Nunca asomarse, grabar ni salir durante una emergencia activa. Siempre boca abajo, puertas cerradas, esperar instrucciones.</div>
+        </div>
+        <div class="sumi" style="border-color:var(--blue)">
+          <div class="sumit">🩺 Alertas Tempranas (3 Categorías)</div>
+          <div class="sumd">Físicas/Psicosomáticas · Académicas/Sociales · Conductuales/Materiales. Una sola señal puede ser normal; la <strong>combinación</strong> activa el protocolo.</div>
+        </div>
+        <div class="sumi" style="border-color:var(--dblue)">
+          <div class="sumit">💙 Atención Empática (3 Pasos)</div>
+          <div class="sumd"><strong>1. Escucha Libre</strong> (sin interrumpir) → <strong>2. Contención</strong> (empatía) → <strong>3. Información Mínima</strong> (solo lo necesario para canalizar).</div>
+        </div>
+        <div class="sumi" style="border-color:var(--green); grid-column:1/-1">
+          <div class="sumit">⚖️ Flujograma de Canalización</div>
+          <div class="sumd">Conflicto escolar → Justicia Restaurativa interna. Delito grave (abuso sexual, lesiones) → <strong>PROHIBIDA resolución interna</strong>. Canalizar de inmediato a Procuraduría de Protección o 911. Todo incidente: inmediato, confidencial y seguro.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /swrap -->
+
+<div id="botnav">
+  <button class="btn bs" id="bprev" onclick="nav(-1)" disabled>◀ Anterior</button>
+  <button class="btn bp" id="bnext" onclick="nav(1)">Siguiente ▶</button>
+</div>
+<div id="foot">Material educativo elaborado por Prof. Francisco De Jesús Luna Benitez</div>
+</div>
+
+<script>
+const TOTAL = 11;
+let cur = 0;
+const vis = new Set([0]);
+
+const titles = [
+  'Portada','El Mandato Dual','El Escudo: 4 Pilares',
+  'Instinto vs. Protocolo','El Iceberg de la Violencia',
+  'Alertas Tempranas','Atención Empática',
+  'Flujograma de Canalización','Integración: Puerto Seguro',
+  'Autoevaluación','Resumen Final'
+];
+
+function buildDots(){
+  const c=document.getElementById('dots'); c.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===cur?' active':vis.has(i)?' visited':'');
+    d.onclick=(()=>{const x=i;return()=>goTo(x);})();
+    c.appendChild(d);
+  }
+}
+
+function updateUI(){
+  buildDots();
+  document.getElementById('ntitle').textContent=titles[cur];
+  document.getElementById('nctr').textContent=(cur+1)+' / '+TOTAL;
+  const pct=Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('bprev').disabled=cur===0;
+  document.getElementById('bnext').disabled=cur===TOTAL-1;
+  document.getElementById('bnext').textContent=cur===TOTAL-1?'✅ Fin':'Siguiente ▶';
+}
+
+function goTo(n){
+  if(n<0||n>=TOTAL||n===cur)return;
+  const ss=document.querySelectorAll('.screen');
+  const prev=cur, fwd=n>prev;
+
+  ss[n].classList.remove('active','anim-in','exit-sl','exit-sr','enter-right','enter-left');
+  ss[n].classList.add(fwd?'enter-right':'enter-left');
+  void ss[n].offsetWidth;
+
+  ss[prev].classList.remove('active');
+  ss[prev].classList.add(fwd?'exit-sl':'exit-sr');
+
+  ss[n].classList.remove('enter-right','enter-left');
+  ss[n].classList.add('anim-in','active');
+
+  setTimeout(()=>{ ss[prev].classList.remove('exit-sl','exit-sr'); }, 350);
+
+  cur=n; vis.add(n); updateUI();
+  if(n===9) startQ();
+}
+function nav(d){ goTo(cur+d); }
+
+function swTab(btn,id){
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// ── QUIZ ──
+const qs=[
+  {
+    q:'¿Cuál es el orden correcto de los 4 Pilares del Escudo ante una emergencia activa?',
+    o:['Cierre → Calma → Espera → Resguardo','Calma → Resguardo → Cierre → Espera','Resguardo → Calma → Cierre → Espera','Espera → Cierre → Calma → Resguardo'],
+    c:1, fb:'✅ ¡Correcto! El orden es: 1. Calma (mantener serenidad), 2. Resguardo (al piso, lejos de ventanas), 3. Cierre (obstaculizar puertas y verificar estudiantes), 4. Espera (llamar al 911 cuando sea seguro, no salir hasta autorización).'
+  },
+  {
+    q:'Ante una balacera, ¿qué debe hacer el docente con su teléfono celular?',
+    o:['Grabar video para documentar el incidente','Tomar fotografías para el reporte','Evitar usar cámaras; el agresor puede considerarlo provocación','Transmitir en vivo para alertar a las familias'],
+    c:2, fb:'✅ ¡Exacto! Evitar el uso de cámaras. El agresor puede considerar la grabación como una provocación directa. En emergencias activas, el protocolo siempre supera al instinto.'
+  },
+  {
+    q:'¿Qué parte del "Iceberg de la Violencia" es la más importante para el Radar docente?',
+    o:['Las marcas físicas visibles como moretones','La parte invisible: señales conductuales','Las declaraciones directas de las víctimas','Los reportes de otros maestros'],
+    c:1, fb:'✅ ¡Muy bien! La mayor parte de la violencia se manifiesta en la conducta (parte invisible del iceberg). Pocas víctimas piden ayuda directamente y las marcas físicas son solo la "punta del iceberg".'
+  },
+  {
+    q:'En la Guía de Atención Empática, ¿cuánta información debe recabar el docente del NNA?',
+    o:['Toda la información posible para investigar completamente','Información suficiente para redactar un informe policial','Solo la información mínima necesaria para canalizar; no investigar de más','Ninguna; solo escuchar sin preguntar nada'],
+    c:2, fb:'✅ ¡Perfecto! El proceso es: Escucha Libre → Contención → Información Mínima. El docente escucha y canaliza, no investiga. Investigar de más puede comprometer la integridad del NNA y la investigación legal.'
+  },
+  {
+    q:'Se detecta que un estudiante sufrió abuso sexual. ¿Cuál es la acción correcta?',
+    o:['Resolver internamente con los padres y el director','Aplicar Justicia Restaurativa con el agresor','PROHIBIDA la resolución interna; canalizar a Procuraduría de Protección o 911','Esperar a que el estudiante formalice la denuncia por sí mismo'],
+    c:2, fb:'✅ ¡Correcto! Los delitos tipificados (abuso sexual, violación, lesiones graves) PROHIBEN la resolución interna. Se debe dar vista inmediata a la Procuraduría de Protección de NNA, autoridades ministeriales o 911.'
+  },
+  {
+    q:'¿Cuál es la diferencia fundamental entre el Estado Mental del Escudo y el del Radar?',
+    o:['El Escudo requiere empatía activa; el Radar requiere calma táctica','El Escudo requiere calma táctica; el Radar requiere empatía activa','Ambos requieren el mismo estado mental: disciplina protocolar','El Escudo requiere agresividad; el Radar requiere pasividad'],
+    c:1, fb:'✅ ¡Excelente! El Escudo (riesgo externo, emergencias físicas) requiere Calma Táctica: reacción rápida y disciplina de protocolo. El Radar (riesgo interno, violencia) requiere Empatía Activa: observación continua y escucha sin juicio.'
+  }
+];
+
+let qi=0, sc=0, done=false;
+
+function startQ(){
+  qi=0; sc=0; done=false;
+  document.getElementById('qcard').style.display='flex';
+  document.getElementById('qresult').style.display='none';
+  renderQ();
+}
+
+function renderQ(){
+  const q=qs[qi];
+  document.getElementById('qnum').textContent='Pregunta '+(qi+1)+' de '+qs.length;
+  document.getElementById('qtext').textContent=q.q;
+  const op=document.getElementById('qopts'); op.innerHTML='';
+  q.o.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='qopt';
+    b.innerHTML='<span style="font-weight:900;color:var(--muted);font-size:15px">'+(String.fromCharCode(65+i))+'</span> '+o;
+    b.onclick=()=>ansQ(i);
+    op.appendChild(b);
+  });
+  const fb=document.getElementById('qfb');
+  fb.className='qfb'; fb.textContent='';
+  document.getElementById('qnext').style.display='none';
+  document.getElementById('qretry').style.display='none';
+  done=false;
+}
+
+function ansQ(idx){
+  if(done)return; done=true;
+  const q=qs[qi];
+  document.querySelectorAll('.qopt').forEach((o,i)=>{
+    o.classList.add('dis');
+    if(i===q.c) o.classList.add('ok');
+    else if(i===idx) o.classList.add('err');
+  });
+  const fb=document.getElementById('qfb');
+  if(idx===q.c){ sc++; fb.className='qfb show ok'; }
+  else { fb.className='qfb show err'; }
+  fb.textContent=q.fb;
+  const nb=document.getElementById('qnext');
+  nb.style.display='inline-flex';
+  nb.textContent=qi<qs.length-1?'Siguiente ▶':'Ver resultados 🎯';
+}
+
+function nextQ(){
+  qi++;
+  if(qi>=qs.length){ showResult(); return; }
+  renderQ();
+}
+
+function showResult(){
+  document.getElementById('qcard').style.display='none';
+  const r=document.getElementById('qresult'); r.style.display='flex';
+  const s=document.getElementById('qscore');
+  s.textContent=sc+'/'+qs.length;
+  s.style.background=sc>=5?'var(--green)':sc>=3?'var(--amber)':'var(--rust)';
+  const m=['¡Sigue repasando los protocolos! 💪','¡Buen avance! Revisa los casos críticos 📋','¡Dominas los protocolos de seguridad! 🏆'];
+  document.getElementById('qmsg').textContent=sc>=5?m[2]:sc>=3?m[1]:m[0];
+}
+
+updateUI();
+</script>
+</body>
+</html>
